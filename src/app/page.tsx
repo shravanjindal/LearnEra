@@ -7,7 +7,6 @@ import Testimonials from '@/components/landingPage/Testimonials';
 import Pricing from '@/components/landingPage/Pricing';
 import Hero from '@/components/landingPage/Hero';
 import Working from '@/components/landingPage/Working';
-
 const Home: NextPage = () => {
   return (
     <div>

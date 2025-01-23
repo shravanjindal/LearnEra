@@ -121,80 +121,120 @@ const OnboardingPage = () => {
     if (validateStep()) {
       console.log('Form Data:', formData);
       alert('Onboarding complete!');
-      router.push("/dashboard/khwcbd")
+      router.push("/dashboard/khwcbd");
+    }
+  };
+
+  // Dynamic content for the left section based on the step
+  const leftSectionContent = () => {
+    switch (step) {
+      case 1:
+        return {
+          title: "Welcome to LearnEra",
+          description: "Create your account to unlock personalized learning paths and resources.",
+        };
+      case 2:
+        return {
+          title: "Welcome to LearnEra",
+          description: "Tell us about your current role to customize your learning journey.",
+        };
+      case 3:
+        return {
+          title: "Welcome to LearnEra",
+          description: "Select your goals to help us recommend the best content for you.",
+        };
+      case 4:
+        return {
+          title: "Welcome to LearnEra",
+          description: "Choose the skills you want to focus on to achieve your goals.",
+        };
+      default:
+        return {
+          title: "Welcome to LearnEra",
+          description: "Start your journey to mastering new skills and achieving your goals.",
+        };
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-500 to-indigo-600">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Onboarding</h1>
-        <div className="flex justify-center space-x-4 mb-6">
-          {[1, 2, 3, 4].map((s) => (
-            <div
-              key={s}
-              className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                step === s ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
-              }`}
-            >
-              {s}
-            </div>
-          ))}
-        </div>
-        <form onSubmit={handleSubmit}>
-          {step === 1 && (
-            <Signup formData={formData} handleChange={handleChange} />
-          )}
-          {step === 2 && (
-            <CurrentRole
-              formData={formData}
-              handleChange={handleChange}
-              currentRoleOptions={currentRoleOptions}
-            />
-          )}
-          {step === 3 && (
-            <Purpose
-              formData={formData}
-              handlePurposeChange={handlePurposeChange}
-              purposeOptions={purposeOptions[formData.currentRole as CurrentRole] || []}
-            />
-          )}
-          {step === 4 && (
-            <Skills
-              formData={formData}
-              handleSkillChange={handleSkillChange}
-              skillsOptions={skillsOptions}
-            />
-          )}
-          <div className="flex justify-between mt-6">
-            {step > 1 && (
-              <button
-                type="button"
-                onClick={prevStep}
-                className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-500 to-indigo-600 p-4">
+      <div className="bg-white rounded-lg shadow-2xl overflow-hidden w-full max-w-4xl flex">
+        {/* Left Section - Dynamic Content */}
+        <div className="hidden md:flex flex-col justify-center items-center bg-gradient-to-b from-purple-600 to-indigo-700 text-white p-8 w-1/2">
+          <h2 className="text-3xl font-bold mb-4">{leftSectionContent().title}</h2>
+          <p className="text-lg text-center mb-6">{leftSectionContent().description}</p>
+          <div className="flex space-x-4">
+            {[1, 2, 3, 4].map((s) => (
+              <div
+                key={s}
+                className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
+                  step === s ? 'border-white bg-purple-800' : 'border-purple-300'
+                }`}
               >
-                <FaArrowLeft className="mr-2" /> Previous
-              </button>
-            )}
-            {step < 4 ? (
-              <button
-                type="button"
-                onClick={nextStep}
-                className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                Next <FaArrowRight className="ml-2" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-              >
-                Submit
-              </button>
-            )}
+                {s}
+              </div>
+            ))}
           </div>
-        </form>
+        </div>
+
+        {/* Right Section - Form */}
+        <div className="p-8 w-full md:w-1/2">
+          <h1 className="text-2xl font-bold text-gray-800 mb-6">Onboarding</h1>
+          <form onSubmit={handleSubmit}>
+            {step === 1 && (
+              <Signup formData={formData} handleChange={handleChange} />
+            )}
+            {step === 2 && (
+              <CurrentRole
+                formData={formData}
+                handleChange={handleChange}
+                currentRoleOptions={currentRoleOptions}
+              />
+            )}
+            {step === 3 && (
+              <Purpose
+                formData={formData}
+                handlePurposeChange={handlePurposeChange}
+                purposeOptions={purposeOptions[formData.currentRole as CurrentRole] || []}
+              />
+            )}
+            {step === 4 && (
+              <Skills
+                formData={formData}
+                handleSkillChange={handleSkillChange}
+                skillsOptions={skillsOptions}
+              />
+            )}
+            <div className="flex justify-between mt-6">
+              {step > 1 && (
+                <button
+                  type="button"
+                  onClick={prevStep}
+                  className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  <FaArrowLeft className="mr-2" /> Previous
+                </button>
+              )}
+              {step < 4 ? (
+                <button
+                  type="button"
+                  onClick={nextStep}
+                  className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  Next <FaArrowRight className="ml-2" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Submit
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

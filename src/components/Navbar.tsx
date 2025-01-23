@@ -24,7 +24,7 @@ const Navbar: NextPage = () => {
         <div className='hidden md:flex space-x-6 '>
           <ul className="md:flex space-x-6 pt-2">
             <li>
-              <Link href="#pricing" className="hover:text-blue-200 transition-colors duration-200">
+              <Link href="#premium" className="hover:text-blue-200 transition-colors duration-200">
                 Premium
               </Link>
             </li>
