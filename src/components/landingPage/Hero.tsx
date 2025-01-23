@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import type { NextPage } from 'next';
+import Link from 'next/link';
 
 const Hero: NextPage = () => {
   // Animation variants for the container
@@ -57,14 +58,15 @@ const Hero: NextPage = () => {
         className="mt-6 flex justify-center"
         variants={childVariants}
       >
-        <motion.button
+        <Link href="/product"><motion.button
           className="mx-3 px-8 py-3 bg-white text-blue-600 font-bold rounded-lg shadow-md hover:bg-gray-200"
           variants={buttonVariants}
           whileHover="hover"
           whileTap="tap"
         >
           Live Demo
-        </motion.button>
+        </motion.button></Link>
+        <Link href="/onboarding">
         <motion.button
           className="mx-3 px-8 py-3 bg-white text-blue-600 font-bold rounded-lg shadow-md hover:bg-gray-200"
           variants={buttonVariants}
@@ -72,7 +74,8 @@ const Hero: NextPage = () => {
           whileTap="tap"
         >
           Get Started
-        </motion.button>
+        </motion.button></Link>
+        
       </motion.div>
     </motion.section>
   );

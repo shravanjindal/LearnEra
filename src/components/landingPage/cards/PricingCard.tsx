@@ -13,12 +13,10 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, target, price, perks = 
   const buttonText = plan.toUpperCase() === "FREE" ? "Get Started" : "Contact us";
 
   // Determine card size and border based on the plan
-  const cardClasses = `bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-100 transition duration-300 ${
-    plan.toUpperCase() === "BASIC" ? "max-w-md border-2 border-black scale-100" : "max-w-sm scale-90 "
-  }`;
-
+  const cardClasses = `bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:scale-105`;
+  const cardId = `${plan==="PREMIUM" ? "premium" : ""}`
   return (
-    <div className={cardClasses}>
+    <div id={cardId} className={cardClasses}>
       {/* Card Header */}
       <div className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-center py-6">
         <h3 className="text-2xl font-bold">{plan}</h3>

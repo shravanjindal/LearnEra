@@ -2,42 +2,48 @@
 import React, { useState } from 'react';
 import type { NextPage } from 'next';
 import { Button } from './ui/button';
+import Link from 'next/link';
 const Navbar: NextPage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+  const handleMenu = () =>{
+    setIsMenuOpen(false);
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white text-center px-6">
       <nav className="container mx-auto flex items-center justify-between py-4 px-6">
         {/* Logo */}
-        <h1 className="text-2xl pt-2 font-bold">LearnEra</h1>
+        <Link href={"/"}><h1 className="text-2xl pt-2 font-bold">LearnEra</h1></Link>
+
 
         {/* Desktop Navigation Links */}
-        <div className='flex space-x-6'>
-        <ul className="hidden md:flex space-x-6 pt-2">
-          <li>
-            <a href="#" className="hover:text-gray-300 transition-colors duration-200">
-              Products
-            </a>
-          </li>
-          <li>
-            <a href="#" className="hover:text-gray-300 transition-colors duration-200">
-              Blog
-            </a>
-          </li>
-          <li>
-            <a href="#" className="hover:text-gray-300 transition-colors duration-200">
-              Contact
-            </a>
-          </li>
-        </ul>
-        <Button className="hover:bg-gray-300 hove:scale-105 bg-white text-blue-500 transition-colors duration-200">
-              Get Started
-            </Button>
-          </div>
+        <div className='hidden md:flex space-x-6 '>
+          <ul className="md:flex space-x-6 pt-2">
+            <li>
+              <Link href="#pricing" className="hover:text-blue-200 transition-colors duration-200">
+                Premium
+              </Link>
+            </li>
+            <li>
+              <Link href="/explore" className="hover:text-blue-200 transition-colors duration-200">
+                Explore
+              </Link>
+            </li>
+            <li>
+              <Link href="/product" className="hover:text-blue-200 transition-colors duration-200">
+                Product
+              </Link>
+            </li>
+          </ul>
+          <Link href='/onboarding'><Button className="mt-1 hover:bg-blue-200 hove:scale-105 bg-white text-blue-500 transition-colors duration-200">
+            Get Started
+          </Button></Link>
+          
+        </div>
         {/* Mobile Menu Button */}
         <button
           className="md:hidden text-white focus:outline-none"
@@ -63,32 +69,25 @@ const Navbar: NextPage = () => {
         {isMenuOpen && (
           <div className="md:hidden absolute top-16 left-0 right-0 bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white">
             <ul className="flex flex-col space-y-4 p-4">
-              <li>
-                <a href="#hero" className="hover:text-gray-300 transition-colors duration-200">
-                  Home
-                </a>
-              </li>
-              <li>
-                <a href="#how-it-works" className="hover:text-gray-300 transition-colors duration-200">
-                  How It Works
-                </a>
-              </li>
-              <li>
-                <a href="#testimonials" className="hover:text-gray-300 transition-colors duration-200">
-                  Testimonials
-                </a>
-              </li>
-              <li>
-                <a href="#pricing" className="hover:text-gray-300 transition-colors duration-200">
-                  Pricing
-                </a>
-              </li>
-              <li>
-                <a href="#faqs" className="hover:text-gray-300 transition-colors duration-200">
-                  FAQs
-                </a>
-              </li>
+            <li>
+              <Link href="#pricing" onClick={handleMenu} className="hover:text-blue-200 transition-colors duration-200">
+                Premium
+              </Link>
+            </li>
+            <li>
+              <Link href="/explore" className="hover:text-blue-200 transition-colors duration-200">
+                Explore
+              </Link>
+            </li>
+            <li>
+              <Link href="/product" className="hover:text-blue-200 transition-colors duration-200">
+                Product
+              </Link>
+            </li>
             </ul>
+            <Link href='/onboarding'><Button className="mb-7 mt-1 hover:bg-blue-200 hove:scale-105 bg-white text-blue-500 transition-colors duration-200">
+            Get Started
+          </Button></Link>
           </div>
         )}
       </nav>

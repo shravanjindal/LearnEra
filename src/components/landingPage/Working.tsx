@@ -1,5 +1,5 @@
 import React from 'react';
-import WorkingCard from './WorkingCard';
+import WorkingCard from './cards/WorkingCard';
 import { FaUserCheck, FaTasks, FaClipboardCheck } from 'react-icons/fa'; // Import relevant icons
 
 const Working = () => {
