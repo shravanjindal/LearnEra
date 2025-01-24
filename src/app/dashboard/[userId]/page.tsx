@@ -50,7 +50,7 @@ const Dashboard = () => {
     submissions: Math.floor(Math.random() * 4), // Random submission count for demo
   }));
 
-  const getColor = (submissions) => {
+  const getColor = (submissions:number) => {
     if (submissions === 1) return "bg-green-300";
     if (submissions === 2) return "bg-green-500";
     if (submissions >= 3) return "bg-green-700";

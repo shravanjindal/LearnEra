@@ -6,17 +6,17 @@ import CurrentRole from '@/components/onboarding/CurrentRole';
 import Purpose from '@/components/onboarding/Purpose';
 import Skills from '@/components/onboarding/Skills';
 import { useRouter } from 'next/navigation';
-
-type CurrentRole = 'BTech Student' | 'PhD Student' | 'Working Professional';
-
-type FormData = {
-  name: string;
-  email: string;
-  password: string;
-  currentRole: string;
-  purpose: string[];
-  skills: string[];
-};
+import {
+  currentRoleOptions,
+  purposeOptions,
+  skillsOptions,
+  handleChange,
+  handlePurposeChange,
+  handleSkillChange,
+  validateStep,
+  leftSectionContent,
+} from './utils';
+import { FormData } from './utils'; // Assuming you have a types file for shared types
 
 const OnboardingPage = () => {
   const router = useRouter();
@@ -30,84 +30,8 @@ const OnboardingPage = () => {
     skills: [],
   });
 
-  const currentRoleOptions: CurrentRole[] = ['BTech Student', 'PhD Student', 'Working Professional'];
-
-  const purposeOptions = {
-    'BTech Student': ['Learn new skills in tech', 'Prepare for internships/jobs', 'Build projects'],
-    'PhD Student': ['Research assistant', 'Learn advanced topics', 'Publish papers'],
-    'Working Professional': ['Career growth', 'Upskill in tech', 'Switch domains'],
-  };
-
-  const skillsOptions = {
-    'Learn new skills in tech': ['Web Development', 'Data Science', 'Machine Learning', 'Cloud Computing'],
-    'Prepare for internships/jobs': ['Coding Interviews', 'Resume Building', 'Networking'],
-    'Build projects': ['Full-Stack Development', 'Mobile App Development', 'IoT Projects'],
-    'Research assistant': ['AI/ML Research', 'Data Analysis', 'Scientific Computing'],
-    'Learn advanced topics': ['Deep Learning', 'Blockchain', 'Quantum Computing'],
-    'Publish papers': ['Academic Writing', 'Research Methodology', 'Data Visualization'],
-    'Career growth': ['Leadership Skills', 'Technical Certifications', 'Mentorship'],
-    'Upskill in tech': ['DevOps', 'Cybersecurity', 'Big Data'],
-    'Switch domains': ['From Non-Tech to Tech', 'From Hardware to Software', 'From Testing to Development'],
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handlePurposeChange = (purpose: string) => {
-    setFormData((prev) => {
-      const updatedPurpose = prev.purpose.includes(purpose)
-        ? prev.purpose.filter((p) => p !== purpose)
-        : [...prev.purpose, purpose];
-      return { ...prev, purpose: updatedPurpose };
-    });
-  };
-
-  const handleSkillChange = (skill: string) => {
-    setFormData((prev) => {
-      const updatedSkills = prev.skills.includes(skill)
-        ? prev.skills.filter((s) => s !== skill)
-        : [...prev.skills, skill];
-      return { ...prev, skills: updatedSkills };
-    });
-  };
-
-  const validateStep = (): boolean => {
-    switch (step) {
-      case 1:
-        if (!formData.name.trim() || !formData.email.trim() || !formData.password.trim()) {
-          alert("Please fill in all fields: Name, Email, and Password.");
-          return false;
-        }
-        return true;
-      case 2:
-        if (!formData.currentRole) {
-          alert("Please select your current role.");
-          return false;
-        }
-        return true;
-      case 3:
-        if (formData.purpose.length === 0) {
-          alert("Please select at least one purpose.");
-          return false;
-        }
-        return true;
-      case 4:
-        if (formData.skills.length === 0) {
-          alert("Please select at least one skill.");
-          return false;
-        }
-        return true;
-      default:
-        return false;
-    }
-  };
-
   const nextStep = () => {
-    if (validateStep()) {
+    if (validateStep(step, formData)) {
       if (step < 4) setStep(step + 1);
     }
   };
@@ -116,53 +40,46 @@ const OnboardingPage = () => {
     if (step > 1) setStep(step - 1);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateStep()) {
-      console.log('Form Data:', formData);
-      alert('Onboarding complete!');
-      router.push("/dashboard/khwcbd");
+  
+    if (validateStep(step, formData)) {
+      try {
+        // Send a POST request to the backend API
+        const response = await fetch('/onboarding/api/createUser', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json', // Correct headers syntax
+          },
+          body: JSON.stringify(formData), // Send the form data as JSON
+        });
+  
+        // Check if the request was successful
+        if (response.ok) {
+          const data = await response.json(); // Parse the JSON response
+          console.log('User created successfully:', data.user);
+          alert('Onboarding complete!');
+          router.push('/dashboard/khwcbd'); // Redirect to the dashboard
+        } else {
+          // Handle errors from the server
+          const errorData = await response.json();
+          console.error('Failed to create user:', errorData.message);
+          alert('Failed to save user data. Please try again.');
+        }
+      } catch (error) {
+        // Handle network or other errors
+        console.error('Error submitting form:', error);
+        alert('An error occurred. Please try again.');
+      }
     }
   };
-
-  // Dynamic content for the left section based on the step
-  const leftSectionContent = () => {
-    switch (step) {
-      case 1:
-        return {
-          title: "Welcome to LearnEra",
-          description: "Create your account to unlock personalized learning paths and resources.",
-        };
-      case 2:
-        return {
-          title: "Welcome to LearnEra",
-          description: "Tell us about your current role to customize your learning journey.",
-        };
-      case 3:
-        return {
-          title: "Welcome to LearnEra",
-          description: "Select your goals to help us recommend the best content for you.",
-        };
-      case 4:
-        return {
-          title: "Welcome to LearnEra",
-          description: "Choose the skills you want to focus on to achieve your goals.",
-        };
-      default:
-        return {
-          title: "Welcome to LearnEra",
-          description: "Start your journey to mastering new skills and achieving your goals.",
-        };
-    }
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-500 to-indigo-600 p-4">
       <div className="bg-white rounded-lg shadow-2xl overflow-hidden w-full max-w-4xl flex">
         {/* Left Section - Dynamic Content */}
         <div className="hidden md:flex flex-col justify-center items-center bg-gradient-to-b from-purple-600 to-indigo-700 text-white p-8 w-1/2">
-          <h2 className="text-3xl font-bold mb-4">{leftSectionContent().title}</h2>
-          <p className="text-lg text-center mb-6">{leftSectionContent().description}</p>
+          <h2 className="text-3xl font-bold mb-4">{leftSectionContent(step).title}</h2>
+          <p className="text-lg text-center mb-6">{leftSectionContent(step).description}</p>
           <div className="flex space-x-4">
             {[1, 2, 3, 4].map((s) => (
               <div
@@ -182,26 +99,26 @@ const OnboardingPage = () => {
           <h1 className="text-2xl font-bold text-gray-800 mb-6">Onboarding</h1>
           <form onSubmit={handleSubmit}>
             {step === 1 && (
-              <Signup formData={formData} handleChange={handleChange} />
+              <Signup formData={formData} handleChange={(e) => handleChange(setFormData, e)} />
             )}
             {step === 2 && (
               <CurrentRole
                 formData={formData}
-                handleChange={handleChange}
+                handleChange={(e) => handleChange(setFormData, e)}
                 currentRoleOptions={currentRoleOptions}
               />
             )}
             {step === 3 && (
               <Purpose
                 formData={formData}
-                handlePurposeChange={handlePurposeChange}
-                purposeOptions={purposeOptions[formData.currentRole as CurrentRole] || []}
+                handlePurposeChange={(purpose) => handlePurposeChange(setFormData, purpose)}
+                purposeOptions={purposeOptions[formData.currentRole as keyof typeof purposeOptions] || []}
               />
             )}
             {step === 4 && (
               <Skills
                 formData={formData}
-                handleSkillChange={handleSkillChange}
+                handleSkillChange={(skill) => handleSkillChange(setFormData, skill)}
                 skillsOptions={skillsOptions}
               />
             )}

@@ -12,7 +12,6 @@ type SkillsProps = {
 const Skills = ({ formData, handleSkillChange, skillsOptions }: SkillsProps) => {
   return (
     <div>
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">What Skills Do You Want to Pursue?</h2>
       <div className="space-y-4">
         {formData.purpose.map((purpose) => (
           <div key={purpose}>
