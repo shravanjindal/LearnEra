@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react';
 import type { NextPage } from 'next';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import Link from 'next/link';
 const Navbar: NextPage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

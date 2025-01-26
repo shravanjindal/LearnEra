@@ -1,7 +1,7 @@
 import React from 'react';
 import type { NextPage } from 'next';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import Navbar from '@/components/landingPage/Navbar';
+import Footer from '@/components/landingPage/Footer';
 import FAQs from '@/components/landingPage/FAQs';
 import Testimonials from '@/components/landingPage/Testimonials';
 import Pricing from '@/components/landingPage/Pricing';
