@@ -7,7 +7,6 @@ export interface IUser extends Document {
   currentRole: string;
   purpose: string[];
   skills: string[];
-  neo4jInstanceId?: string[]; // Add this field
 }
 
 const userSchema: Schema = new mongoose.Schema({
@@ -35,10 +34,6 @@ const userSchema: Schema = new mongoose.Schema({
   skills: [{
     type: String,
     required: true,
-  }],
-  neo4jInstanceId: [{
-    type: String,
-    required: false, // Optional field
   }],
 });
 

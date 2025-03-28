@@ -1,39 +1,15 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const MONGODB_URL = process.env.MONGODB_URL || "";
+const MONGODB_URL = "mongodb://localhost:27017/learneraDB";
 
-interface MongooseGlobal {
-  conn: typeof mongoose | null;
-  promise: Promise<typeof mongoose> | null;
-}
-
-declare const global: typeof globalThis & {
-  mongoose: MongooseGlobal;
-};
-
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
-
-async function dbConnect(): Promise<typeof mongoose> {
-  if (cached.conn) {
-    return cached.conn;
+async function dbConnect() {
+  try {
+    await mongoose.connect(MONGODB_URL);
+    console.log("MongoDB Connected ✅");
+  } catch (error) {
+    console.error("MongoDB Connection Error ❌", error);
+    process.exit(1); // Exit process on failure
   }
-
-  if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URL, opts).then((mongoose) => {
-      return mongoose;
-    });
-  }
-
-  cached.conn = await cached.promise;
-  return cached.conn;
 }
 
 export default dbConnect;

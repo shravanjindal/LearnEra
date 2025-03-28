@@ -53,13 +53,19 @@ const OnboardingPage = () => {
           },
           body: JSON.stringify(formData), // Send the form data as JSON
         });
-  
+      
         // Check if the request was successful
         if (response.ok) {
           const data = await response.json(); // Parse the JSON response
           console.log('User created successfully:', data.user);
-          alert('Onboarding complete!');
-          router.push('/dashboard/khwcbd'); // Redirect to the dashboard
+      
+          if (data.user && data.user._id) {
+            alert('Onboarding complete!');
+            router.push(`/dashboard/${data.user._id}`); // Redirect to the dashboard with user ID
+          } else {
+            console.error('User ID missing in response');
+            alert('User created, but no ID received.');
+          }
         } else {
           // Handle errors from the server
           const errorData = await response.json();
@@ -71,6 +77,7 @@ const OnboardingPage = () => {
         console.error('Error submitting form:', error);
         alert('An error occurred. Please try again.');
       }
+      
     }
   };
   return (

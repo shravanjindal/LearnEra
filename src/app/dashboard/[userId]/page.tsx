@@ -1,6 +1,4 @@
 "use client";
-import React, { use, useState } from "react";
-
 import Navbar from "@/components/dashboard/Navbar";
 import UserDetails from "@/components/dashboard/UserDetails";
 import UserSkillBars from "@/components/dashboard/UserSkillBars";
@@ -9,10 +7,14 @@ import BadgesCard from "@/components/dashboard/BadgesCard";
 import StreakGrid from "@/components/dashboard/StreakGrid";
 import ProgressCarousel from "@/components/dashboard/ProgressCarousel";
 import TaskHistory from "@/components/dashboard/TaskHistory";
+import Chatbot from "@/components/dashboard/Chatbot";
+import { useParams } from "next/navigation";
 
 const Dashboard = () => {
+  const { userId } = useParams();
   // Sample data
   const user = {
+    id: userId,
     name: "Shravan Jindal",
     rank: "1,368,045",
     solved: 73,
@@ -48,7 +50,7 @@ const Dashboard = () => {
   ];
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 overflow-x-hidden">
-      <Navbar user={user}/>
+      <Navbar user={user} />
       <div className="container flex p-4 overflow-y-auto scrollbar-custom">
         <div className="bg-gray-800 p-4 rounded-lg mr-4">
           <UserDetails user={user}/>
@@ -60,10 +62,13 @@ const Dashboard = () => {
             <BadgesCard user={user}/>
           </div>
           <StreakGrid />
-          <ProgressCarousel user={user} performanceData={performanceData}/>
+          <div id="progress-section">
+            <ProgressCarousel user={user} performanceData={performanceData}/>
+          </div>  
           <TaskHistory taskHistory={taskHistory}/>
         </div>
       </div>
+      <Chatbot/>
     </div>
   );
 };
