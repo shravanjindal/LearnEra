@@ -1,76 +1,115 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useState } from "react";
+import TutorChatbot from "@/components/TutorChatbot";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
 
-const TestsPage = () => {
-  const { userId } = useParams(); // Get userId from URL
+// Define test structure
+interface Test {
+  id: number;
+  title: string;
+  description: string;
+  difficulty: string;
+  date?: string; // Only for previous tests
+  score?: number; // Only for previous tests
+}
 
-  // AI-generated summary
-  const aiSummary =
-    "📊 Based on your last tasks and previous performance, I have made following tests to evaluate your progress. All the best! 🚀";
+// Define message structure
+interface Message {
+  sender: "bot" | "user";
+  text: string;
+}
 
-  // Test Categories
-  const generalTests = [
-    { title: "🖥️ Web Development Basics", description: "Test your knowledge of HTML, CSS, and JavaScript." },
-    { title: "📊 Data Science & Pandas", description: "Evaluate your ability to manipulate and analyze datasets." },
-    { title: "📊 Data Science & Pandas", description: "Evaluate your ability to manipulate and analyze datasets." },
-    { title: "🤖 Machine Learning Fundamentals", description: "Assess your understanding of ML concepts and algorithms." },
+const TestPage: React.FC = () => {
+  const [messages, setMessages] = useState<Message[]>([
+    { sender: "bot", text: "Welcome! Need help with your test?" },
+  ]);
+  const [input, setInput] = useState<string>("");
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    setMessages([...messages, { sender: "user", text: input }]);
+    setInput("");
+  };
+
+  // New Tests (Multiple)
+  const newTests: Test[] = [
+    { id: 1, title: "JavaScript Fundamentals", description: "Test your JavaScript skills.", difficulty: "Medium" },
+    { id: 2, title: "React Components", description: "Evaluate your React component knowledge.", difficulty: "Hard" },
+    { id: 3, title: "Node.js APIs", description: "Test on creating REST APIs using Node.js.", difficulty: "Medium" },
   ];
 
-  const practicalTests = [
-    { title: "⚡ Build a Responsive Navbar", description: "Write code to create a fully responsive navigation bar." },
-    { title: "🔍 Data Cleaning Challenge", description: "Write Python scripts to clean and preprocess a dataset." },
-    { title: "🧠 Train an ML Model", description: "Build and train a basic machine learning model using scikit-learn." },
+  // Previous Tests (Table)
+  const previousTests: Test[] = [
+    { id: 4, title: "HTML & CSS Basics", description: "Test your HTML and CSS knowledge.", difficulty: "Easy", date: "2024-03-20", score: 85 },
+    { id: 5, title: "JavaScript Arrays", description: "Test your JavaScript array knowledge.", difficulty: "Medium", date: "2024-03-15", score: 78 },
+    { id: 6, title: "React Hooks", description: "Test your React Hooks knowledge.", difficulty: "Hard", date: "2024-03-10", score: 90 },
   ];
-
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-900 text-gray-100 p-8">
-      {/* AI Summary */}
-      <motion.div
-        className="bg-gray-800 p-6 rounded-xl shadow-xl text-center"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h2 className="text-2xl font-bold mb-2">📌 Tutor Comments </h2>
-        <p className="text-gray-300">{aiSummary}</p>
-      </motion.div>
+    <div className="min-h-screen bg-gray-900 text-gray-100 flex">
+      {/* Left Section (3/4 of the page) */}
+      <div className="w-3/4 p-6">
+        {/* AI Summary Heading */}
+        <div className="flex flex-col items-center justify-center text-center">
+  <h1 className="text-2xl font-bold mb-4">📊 Tutor Comments</h1>
+  <p className="text-gray-300 mb-6">
+    Based on your progress, here are some new tests. You can also review your past tests.
+  </p>
+</div>
 
-      {/* Sections */}
-      <div className="mt-8 space-y-10">
-        {/* General Tests */}
-        <TestSection title="🧠 Knowlegde Tests" tests={generalTests} />
+        {/* New Tests Section (Multiple Cards) */}
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-3">🆕 New Tests</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {newTests.map((test) => (
+              <div key={test.id} className="bg-gray-800 p-5 rounded-lg shadow-lg">
+                <h3 className="text-lg font-semibold">{test.title}</h3>
+                <p className="text-gray-400 text-sm">{test.description}</p>
+                <span className="text-xs text-gray-300 bg-gray-700 px-2 py-1 rounded mt-2 inline-block">
+                  Difficulty: {test.difficulty}
+                </span>
+                <Button className="mt-4 w-full">Start Test</Button>
+              </div>
+            ))}
+          </div>
+        </section>
 
-        {/* Practical Tests */}
-        <TestSection title="💻 Practical Tests" tests={practicalTests} />
+        {/* Previous Tests Section (Table) */}
+        <section>
+          <h2 className="text-xl font-semibold mb-3">📜 Previous Tests</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+              <thead>
+                <tr className="bg-gray-700">
+                  <th className="p-3 text-left">Test</th>
+                  <th className="p-3 text-left">Difficulty</th>
+                  <th className="p-3 text-left">Date</th>
+                  <th className="p-3 text-left">Score</th>
+                  <th className="p-3 text-left">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {previousTests.map((test) => (
+                  <tr key={test.id} className="border-b border-gray-700">
+                    <td className="p-3">{test.title}</td>
+                    <td className="p-3">{test.difficulty}</td>
+                    <td className="p-3">{test.date}</td>
+                    <td className="p-3">{test.score}%</td>
+                    <td className="p-3">
+                      <Button className="text-sm px-3">Review Test</Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
+
+      {/* Right Section (1/4 of the page) - Tutor Chatbot */}
+      <TutorChatbot messages={messages} input={input} setInput={setInput} handleSend={handleSend} />
     </div>
   );
 };
 
-// Reusable Test Section Component
-const TestSection = ({ title, tests }: { title: string; tests: { title: string; description: string }[] }) => {
-  return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">{title}</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tests.map((test, index) => (
-          <motion.div
-            key={index}
-            className="bg-gray-800 p-5 rounded-xl shadow-lg hover:bg-gray-700 transition duration-300 cursor-pointer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <h3 className="text-lg font-semibold text-gray-200">{test.title}</h3>
-            <p className="text-gray-400">{test.description}</p>
-            <Button className="mt-3 w-full text-white">Start Test</Button>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default TestsPage;
+export default TestPage;
