@@ -1,7 +1,12 @@
 // pages/api/createUser.ts
-import dbConnect from '@/lib/dbConnect'; // Utility to connect to your database
-import {User} from '@/models/user'; // Your User model
+import dbConnect from '@/lib/dbConnect';
+import {User} from '@/models/user';
 import { NextResponse } from 'next/server';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 // Define the type for the user details
 type UserDetails = {
@@ -15,19 +20,41 @@ type UserDetails = {
 
 export async function POST(request: Request) {
   try {
-    // Parse the request body and assert it as UserDetails
+    // Parse the request body
     const userDetails: UserDetails = await request.json();
 
     // Connect to the database
     await dbConnect();
 
-    // Create a new user in the database
-    const newUser = new User(userDetails);
+    // Check if the email already exists
+    const existingUser = await User.findOne({ email: userDetails.email });
+    if (existingUser) {
+      return NextResponse.json(
+        { message: 'User already exists' },
+        { status: 400 }
+      );
+    }
 
-    // Save the user to the database
+    // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(userDetails.password, salt);
+
+    // Create a new user with the hashed password
+    const newUser = new User({ ...userDetails, password: hashedPassword });
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: newUser._id, email: newUser.email },
+      process.env.JWT_SECRET as string,
+      { expiresIn: '1h' }
+    );
+
+    // Store JWT token in the user document
+    newUser.token = token;
     await newUser.save();
+
     return NextResponse.json(
-      { message: 'User created successfully', user: newUser },
+      { message: 'User created successfully', user: newUser, token },
       { status: 201 }
     );
   } catch (error) {

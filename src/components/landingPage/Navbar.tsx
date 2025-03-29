@@ -38,6 +38,11 @@ const Navbar: NextPage = () => {
                 Product
               </Link>
             </li>
+            <li>
+              <Link href="/login" className="hover:text-blue-200 transition-colors duration-200">
+                Login
+              </Link>
+            </li>
           </ul>
           <Link href='/onboarding'><Button className="mt-1 hover:bg-blue-200 hove:scale-105 bg-white text-blue-500 transition-colors duration-200">
             Get Started
@@ -82,6 +87,11 @@ const Navbar: NextPage = () => {
             <li>
               <Link href="/product" className="hover:text-blue-200 transition-colors duration-200">
                 Product
+              </Link>
+            </li>
+            <li>
+              <Link href="/login" className="hover:text-blue-200 transition-colors duration-200">
+                Login
               </Link>
             </li>
             </ul>
