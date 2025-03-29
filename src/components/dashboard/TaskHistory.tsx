@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 type TaskHistoryProps = {
     taskHistory: {
         date: string;
-        task: string;
+        title: string;
         skill: string;
     }[];
 }
@@ -29,7 +29,7 @@ const TaskHistory = ({ taskHistory }: TaskHistoryProps) => {
                         >
                             <div className="flex-1">
                                 <p className="text-xs font-medium text-gray-100 group-hover:text-blue-400 transition-colors duration-200">
-                                    {task.task}
+                                    {task.title}
                                 </p>
                                 <p className="text-xs text-gray-400 mt-1 group-hover:text-gray-300 transition-colors duration-200">
                                     {task.date}

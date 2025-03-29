@@ -28,6 +28,10 @@ const OnboardingPage = () => {
     currentRole: '',
     purpose: [],
     skills: [],
+    tasksDone: [],
+    testsTaken: [],
+    skillProgress: [],
+    badges: ["newbie"],
   });
 
   const nextStep = () => {
@@ -42,7 +46,6 @@ const OnboardingPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
     if (validateStep(step, formData)) {
       try {
         // Send a POST request to the backend API
@@ -69,8 +72,8 @@ const OnboardingPage = () => {
         } else {
           // Handle errors from the server
           const errorData = await response.json();
-          console.error('Failed to create user:', errorData.message);
-          alert('Failed to save user data. Please try again.');
+          alert(`Failed to create user: ${errorData.message}`);
+          // alert('Failed to save user data. Please try again.');
         }
       } catch (error) {
         // Handle network or other errors

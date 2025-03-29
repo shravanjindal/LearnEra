@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
 dotenv.config();
 
@@ -16,13 +17,24 @@ type UserDetails = {
   currentRole: string;
   purpose: string[];
   skills: string[];
+  badges:string[];
+  tasksDone: mongoose.Types.ObjectId[];
+  testsTaken: {
+    testId: mongoose.Types.ObjectId;
+    score: number;
+    tutorComments : string;
+    userFeedback :string;
+  }[];
+  skillProgress: {
+    skill:string;
+    progress:number;
+  }[];
 };
 
 export async function POST(request: Request) {
   try {
     // Parse the request body
     const userDetails: UserDetails = await request.json();
-
     // Connect to the database
     await dbConnect();
 
@@ -51,6 +63,7 @@ export async function POST(request: Request) {
 
     // Store JWT token in the user document
     newUser.token = token;
+    console.log(newUser)
     await newUser.save();
 
     return NextResponse.json(

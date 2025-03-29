@@ -1,4 +1,6 @@
-"use client";
+"use client"
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import Navbar from "@/components/dashboard/Navbar";
 import UserDetails from "@/components/dashboard/UserDetails";
 import UserSkillBars from "@/components/dashboard/UserSkillBars";
@@ -8,67 +10,92 @@ import StreakGrid from "@/components/dashboard/StreakGrid";
 import ProgressCarousel from "@/components/dashboard/ProgressCarousel";
 import TaskHistory from "@/components/dashboard/TaskHistory";
 import Chatbot from "@/components/dashboard/Chatbot";
-import { useParams } from "next/navigation";
+import mongoose from "mongoose";
+
+interface IUser {
+  _id: string,
+  name: string;
+  email: string;
+  password: string;
+  currentRole: string;
+  purpose: string[];
+  skills: string[];
+  tasksDone: {
+    date:Date,
+    task:mongoose.Types.ObjectId,
+    skill:string,
+  }[];
+  testsTaken: {
+    testId: mongoose.Types.ObjectId;
+    score: number;
+    tutorComments : string;
+    userFeedback :string;
+  }[];
+  skillProgress: {
+    skill:string;
+    progress:number;
+  }[];
+  badges:string[];
+}
 
 const Dashboard = () => {
   const { userId } = useParams();
-  // Sample data
-  const user = {
-    id: userId,
-    name: "Shravan Jindal",
-    rank: "1,368,045",
-    solved: 73,
-    streak: 4,
-    badges: ["2022 Code Beginner", "4. Allen Coding Challenge"],
-    skills: ["Web Development", "Data Science", "Machine Learning"],
-  };
+  const [user, setUser] = useState<IUser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const skillProgressData = [
-    { skill: "Web Development", progress: 75 },
-    { skill: "Data Science", progress: 50 },
-    { skill: "Machine Learning", progress: 90 },
-  ];
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(`/dashboard/${userId}/api`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        
+        if (!response.ok) throw new Error("Failed to fetch user data");
 
-  const tasksDoneData = [
-    { skill: "Web Development", tasks: 30 },
-    { skill: "Data Science", tasks: 15 },
-    { skill: "Machine Learning", tasks: 25 },
-  ];
+        const data = await response.json();
+        console.log(data)
+        setUser(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const performanceData = [
-    { month: "Jan", score: 60 },
-    { month: "Feb", score: 75 },
-    { month: "Mar", score: 80 },
-    { month: "Apr", score: 85 },
-    { month: "May", score: 90 },
-  ];
+    if (userId) {
+      fetchUser();
+    }
+  }, [userId]);
 
-  const taskHistory = [
-    { date: "2023-10-01", task: "Responsive navbar with HTML and CSS", skill: "Web Development" },
-    { date: "2023-10-05", task: "Routing using ExpressJS", skill: "Web Development" },
-    { date: "2023-10-10", task: "Exploring Standard Scalar", skill: "Data Science" },
-  ];
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!user) return <p>No user found</p>;
+
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 overflow-x-hidden">
-      <Navbar user={user} />
+      <Navbar user={{name : user.name, streak: 0, id : user._id}} />
       <div className="container flex p-4 overflow-y-auto scrollbar-custom">
-        <div className="bg-gray-800 p-4 rounded-lg mr-4">
-          <UserDetails user={user}/>
-          <UserSkillBars skillProgressData={skillProgressData}/>
-        </div>
-        <div className="flex-1">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <PieChartCard tasksDoneData={tasksDoneData}/>
-            <BadgesCard user={user}/>
-          </div>
-          <StreakGrid />
-          <div id="progress-section">
-            <ProgressCarousel user={user} performanceData={performanceData}/>
-          </div>  
-          <TaskHistory taskHistory={taskHistory}/>
-        </div>
-      </div>
-      <Chatbot/>
+  <div className="w-1/4 bg-gray-800 p-4 rounded-lg mr-4">
+    <UserDetails user={{name : user.name, badges: user.badges}} />
+    <UserSkillBars skillProgressData={user.skillProgress} />
+  </div>
+  <div className="w-3/4 flex-1">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <PieChartCard tasksDoneData={user.skillProgress} />
+      <BadgesCard user={{badges: user.badges}} />
+    </div>
+    <StreakGrid />
+    <div id="progress-section">
+      {/* <ProgressCarousel user={user} performanceData={user} /> */}
+    </div>
+    <TaskHistory taskHistory={[]} />
+  </div>
+</div>
+      <Chatbot />
     </div>
   );
 };

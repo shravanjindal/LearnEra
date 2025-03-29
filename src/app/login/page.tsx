@@ -50,10 +50,10 @@ const LoginPage = () => {
           router.push(`/dashboard/${data.user._id}`);
         } else {
           const errorData = await response.json();
-          alert("Failed to login. Please try again.");
+          alert(`Failed to login. ${errorData.message}`);
         }
       } catch (error) {
-        alert("An error occurred. Please try again.");
+        alert(`An error occurred. Please try again`);
       }
     }
   };

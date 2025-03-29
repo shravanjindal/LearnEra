@@ -1,10 +1,24 @@
+import mongoose from "mongoose";
+
 export type FormData = {
     name: string;
-    email: string;
-    password: string;
-    currentRole: string;
-    purpose: string[];
-    skills: string[];
+  email: string;
+  password: string;
+  currentRole: string;
+  purpose: string[];
+  skills: string[];
+  tasksDone: mongoose.Types.ObjectId[];
+  testsTaken: {
+    testId: mongoose.Types.ObjectId;
+    score: number;
+    tutorComments : string;
+    userFeedback :string;
+  }[];
+  skillProgress: {
+    skill:string;
+    progress:number;
+  }[];
+  badges:string[];
 };
 export type CurrentRole = 'BTech Student' | 'PhD Student' | 'Working Professional';
 
