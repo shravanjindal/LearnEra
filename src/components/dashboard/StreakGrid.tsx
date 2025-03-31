@@ -1,7 +1,7 @@
 import React from 'react'
 const days = Array.from({ length: 365 }, (_, i) => ({
     date: i,
-    submissions: 2, // Random submission count for demo
+    submissions: 0, // Random submission count for demo
 }));
 
 const getColor = (submissions: number) => {
@@ -16,7 +16,7 @@ const StreakGrid = () => {
         <div className="flex justify-center mb-6">
             <div className="w-full p-2">
                 <div className="flex justify-between items-center mb-2">
-                    <h1 className="text-md font-semibold">258 submissions in the past one year</h1>
+                    <h1 className="text-md font-semibold">0 submissions in the past one year</h1>
                 </div>
 
                 {/* Streak Grid */}

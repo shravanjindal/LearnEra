@@ -12,7 +12,7 @@ import { Cell } from "recharts";
 type PieChartCardProps = {
   tasksDoneData: {
     skill: String;
-    progress: number;
+    tasksDone: number;
   }[];
 };
 
@@ -27,6 +27,10 @@ const getRandomColor = () => {
 };
 
 const PieChartCard = ({ tasksDoneData }: PieChartCardProps) => {
+  let p = false;
+  tasksDoneData.map((e) => {
+    if (e.tasksDone != 0) p = true;
+  });
   return (
     <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 rounded-lg shadow-2xl hover:shadow-3xl transition-shadow duration-300">
       <CardHeader>
@@ -38,16 +42,22 @@ const PieChartCard = ({ tasksDoneData }: PieChartCardProps) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer className="flex justify-center" width="100%" height={250}>
-          {tasksDoneData.length === 0 ? (
-            <div className="border-2 border-gray-400 rounded-full w-32 h-32 flex items-center justify-center bg-gray-700">
-              <p className="text-sm text-white">No Data</p>
+        <ResponsiveContainer
+          className="flex justify-center"
+          width="100%"
+          height={250}
+        >
+          {!p ? (
+            <div className="flex items-center justify-center">
+              <div className="w-40 h-40 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold text-center">
+                No tasks <br /> completed
+              </div>
             </div>
           ) : (
             <PieChart>
               <Pie
                 data={tasksDoneData}
-                dataKey="progress"
+                dataKey="tasksDone"
                 nameKey="skill"
                 cx="50%"
                 cy="50%"

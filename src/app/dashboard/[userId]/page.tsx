@@ -10,37 +10,12 @@ import StreakGrid from "@/components/dashboard/StreakGrid";
 import ProgressCarousel from "@/components/dashboard/ProgressCarousel";
 import TaskHistory from "@/components/dashboard/TaskHistory";
 import Chatbot from "@/components/dashboard/Chatbot";
-import mongoose from "mongoose";
+import { IUser } from "../../../models/user";
 
-interface IUser {
-  _id: string,
-  name: string;
-  email: string;
-  password: string;
-  currentRole: string;
-  purpose: string[];
-  skills: string[];
-  tasksDone: {
-    date:Date,
-    task:mongoose.Types.ObjectId,
-    skill:string,
-  }[];
-  testsTaken: {
-    testId: mongoose.Types.ObjectId;
-    score: number;
-    tutorComments : string;
-    userFeedback :string;
-  }[];
-  skillProgress: {
-    skill:string;
-    progress:number;
-  }[];
-  badges:string[];
-}
 
 const Dashboard = () => {
   const { userId } = useParams();
-  const [user, setUser] = useState<IUser | null>(null);
+  const [user, setUser] = useState<(IUser & { _id: string }) | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -77,15 +52,25 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 overflow-x-hidden">
-      <Navbar user={{name : user.name, streak: 0, id : user._id}} />
+      <Navbar user={{name : user.name, streak: 0, id : user._id.toString()}} />
       <div className="container flex p-4 overflow-y-auto scrollbar-custom">
   <div className="w-1/4 bg-gray-800 p-4 rounded-lg mr-4">
     <UserDetails user={{name : user.name, badges: user.badges}} />
-    <UserSkillBars skillProgressData={user.skillProgress} />
+    <UserSkillBars skillProgressData={user.skillTracker.map((e)=>{
+      return {
+        skill : e.skill,
+        progress : e.progress,
+      }
+    })} />
   </div>
   <div className="w-3/4 flex-1">
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-      <PieChartCard tasksDoneData={user.skillProgress} />
+      <PieChartCard tasksDoneData={user.skillTracker.map((e)=>{
+        return {
+          skill : e.skill,
+          tasksDone : e.tasksDone,
+        }
+      })} />
       <BadgesCard user={{badges: user.badges}} />
     </div>
     <StreakGrid />

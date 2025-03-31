@@ -7,16 +7,11 @@ export interface IUser extends Document {
   currentRole: string;
   purpose: string[];
   skills: string[];
-  tasksDone: mongoose.Types.ObjectId[];
-  testsTaken: {
-    testId: mongoose.Types.ObjectId;
-    score: number;
-    tutorComments : string;
-    userFeedback :string;
-  }[];
-  skillProgress: {
+  skillTracker: {
     skill:string;
-    progress:number;
+    trackerId: mongoose.Schema.Types.ObjectId;
+    progress:number,
+    tasksDone:number,
   }[];
   badges: string[];
 }
@@ -51,36 +46,24 @@ const userSchema: Schema = new mongoose.Schema({
       required: true,
     }
   ],
-  tasksDone: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "tasks",
-    }
-  ],
-  testsTaken: [
-    {
-      testId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "tasks",
-      },
-      score: {
-        type: Number,
-      },
-      tutorComments:{
-        type: String,
-      },
-      userFeedback:{
-        type: String,
-      }
-    }
-  ],
-  skillProgress:[
+  skillTracker:[
     {
       skill:{
         type:String,
       },
+      trackerId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "skillTrackers"
+      },
       progress:{
+        type: Number,
+        min: 0,
+        max: 100,
+        default: 0,
+      },
+      tasksDone:{
         type:Number,
+        default: 0,
       }
     }
   ],

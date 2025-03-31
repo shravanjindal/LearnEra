@@ -28,9 +28,6 @@ const OnboardingPage = () => {
     currentRole: '',
     purpose: [],
     skills: [],
-    tasksDone: [],
-    testsTaken: [],
-    skillProgress: [],
     badges: ["newbie"],
   });
 

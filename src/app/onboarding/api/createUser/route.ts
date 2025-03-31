@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import { SkillTracker } from '@/models/skillTracker';
 
 dotenv.config();
 
@@ -17,18 +18,13 @@ type UserDetails = {
   currentRole: string;
   purpose: string[];
   skills: string[];
-  badges:string[];
-  tasksDone: mongoose.Types.ObjectId[];
-  testsTaken: {
-    testId: mongoose.Types.ObjectId;
-    score: number;
-    tutorComments : string;
-    userFeedback :string;
-  }[];
-  skillProgress: {
+  skillTracker: {
     skill:string;
-    progress:number;
+    trackerId: mongoose.Schema.Types.ObjectId;
+    progress:number,
+    tasksDone:number,
   }[];
+  badges: string[];
 };
 
 export async function POST(request: Request) {
@@ -47,12 +43,27 @@ export async function POST(request: Request) {
       );
     }
 
+    // adding skill progress == 0
+    const skills = userDetails.skills;
+    let skillTracker = skills.map((e)=>{
+      return {
+        skill : e,
+      }
+    });
+    let userSkillTrackers = await Promise.all(
+      skillTracker.map(async (tracker) => {
+        const newTracker = new SkillTracker(tracker);
+        const instance = await newTracker.save();
+        return { skill: tracker.skill, _id: instance._id };
+      })
+    );
+  
     // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(userDetails.password, salt);
 
     // Create a new user with the hashed password
-    const newUser = new User({ ...userDetails, password: hashedPassword });
+    const newUser = new User({ ...userDetails, password: hashedPassword, skillTracker: userSkillTrackers});
 
     // Generate JWT token
     const token = jwt.sign(
