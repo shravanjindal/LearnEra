@@ -4,6 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, TooltipProps
 import { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 type Skill = {
+  idx: string
   skill: string;
   data: { day: string; tasks: number }[];
 };

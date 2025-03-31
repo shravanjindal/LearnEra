@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation"; // ✅ Correct way to get params in Next.js 13+
+import { useParams } from "next/navigation";
 import TutorComments from "@/components/TutorComments";
 import SkillsToLearn from "@/components/tasks/skillsToLearn";
 import TaskList from "@/components/tasks/taskList";
@@ -15,19 +15,14 @@ interface TaskData {
 }
 
 interface SkillProgress {
+  idx:string;
   skill: string;
   data: TaskData[];
 }
 
-const difficultyLevels = [
-  { level: "Easy", description: "Beginner-friendly task to get started!" },
-  { level: "Medium", description: "A balanced challenge for improvement." },
-  { level: "Hard", description: "Advanced task to test your skills!" },
-];
-
 const TasksPage: React.FC = () => {
-  const params = useParams(); // ✅ Use useParams() instead of useRouter()
-  const userId = params.userId as string; // Extract userId from URL
+  const params = useParams();
+  const userId = params.userId as string;
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([
     { sender: "bot", text: "I have analyzed your progress! Keep going strong! 💪" },
@@ -56,6 +51,14 @@ const TasksPage: React.FC = () => {
     if (!input.trim()) return;
     setMessages([...messages, { sender: "user", text: input }]);
     setInput("");
+    
+    // Simple chatbot response
+    setTimeout(() => {
+      setMessages(prev => [...prev, { 
+        sender: "bot", 
+        text: "I'm here to help with your learning journey! What questions do you have about your tasks?" 
+      }]);
+    }, 1000);
   };
 
   return (
@@ -63,7 +66,11 @@ const TasksPage: React.FC = () => {
       <div className="w-3/4 p-8">
         <TutorComments />
         {selectedSkill ? (
-          <TaskList skill={selectedSkill} onGoBack={() => setSelectedSkill(null)} tasks={difficultyLevels} />
+          <TaskList 
+            skill={selectedSkill} 
+            onGoBack={() => setSelectedSkill(null)} 
+            userId={userId}
+          />
         ) : (
           <SkillsToLearn skills={skillProgress} onSelectSkill={setSelectedSkill} />
         )}

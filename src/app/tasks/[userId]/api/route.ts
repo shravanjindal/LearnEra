@@ -73,7 +73,7 @@ export async function GET(
                 tasks: taskCounts[day] || 0,
             }));
 
-            return { skill, data };
+            return { idx: _id, skill, data };
         });
 
         return NextResponse.json(skillProgress, { status: 200 });

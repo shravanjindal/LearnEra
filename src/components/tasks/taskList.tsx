@@ -1,13 +1,73 @@
+"use client"
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
+import { useState, useEffect } from "react";
 
-type Task = {
-  level: string;
+interface Topic {
+  topic: string;
   description: string;
-};
+  prerequisites?: string[];
+}
 
-const TaskList = ({ skill, tasks, onGoBack }: { skill: string; tasks: Task[]; onGoBack: () => void }) => {
+interface TaskListProps {
+  skill: string;
+  onGoBack: () => void;
+  userId: string;
+}
+
+const TaskList = ({ skill, onGoBack, userId }: TaskListProps) => {
+  const [topics, setTopics] = useState<Topic[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchUserData();
+  }, [skill, userId]);
+
+  const fetchUserData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const userResponse = await fetch(`/api/users/${userId}`);
+      if (!userResponse.ok) throw new Error("Failed to fetch user data");
+      const userData = await userResponse.json();
+
+      const skillTracker = userData.skillTracker.find((tracker: any) => tracker.skill.toLowerCase() === skill.toLowerCase());
+      if (!skillTracker) throw new Error("Skill tracker not found");
+
+      const skillTrackerResponse = await fetch(`/api/skilltrackers/${skillTracker._id}`);
+      if (!skillTrackerResponse.ok) throw new Error("Failed to fetch skill tracker");
+      const skillTrackerData = await skillTrackerResponse.json();
+
+      fetchTopics(skillTrackerData.tasksDone, skillTrackerData.topicsLearnt, userData.purpose);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      setError("Failed to load user data. Please try again later.");
+      setLoading(false);
+    }
+  };
+
+  const fetchTopics = async (tasksDone: string[], topicsLearnt: string[], purpose: string) => {
+    try {
+      const response = await fetch(`/tasks/${userId}/api/getTasks`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_data: { skill: skill.toLowerCase(), tasksDone, topicsLearnt, purpose },
+        }),
+      });
+      if (!response.ok) throw new Error("Failed to fetch topics");
+      const data = await response.json();
+      setTopics(data.topics || []);
+    } catch (error) {
+      console.error("Error fetching topics:", error);
+      setError("Failed to load tasks. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="mt-8">
       <div className="flex items-center gap-3 mb-4">
@@ -17,20 +77,59 @@ const TaskList = ({ skill, tasks, onGoBack }: { skill: string; tasks: Task[]; on
         <h2 className="text-2xl font-bold">🎯 Available Tasks for {skill}</h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {tasks.map((task, index) => (
+      {loading && (
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-900/30 border border-red-500 rounded-lg p-4 mb-6">
+          <p className="text-red-200">{error}</p>
+          <Button className="mt-3 bg-red-600 hover:bg-red-700 text-white" onClick={fetchUserData}>
+            Try Again
+          </Button>
+        </div>
+      )}
+
+      {!loading && !error && topics.length === 0 && (
+        <div className="bg-gray-800 rounded-lg p-6 text-center">
+          <p className="text-gray-300 mb-4">No tasks available for this skill yet.</p>
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={fetchUserData}>
+            Refresh Tasks
+          </Button>
+        </div>
+      )}
+
+      {!loading && !error && topics.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {topics.map((topic, index) => (
           <motion.div
             key={index}
-            className="p-5 bg-gray-800 rounded-xl shadow-lg hover:bg-gray-700 transition duration-300"
+            className="p-5 bg-gray-800 rounded-xl shadow-lg hover:bg-gray-700 transition duration-300 flex flex-col min-h-[250px]"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <h3 className="text-lg font-semibold">{task.level}</h3>
-            <p className="text-gray-400">{task.description}</p>
-            <Button className="mt-3 bg-black w-full text-white">Start Now</Button>
+            <h3 className="text-lg font-semibold">{topic.topic}</h3>
+            <p className="text-gray-400 flex-grow">{topic.description}</p>
+            
+            {topic.prerequisites && topic.prerequisites.length > 0 && (
+              <div className="mt-auto mb-3">
+                <h4 className="text-sm font-medium text-gray-300">Prerequisites:</h4>
+                <ul className="list-disc pl-5 text-sm text-gray-400">
+                  {topic.prerequisites.map((prereq, i) => (
+                    <li key={i}>{prereq}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+      
+            <Button className="mt-auto bg-black w-full text-white">Start Now</Button>
           </motion.div>
         ))}
       </div>
+      
+      )}
     </div>
   );
 };
