@@ -1,37 +1,23 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation"; // ✅ Correct way to get params in Next.js 13+
 import TutorComments from "@/components/TutorComments";
 import SkillsToLearn from "@/components/tasks/skillsToLearn";
 import TaskList from "@/components/tasks/taskList";
 import TutorChatbot from "@/components/TutorChatbot";
 import { Message } from "@/components/TutorChatbot";
 
-const skillProgress = [
-  {
-    skill: "Web Development",
-    data: [
-      { day: "Mon", tasks: 3 },
-      { day: "Tue", tasks: 5 },
-      { day: "Wed", tasks: 2 },
-      { day: "Thu", tasks: 4 },
-      { day: "Fri", tasks: 1 },
-      { day: "Sat", tasks: 6 },
-      { day: "Sun", tasks: 3 },
-    ],
-  },
-  {
-    skill: "Machine Learning",
-    data: [
-      { day: "Mon", tasks: 2 },
-      { day: "Tue", tasks: 3 },
-      { day: "Wed", tasks: 4 },
-      { day: "Thu", tasks: 1 },
-      { day: "Fri", tasks: 5 },
-      { day: "Sat", tasks: 2 },
-      { day: "Sun", tasks: 4 },
-    ],
-  },
-];
+// Define TypeScript Interfaces
+interface TaskData {
+  day: string;
+  tasks: number;
+}
+
+interface SkillProgress {
+  skill: string;
+  data: TaskData[];
+}
 
 const difficultyLevels = [
   { level: "Easy", description: "Beginner-friendly task to get started!" },
@@ -39,12 +25,32 @@ const difficultyLevels = [
   { level: "Hard", description: "Advanced task to test your skills!" },
 ];
 
-const TasksPage = () => {
+const TasksPage: React.FC = () => {
+  const params = useParams(); // ✅ Use useParams() instead of useRouter()
+  const userId = params.userId as string; // Extract userId from URL
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([
     { sender: "bot", text: "I have analyzed your progress! Keep going strong! 💪" },
-  ]);  
+  ]);
   const [input, setInput] = useState("");
+  const [skillProgress, setSkillProgress] = useState<SkillProgress[]>([]);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchSkillProgress = async () => {
+      try {
+        const response = await fetch(`/tasks/${userId}/api`);
+        if (!response.ok) throw new Error("Failed to fetch data");
+        const data: SkillProgress[] = await response.json();
+        setSkillProgress(data);
+      } catch (error) {
+        console.error("Error fetching skill progress:", error);
+      }
+    };
+
+    fetchSkillProgress();
+  }, [userId]);
 
   const handleSend = () => {
     if (!input.trim()) return;

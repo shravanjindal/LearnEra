@@ -30,7 +30,7 @@ const skillTrackerSchema: Schema = new mongoose.Schema({
     {
       taskId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "tasks",
+        ref: "Task",
       },
       startTime: {
         type: Date,
@@ -52,7 +52,7 @@ const skillTrackerSchema: Schema = new mongoose.Schema({
     {
       taskId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "tasks",
+        ref: "Task",
       },
       startTime: {
         type: Date,
@@ -92,3 +92,4 @@ const skillTrackerSchema: Schema = new mongoose.Schema({
 export const SkillTracker =
   mongoose.models.SkillTracker ||
   mongoose.model<ISkillTracker>("SkillTracker", skillTrackerSchema);
+

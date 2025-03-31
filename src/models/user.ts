@@ -9,7 +9,7 @@ export interface IUser extends Document {
   skills: string[];
   skillTracker: {
     skill:string;
-    trackerId: mongoose.Schema.Types.ObjectId;
+    _id: mongoose.Schema.Types.ObjectId;
     progress:number,
     tasksDone:number,
   }[];
@@ -55,9 +55,9 @@ const userSchema: Schema = new mongoose.Schema({
       skill:{
         type:String,
       },
-      trackerId:{
+      _id:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "skillTrackers"
+        ref: "SkillTracker"
       },
       progress:{
         type: Number,

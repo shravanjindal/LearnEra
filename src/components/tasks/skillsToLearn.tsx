@@ -1,10 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, TooltipProps } from "recharts";
+import { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 type Skill = {
   skill: string;
   data: { day: string; tasks: number }[];
+};
+
+const CustomTooltip = ({ active, payload }: TooltipProps<ValueType, NameType>) => {
+  if (active && payload && payload.length) {
+    const actualTasks = payload[0].payload.actualTasks;
+    return (
+      <div className="bg-gray-900 text-white p-2 rounded-md shadow-md">
+        <p>{`Tasks Completed: ${actualTasks}`}</p>
+      </div>
+    );
+  }
+  return null;
 };
 
 const SkillsToLearn = ({ skills, onSelectSkill }: { skills: Skill[]; onSelectSkill: (skill: string) => void }) => {
@@ -20,11 +33,18 @@ const SkillsToLearn = ({ skills, onSelectSkill }: { skills: Skill[]; onSelectSki
             whileTap={{ scale: 0.98 }}
           >
             <h3 className="text-lg font-semibold">{skill.skill}</h3>
-            <ResponsiveContainer width="100%" height={100}>
-              <BarChart data={skill.data}>
+            <ResponsiveContainer width="100%" height={120}>
+              <BarChart
+                data={skill.data.map((d) => ({
+                  ...d,
+                  displayTasks: d.tasks === 0 ? 0.1 : d.tasks, // Raise bar height for 0 tasks
+                  actualTasks: d.tasks, // Store actual task count for tooltip
+                }))}
+              >
                 <XAxis dataKey="day" stroke="#ccc" />
-                <Tooltip />
-                <Bar dataKey="tasks" fill="#3b82f6" radius={[5, 5, 0, 0]} />
+                <YAxis domain={[0, "dataMax + 1"]} hide /> {/* Ensures bars are never at 0 */}
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="displayTasks" fill="#3b82f6" radius={[5, 5, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
             <Button className="mt-3 bg-black w-full text-white" onClick={() => onSelectSkill(skill.skill)}>
