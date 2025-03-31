@@ -4,33 +4,13 @@ import {User} from '@/models/user';
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-import mongoose from 'mongoose';
 import { SkillTracker } from '@/models/skillTracker';
-
-dotenv.config();
-
-// Define the type for the user details
-type UserDetails = {
-  name: string;
-  email: string;
-  password: string;
-  currentRole: string;
-  purpose: string[];
-  skills: string[];
-  skillTracker: {
-    skill:string;
-    trackerId: mongoose.Schema.Types.ObjectId;
-    progress:number,
-    tasksDone:number,
-  }[];
-  badges: string[];
-};
+import { IUser } from "@/models/user";
 
 export async function POST(request: Request) {
   try {
     // Parse the request body
-    const userDetails: UserDetails = await request.json();
+    const userDetails: IUser = await request.json();
     // Connect to the database
     await dbConnect();
 
@@ -63,7 +43,7 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(userDetails.password, salt);
 
     // Create a new user with the hashed password
-    const newUser = new User({ ...userDetails, password: hashedPassword, skillTracker: userSkillTrackers});
+    const newUser = new User({ ...userDetails, password: hashedPassword, skillTracker: userSkillTrackers, streakData: []});
 
     // Generate JWT token
     const token = jwt.sign(

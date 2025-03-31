@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
 // Define the type for a single message
-interface Message {
+export interface Message {
   sender: "bot" | "user";
   text: string;
 }

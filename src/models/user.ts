@@ -14,6 +14,10 @@ export interface IUser extends Document {
     tasksDone:number,
   }[];
   badges: string[];
+  streakData: {
+    date : Date,
+    submissions : number,
+  }[];
 }
 
 const userSchema: Schema = new mongoose.Schema({
@@ -69,6 +73,10 @@ const userSchema: Schema = new mongoose.Schema({
   ],
   badges:[{
     type: String
+  }],
+  streakData: [{
+    date : Date,
+    submissions : Number,
   }]
 });
 
