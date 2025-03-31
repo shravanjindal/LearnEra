@@ -14,9 +14,10 @@ interface TaskListProps {
   skill: string;
   onGoBack: () => void;
   userId: string;
+  onStartTask: (task: { topic: string; description: string }) => void; // New prop
 }
 
-const TaskList = ({ skill, onGoBack, userId }: TaskListProps) => {
+const TaskList = ({ skill, onGoBack, userId, onStartTask }: TaskListProps) => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +51,7 @@ const TaskList = ({ skill, onGoBack, userId }: TaskListProps) => {
 
   const fetchTopics = async (tasksDone: string[], topicsLearnt: string[], purpose: string) => {
     try {
-      const response = await fetch(`/tasks/${userId}/api/getTasks`, {
+      const response = await fetch(`/tasks/api/getTopics`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -103,32 +104,34 @@ const TaskList = ({ skill, onGoBack, userId }: TaskListProps) => {
 
       {!loading && !error && topics.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {topics.map((topic, index) => (
-          <motion.div
-            key={index}
-            className="p-5 bg-gray-800 rounded-xl shadow-lg hover:bg-gray-700 transition duration-300 flex flex-col min-h-[250px]"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <h3 className="text-lg font-semibold">{topic.topic}</h3>
-            <p className="text-gray-400 flex-grow">{topic.description}</p>
-            
-            {topic.prerequisites && topic.prerequisites.length > 0 && (
-              <div className="mt-auto mb-3">
-                <h4 className="text-sm font-medium text-gray-300">Prerequisites:</h4>
-                <ul className="list-disc pl-5 text-sm text-gray-400">
-                  {topic.prerequisites.map((prereq, i) => (
-                    <li key={i}>{prereq}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-      
-            <Button className="mt-auto bg-black w-full text-white">Start Now</Button>
-          </motion.div>
-        ))}
-      </div>
-      
+          {topics.map((topic, index) => (
+            <motion.div
+              key={index}
+              className="p-5 bg-gray-800 rounded-xl shadow-lg hover:bg-gray-700 transition duration-300 flex flex-col min-h-[250px]"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <h3 className="text-lg font-semibold">{topic.topic}</h3>
+              <p className="text-gray-400 flex-grow">{topic.description}</p>
+
+              {topic.prerequisites && topic.prerequisites.length > 0 && (
+                <div className="mt-auto mb-3">
+                  <h4 className="text-sm font-medium text-gray-300">Prerequisites:</h4>
+                  <ul className="list-disc pl-5 text-sm text-gray-400">
+                    {topic.prerequisites.map((prereq, i) => (
+                      <li key={i}>{prereq}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <Button className="mt-auto bg-black w-full text-white" onClick={() => onStartTask({ topic: topic.topic, description: topic.description })}>
+                Start Now
+              </Button>          
+            </motion.div>
+          ))}
+        </div>
+
       )}
     </div>
   );
