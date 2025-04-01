@@ -1,10 +1,39 @@
-# Next Steps ?
+## Features to add :
 
--- Step 1 : When the user clicks on the Learn More button on tasks page, the general tutor bot should generate some topics to learn (but not store these topics anywhere), then display these topics in form of cards. 
+-- View past tasks
 
--- Step 2 : when the user click on start now on any topic, the object should be sent to task
-generator, which then generates the task and displays in properly on the web page. 
+-- load the tutor comments as soon as the dashboard is loaded. Add a feature of modified-since / updatedAt to modify comments.
 
--- Step 3 : User DB must be updated at the start and on task completion.
+-- make the tasks personalized.
 
--- Step 4 : Make the tutor bot feature - which can help with doubts.
+-- submit task dialog box -- then proceed to verify the submission and respond with comments, correct / optimized solution.
+
+-- make the task UI better
+
+-- Make the tutor bot feature - which can help with doubts.
+
+-- adding progress carousel
+
+-- defining some badges.
+
+-- optimization of task generation, for better user experience.
+
+**Minor fixes before deploying**
+
+-- store cookie for authentication
+
+-- landing page comments and FAQs
+
+-- editing onboarding data
+
+-- fix the bug in streakGrid
+
+-- using cloud mongo db
+
+**Features to add before deploying**
+
+-- edit profile, add skills.
+
+-- using better models
+
+-- adding payment portal
