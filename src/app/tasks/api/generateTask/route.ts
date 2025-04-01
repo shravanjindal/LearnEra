@@ -1,7 +1,8 @@
+import { Task } from "@/models/task";
 import { NextRequest, NextResponse } from "next/server";
 
 const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;
-
+const HUGGINGFACE_INFERENCE = process.env.HUGGINGFACE_INFERENCE;
 interface TaskInput {
   skill: string;
   topic: string;
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
       "links": ["Helpful resource 1", "Helpful resource 2", "Helpful resource 3"]
     }`;
 
-    const response = await fetch("https://api-inference.huggingface.co/models/google/gemma-3-27b-it", {
+    const response = await fetch(`${HUGGINGFACE_INFERENCE}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         inputs: inputText,
-        parameters: { max_length: 1000 },
+        parameters: { max_length: 500 },
       }),
     });
 
@@ -51,29 +52,36 @@ export async function POST(req: NextRequest) {
     const data = await response.json();
     const generatedText = data?.[0]?.generated_text || "";
 
-    // Extract JSON using a strict regex pattern
-    const jsonRegex = /\{\s*"topic"\s*:\s*"[^"]*"\s*,\s*"content"\s*:\s*"[^"]*"\s*,\s*"task"\s*:\s*"[^"]*"\s*,\s*"links"\s*:\s*\[\s*"[^"]*"\s*(?:,\s*"[^"]*")*\s*\]\s*\}/;
-    const match = generatedText.match(jsonRegex);
+    // Regex to match JSON objects (same pattern but for multiple occurrences)
+    const jsonRegex = /\{\s*"topic"\s*:\s*"[^"]*"\s*,\s*"content"\s*:\s*"[^"]*"\s*,\s*"task"\s*:\s*"[^"]*"\s*,\s*"links"\s*:\s*\[\s*"[^"]*"\s*(?:,\s*"[^"]*")*\s*\]\s*\}/g;
 
+    // Extract all JSON matches
+    const matches = [...generatedText.matchAll(jsonRegex)];
     let generatedTask = {};
 
-    if (match) {
+    let extractedJson = matches[matches.length - 1]?.[0];
+
+    if (extractedJson) {
+      // Remove control characters except standard escapes
+      extractedJson = extractedJson.replace(/[\x00-\x1F\x7F]/g, "");
+
       try {
-        generatedTask = JSON.parse(match[0]); // Parse the valid JSON
+        generatedTask = JSON.parse(extractedJson);
       } catch (error) {
         console.error("Error parsing JSON:", error);
-        console.error("Extracted JSON Attempt:", match[0]);
+        console.error("Cleaned Extracted JSON Attempt:", extractedJson);
         return NextResponse.json({ error: "Failed to parse generated task" }, { status: 500 });
       }
     }
-
     if (!generatedTask || Object.keys(generatedTask).length === 0) {
       console.error("No valid task generated.");
       return NextResponse.json({ error: "No task generated" }, { status: 500 });
     }
 
     console.log("Generated Task:", generatedTask);
-    return NextResponse.json(generatedTask);
+    const newTask = new Task({...generatedTask, skill});
+    const addedTask = await newTask.save();
+    return NextResponse.json(addedTask);
   } catch (error) {
     console.error("Error generating task:", error);
     return NextResponse.json({ error: "Failed to generate task" }, { status: 500 });

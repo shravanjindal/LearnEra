@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { SkillTracker } from '@/models/skillTracker';
 import { IUser } from "@/models/user";
+import mongoose from 'mongoose';
 
 export async function POST(request: Request) {
   try {
@@ -55,8 +56,13 @@ export async function POST(request: Request) {
     // Store JWT token in the user document
     newUser.token = token;
     console.log(newUser)
-    await newUser.save();
-
+    const addedUser = await newUser.save();
+    // Iterate over each skillTracker and update it with the userId
+    await Promise.all(
+      addedUser.skillTracker.map(async (tracker: { _id: mongoose.Schema.Types.ObjectId }) => {
+        await SkillTracker.findByIdAndUpdate(tracker._id, { userId: addedUser._id });
+      })
+    );
     return NextResponse.json(
       { message: 'User created successfully', user: newUser, token },
       { status: 201 }

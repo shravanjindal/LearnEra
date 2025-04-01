@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;
+const HUGGINGFACE_INFERENCE = process.env.HUGGINGFACE_INFERENCE;
 
 interface UserData {
   skill: string;
-  topicsLearnt: string[];
   tasksDone: string[];
   purpose: string;
 }
@@ -15,7 +15,6 @@ export async function POST(req: NextRequest) {
 
     const inputText = `Given the user's learning progress:
     Skill: ${user_data.skill}
-    Topics Completed: ${user_data.topicsLearnt.join(", ")}
     Recent Tasks: ${user_data.tasksDone.join(", ")}
     Learning Goal: ${user_data.purpose}
     
@@ -36,7 +35,7 @@ export async function POST(req: NextRequest) {
       ...
     ]`;
 
-    const response = await fetch("https://api-inference.huggingface.co/models/google/gemma-3-27b-it", {
+    const response = await fetch(`${HUGGINGFACE_INFERENCE}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,7 +43,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         inputs: inputText,
-        parameters: { max_length: 500 },
+        parameters: { max_length: 150 },
       }),
     });
 
@@ -59,29 +58,26 @@ export async function POST(req: NextRequest) {
 
     // console.log("Raw Generated Text:", generatedText);
 
-    // Extract JSON array (strict regex)
-    const topicsRegex = /\[\s*\{[\s\S]*?\}\s*\]/;
-    const match = generatedText.match(topicsRegex);
+    // Extract JSON from the response
+    const jsonRegex = /\{\s*"topic"\s*:\s*"[^"]*"\s*,\s*"description"\s*:\s*"[^"]*"\s*,\s*"prerequisites"\s*:\s*\[\s*"[^"]*"\s*(?:,\s*"[^"]*")*\s*\]\s*\}/g;
+    const matches = [...generatedText.matchAll(jsonRegex)];
 
-    let topics = [];
-
-    if (match) {
-      try {
-        topics = JSON.parse(match[0]); // Parse the valid JSON
-      } catch (error) {
-        console.error("Error parsing JSON:", error);
-        console.error("Extracted JSON Attempt:", match[0]);
-        return NextResponse.json({ error: "Failed to parse generated topics" }, { status: 500 });
-      }
-    }
-
-    if (!Array.isArray(topics) || topics.length === 0) {
-      console.error("No valid topics found.");
+    if (!matches || matches.length === 0) {
+      console.error("No JSON pattern found in the generated text");
       return NextResponse.json({ error: "No topics generated" }, { status: 500 });
     }
+    matches.shift();
+    console.log("Extracted JSON String:", matches);
 
-    console.log("Extracted Topics:", topics);
-    return NextResponse.json({ topics });
+    try {
+      const topics = matches.map(match => JSON.parse(match));
+      console.log("Extracted Topics:", topics);
+      return NextResponse.json({ topics });
+    } catch (error) {
+      console.error("Error parsing JSON:", error);
+      console.error("Sanitized JSON String:", matches);
+      return NextResponse.json({ error: "Failed to parse JSON" }, { status: 500 });
+    }
   } catch (error) {
     console.error("Error fetching topics:", error);
     return NextResponse.json({ error: "Failed to generate topics" }, { status: 500 });

@@ -4,8 +4,8 @@ import { Badge } from "@/components/ui/badge";
 
 type TaskHistoryProps = {
     taskHistory: {
-        date: string;
-        title: string;
+        date: Date;
+        topic: string;
         skill: string;
     }[];
 }
@@ -29,10 +29,10 @@ const TaskHistory = ({ taskHistory }: TaskHistoryProps) => {
                         >
                             <div className="flex-1">
                                 <p className="text-xs font-medium text-gray-100 group-hover:text-blue-400 transition-colors duration-200">
-                                    {task.title}
+                                    {task.topic}
                                 </p>
                                 <p className="text-xs text-gray-400 mt-1 group-hover:text-gray-300 transition-colors duration-200">
-                                    {task.date}
+                                    {task.date.toString()}
                                 </p>
                             </div>
                             <Badge className="mt-1 sm:mt-0 bg-blue-600 group-hover:bg-blue-500 text-white text-xs font-medium transition-colors duration-200">

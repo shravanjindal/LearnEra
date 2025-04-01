@@ -10,14 +10,8 @@ export interface IUser extends Document {
   skillTracker: {
     skill:string;
     _id: mongoose.Schema.Types.ObjectId;
-    progress:number,
-    tasksDone:number,
   }[];
   badges: string[];
-  streakData: {
-    date : Date,
-    submissions : number,
-  }[];
 }
 
 const userSchema: Schema = new mongoose.Schema({
@@ -59,25 +53,12 @@ const userSchema: Schema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "SkillTracker"
       },
-      progress:{
-        type: Number,
-        min: 0,
-        max: 100,
-        default: 0,
-      },
-      tasksDone:{
-        type:Number,
-        default: 0,
-      }
     }
   ],
   badges:[{
     type: String
   }],
-  streakData: [{
-    date : Date,
-    submissions : Number,
-  }]
+
 });
 
 export const User = mongoose.models.User || mongoose.model<IUser>('User', userSchema);

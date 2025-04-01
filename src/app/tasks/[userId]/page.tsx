@@ -81,6 +81,8 @@ const TasksPage: React.FC = () => {
             skill={selectedSkill as string} 
             topic={selectedTask.topic} 
             description={selectedTask.description} 
+            setSelectedTask = {setSelectedTask}
+            setSelectedSkill = {setSelectedSkill}
           />
         ) : selectedSkill ? (
           <TaskList 

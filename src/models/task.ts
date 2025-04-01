@@ -5,7 +5,7 @@ export interface ITask extends Document {
   topic: string;
   level: 'beginner' | 'intermediate' | 'advanced';
   difficulty: 'easy' | 'medium' | 'hard';
-  theory: string;
+  content: string;
   task: string;
   links: string[];
   createdAt: Date;
@@ -24,14 +24,13 @@ const taskSchema: Schema = new mongoose.Schema(
     level: {
       type: String,
       enum: ['beginner', 'intermediate', 'advanced'],
-      required: true,
     },
     difficulty: {
       type: String,
       enum: ['easy', 'medium', 'hard'],
-      required: true,
+      default: 'medium',
     },
-    theory: {
+    content: {
       type: String,
       required: true,
     },

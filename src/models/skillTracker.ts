@@ -1,8 +1,10 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface ISkillTracker extends Document {
+  userId: mongoose.Schema.Types.ObjectId;
   skill: string;
   tasksDone: {
+    topic: string;
     taskId: mongoose.Schema.Types.ObjectId;
     startTime: Date;
     endTime: Date;
@@ -10,6 +12,7 @@ export interface ISkillTracker extends Document {
     rating: number;
   }[];
   testsTaken: {
+    topic: string;
     taskId: mongoose.Schema.Types.ObjectId;
     startTime: Date;
     endTime: Date;
@@ -17,17 +20,23 @@ export interface ISkillTracker extends Document {
     rating: number;
     score: number;
   }[];
-  topicsLearnt: string[];
   progress: number;
 }
 
 const skillTrackerSchema: Schema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
   skill: {
     type: String,
     required: true,
   },
   tasksDone: [
     {
+      topic: {
+        type:String,
+      },
       taskId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Task",
@@ -50,6 +59,9 @@ const skillTrackerSchema: Schema = new mongoose.Schema({
   ],
   testsTaken: [
     {
+      topic: {
+        type: String,
+      },
       taskId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Task",
@@ -74,11 +86,6 @@ const skillTrackerSchema: Schema = new mongoose.Schema({
         max: 100,
         default: 0,
       },
-    },
-  ],
-  topicsLearnt: [
-    {
-      type: String,
     },
   ],
   progress: {

@@ -41,7 +41,7 @@ const TaskList = ({ skill, onGoBack, userId, onStartTask }: TaskListProps) => {
       if (!skillTrackerResponse.ok) throw new Error("Failed to fetch skill tracker");
       const skillTrackerData = await skillTrackerResponse.json();
 
-      fetchTopics(skillTrackerData.tasksDone, skillTrackerData.topicsLearnt, userData.purpose);
+      fetchTopics(skillTrackerData.tasksDone, userData.purpose);
     } catch (error) {
       console.error("Error fetching user data:", error);
       setError("Failed to load user data. Please try again later.");
@@ -49,13 +49,13 @@ const TaskList = ({ skill, onGoBack, userId, onStartTask }: TaskListProps) => {
     }
   };
 
-  const fetchTopics = async (tasksDone: string[], topicsLearnt: string[], purpose: string) => {
+  const fetchTopics = async (tasksDone: string[], purpose: string) => {
     try {
       const response = await fetch(`/tasks/api/getTopics`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          user_data: { skill: skill.toLowerCase(), tasksDone, topicsLearnt, purpose },
+          user_data: { skill: skill.toLowerCase(), tasksDone, purpose },
         }),
       });
       if (!response.ok) throw new Error("Failed to fetch topics");
