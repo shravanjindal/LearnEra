@@ -130,25 +130,63 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, setSelec
       )}
 
       {!loading && !error && taskData && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="p-5 bg-gray-900 rounded-lg text-gray-200">
-          <div className="prose prose-invert max-w-none">
-            <ReactMarkdown>{taskData.content}</ReactMarkdown>
-          </div>
-          <hr className="border-gray-700 mb-5 mt-5" />
-          <h2 className="text-lg font-semibold text-gray-300">Task:</h2>
-          <div className="prose prose-invert max-w-none">
-            <ReactMarkdown>{taskData.task}</ReactMarkdown>
-          </div>
-          <hr className="border-gray-700 mb-5 mt-5" />
-          <h2 className="text-lg font-semibold text-gray-300">Useful Links:</h2>
-          <ul className="list-disc pl-6">
-            {taskData.links && taskData.links.map((link: string, index: number) => (
-              <li key={index}><a href={link} className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">{link}</a></li>
+        <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="p-5 bg-gray-900 rounded-lg text-gray-200"
+      >
+        <div className="prose prose-invert max-w-none">
+          <ReactMarkdown
+            components={{
+              h1: ({ node, ...props }) => <h1 className="text-4xl font-extrabold text-blue-400 mb-4" {...props} />,
+              h2: ({ node, ...props }) => <h2 className="text-3xl font-semibold text-blue-300 mb-3" {...props} />,
+              h3: ({ node, ...props }) => <h3 className="text-2xl font-medium text-blue-200 mb-2" {...props} />,
+              p: ({ node, ...props }) => <p className="text-lg leading-relaxed text-gray-300 mb-4" {...props} />,
+              ul: ({ node, ...props }) => <ul className="list-disc pl-6 space-y-2" {...props} />,
+              ol: ({ node, ...props }) => <ol className="list-decimal pl-6 space-y-2" {...props} />,
+              li: ({ node, ...props }) => <li className="text-gray-400" {...props} />,
+              a: ({ node, ...props }) => <a className="text-blue-400 hover:underline" {...props} />,
+              blockquote: ({ node, ...props }) => (
+                <blockquote className="bg-gray-800 p-4 italic text-gray-200 border-l-4 border-blue-400 mb-4" {...props} />
+              ),
+              code: ({ node, ...props }) => (
+                <pre className="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto">
+                  <code className="text-sm">{props.children}</code>
+                </pre>
+              ),
+              img: ({ node, ...props }) => <img className="rounded-md mb-4" {...props} />
+            }}
+          >
+            {taskData.content}
+          </ReactMarkdown>
+        </div>
+        <hr className="border-gray-700 mb-5 mt-5" />
+        <h2 className="text-lg font-semibold text-gray-300">Task:</h2>
+        <div className="prose prose-invert max-w-none">
+          <ReactMarkdown>{taskData.task}</ReactMarkdown>
+        </div>
+        <hr className="border-gray-700 mb-5 mt-5" />
+        <h2 className="text-lg font-semibold text-gray-300">Useful Links:</h2>
+        <ul className="list-disc pl-6">
+          {taskData.links &&
+            taskData.links.map((link: string, index: number) => (
+              <li key={index}>
+                <a
+                  href={link}
+                  className="text-blue-400 hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {link}
+                </a>
+              </li>
             ))}
-          </ul>
-          <hr className="border-gray-700 mb-5 mt-5" />
-          <Button onClick={handleSubmit} className="bg-blue-900">Mark as completed</Button>
-        </motion.div>
+        </ul>
+        <hr className="border-gray-700 mb-5 mt-5" />
+        <Button onClick={handleSubmit} className="bg-blue-900">Mark as completed</Button>
+      </motion.div>
+      
       )}
 
 {showFeedback && (

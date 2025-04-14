@@ -11,93 +11,106 @@ interface TaskInput {
   description: string;
 }
 
+async function callGroq(messages: any[]) {
+  const response = await fetch(`${GROQ_INFERENCE}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${GROQ_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: GROQ_MODEL,
+      messages,
+      max_tokens: 1000,
+      temperature: 0.7,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Groq API Error:", response.status, errorText);
+    throw new Error(`Groq call failed: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data?.choices?.[0]?.message?.content || "";
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { skill, topic, description }: TaskInput = await req.json();
 
-    const inputText = `Given the user's learning request:
+    // Step 1: Generate learning plan as free text
+    const inputPrompt = `Given the user's learning request:
     Skill: ${skill}
     Topic: ${topic}
     Description: ${description}
 
-    Generate a structured learning plan with:
-    1. **Content** - A detailed explanation of the topic, covering the theory, syntax, examples, and best practices.
-    2. **Task** - A coding exercise that allows the user to practice this concept.
-    3. **Links** - At least 3 useful links (docs, tutorials, articles) for deeper learning.
+    Generate a structured Content, task, and few links with:
+    1. Content: Theory, syntax, examples, best practices
+    2. Task: A coding exercise to practice the concept
+    3. Links: At least 3 useful resources
 
-    Return the response in **JSON format**:
+    The task should be of the form {
+      "topic": "Topic Name",
+      "content": "Detailed explanation",
+      "task": "Coding task",
+      "links": ["Link 1", "Link 2", "Link 3"]
+    }
+    
+    You just have to create one such task, to understand the topic clearly. The objective is that user reads the content to understand the topic, then does the task to practice the concept, and finally checks the links for more information.
+    `;
+
+    const learningPlan = await callGroq([
+      {
+        role: "system",
+        content: "You are a helpful assistant that creates detailed task with theory and links to help user understand a give topic.",
+      },
+      {
+        role: "user",
+        content: inputPrompt,
+      },
+    ]);
+
+    // Step 2: Parse the free text into structured JSON
+    const jsonParsePrompt = `Convert the following task into JSON format strictly as:
     {
       "topic": "Topic Name",
-      "content": "Detailed explanation of the topic, including theory, syntax, examples, and best practices.",
-      "task": "A small or medium coding exercise to practice the topic.",
-      "links": ["Helpful resource 1", "Helpful resource 2", "Helpful resource 3"]
-    }`;
+      "content": "Detailed explanation",
+      "task": "Coding task",
+      "links": ["Link 1", "Link 2", "Link 3"]
+    }
 
-    const response = await fetch(`${GROQ_INFERENCE}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${GROQ_API_KEY}`,
+    Text:
+    ${learningPlan}`;
+    const parsedJsonText = await callGroq([
+      {
+        role: "system",
+        content: "You are a helpful assistant that only returns valid JSON with no explanation or markdown.",
       },
-      body: JSON.stringify({
-        model: `${GROQ_MODEL}`, // or "llama3-70b-8192" for larger model
-        messages: [
-          {
-            role: "system",
-            content: "You are a helpful assistant that generates structured learning plans.",
-          },
-          {
-            role: "user",
-            content: inputText,
-          }
-        ],
-        max_tokens: 1000, // increase if needed
-        temperature: 0.7
-      }),
-    });
-
-
-    if (!response.ok) {
-      const responseBody = await response.text();
-      console.error("Groq API Error:", response.status, responseBody);
-      throw new Error(`Failed to fetch from Groq: ${response.status}`);
+      {
+        role: "user",
+        content: jsonParsePrompt,
+      },
+    ]);
+    console.log("Parsed JSON:", parsedJsonText);
+    let generatedTask;
+    try {
+      generatedTask = JSON.parse(parsedJsonText);
+    } catch (err) {
+      console.error("Failed to parse JSON:", parsedJsonText);
+      return NextResponse.json({ error: "Could not parse JSON output" }, { status: 500 });
     }
 
-    const data = await response.json();
-    const generatedText = data?.choices?.[0]?.message?.content || "";
-
-    // Regex to match JSON objects (same pattern but for multiple occurrences)
-    const jsonRegex = /\{\s*"topic"\s*:\s*"[^"]*"\s*,\s*"content"\s*:\s*"[^"]*"\s*,\s*"task"\s*:\s*"[^"]*"\s*,\s*"links"\s*:\s*\[\s*"[^"]*"\s*(?:,\s*"[^"]*")*\s*\]\s*\}/g;
-
-    // Extract all JSON matches
-    const matches = [...generatedText.matchAll(jsonRegex)];
-    let generatedTask = {};
-
-    let extractedJson = matches[matches.length - 1]?.[0];
-
-    if (extractedJson) {
-      // Remove control characters except standard escapes
-      extractedJson = extractedJson.replace(/[\x00-\x1F\x7F]/g, "");
-
-      try {
-        generatedTask = JSON.parse(extractedJson);
-      } catch (error) {
-        console.error("Error parsing JSON:", error);
-        console.error("Cleaned Extracted JSON Attempt:", extractedJson);
-        return NextResponse.json({ error: "Failed to parse generated task" }, { status: 500 });
-      }
-    }
     if (!generatedTask || Object.keys(generatedTask).length === 0) {
-      console.error("No valid task generated.");
-      return NextResponse.json({ error: "No task generated" }, { status: 500 });
+      return NextResponse.json({ error: "Empty task generated" }, { status: 500 });
     }
 
-    console.log("Generated Task:", generatedTask);
-    const newTask = new Task({...generatedTask, skill});
-    const addedTask = await newTask.save();
-    return NextResponse.json(addedTask);
-  } catch (error) {
-    console.error("Error generating task:", error);
-    return NextResponse.json({ error: "Failed to generate task" }, { status: 500 });
+    const newTask = new Task({ ...generatedTask, skill });
+    const saved = await newTask.save();
+    return NextResponse.json(saved);
+  } catch (err) {
+    console.error("Task generation error:", err);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

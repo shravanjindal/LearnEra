@@ -77,11 +77,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No topics generated" }, { status: 500 });
     }
     matches.shift();
-    console.log("Extracted JSON String:", matches);
+    // console.log("Extracted JSON String:", matches);
 
     try {
       const topics = matches.map(match => JSON.parse(match));
-      console.log("Extracted Topics:", topics);
+      // console.log("Extracted Topics:", topics);
       return NextResponse.json({ topics });
     } catch (error) {
       console.error("Error parsing JSON:", error);
