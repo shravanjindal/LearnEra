@@ -1,8 +1,10 @@
 import { Task } from "@/models/task";
 import { NextRequest, NextResponse } from "next/server";
 
-const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;
-const HUGGINGFACE_INFERENCE = process.env.HUGGINGFACE_INFERENCE;
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_INFERENCE = process.env.GROQ_INFERENCE;
+const GROQ_MODEL = process.env.GROQ_MODEL;
+
 interface TaskInput {
   skill: string;
   topic: string;
@@ -31,26 +33,38 @@ export async function POST(req: NextRequest) {
       "links": ["Helpful resource 1", "Helpful resource 2", "Helpful resource 3"]
     }`;
 
-    const response = await fetch(`${HUGGINGFACE_INFERENCE}`, {
+    const response = await fetch(`${GROQ_INFERENCE}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${HUGGINGFACE_API_KEY}`,
+        "Authorization": `Bearer ${GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        inputs: inputText,
-        parameters: { max_length: 500 },
+        model: `${GROQ_MODEL}`, // or "llama3-70b-8192" for larger model
+        messages: [
+          {
+            role: "system",
+            content: "You are a helpful assistant that generates structured learning plans.",
+          },
+          {
+            role: "user",
+            content: inputText,
+          }
+        ],
+        max_tokens: 1000, // increase if needed
+        temperature: 0.7
       }),
     });
 
+
     if (!response.ok) {
       const responseBody = await response.text();
-      console.error("Hugging Face API Error:", response.status, responseBody);
-      throw new Error(`Failed to fetch from Hugging Face: ${response.status}`);
+      console.error("Groq API Error:", response.status, responseBody);
+      throw new Error(`Failed to fetch from Groq: ${response.status}`);
     }
 
     const data = await response.json();
-    const generatedText = data?.[0]?.generated_text || "";
+    const generatedText = data?.choices?.[0]?.message?.content || "";
 
     // Regex to match JSON objects (same pattern but for multiple occurrences)
     const jsonRegex = /\{\s*"topic"\s*:\s*"[^"]*"\s*,\s*"content"\s*:\s*"[^"]*"\s*,\s*"task"\s*:\s*"[^"]*"\s*,\s*"links"\s*:\s*\[\s*"[^"]*"\s*(?:,\s*"[^"]*")*\s*\]\s*\}/g;

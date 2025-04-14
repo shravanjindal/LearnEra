@@ -34,6 +34,8 @@
 
 -- edit profile, add skills.
 
--- using better models
+-- using better models.
 
--- adding payment portal
+-- adding payment portal.
+
+-- make user guide.

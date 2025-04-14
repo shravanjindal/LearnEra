@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY;
-const HUGGINGFACE_INFERENCE = process.env.HUGGINGFACE_INFERENCE;
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_INFERENCE = process.env.GROQ_INFERENCE;
+const GROQ_MODEL = process.env.GROQ_MODEL;
 
 interface UserData {
   skill: string;
@@ -17,14 +18,14 @@ export async function POST(req: NextRequest) {
     Skill: ${user_data.skill}
     Recent Tasks: ${user_data.tasksDone.join(", ")}
     Learning Goal: ${user_data.purpose}
-    
+
     Generate 2-3 logical next sub-topics that:
     1. Build directly on their most recently completed topics
     2. Represent incremental, achievable next steps
     3. Follow a natural learning progression toward their goal
-    
+
     For example, if they just completed "CSS Flexbox", suggest "CSS Grid" rather than jumping to "Advanced JavaScript".
-    
+
     Return your recommendations as a JSON array:
     [
       {
@@ -35,28 +36,37 @@ export async function POST(req: NextRequest) {
       ...
     ]`;
 
-    const response = await fetch(`${HUGGINGFACE_INFERENCE}`, {
+    const response = await fetch(`${GROQ_INFERENCE}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${HUGGINGFACE_API_KEY}`,
+        "Authorization": `Bearer ${GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        inputs: inputText,
-        parameters: { max_length: 150 },
+        model: `${GROQ_MODEL}`, // or "llama3-70b-8192"
+        messages: [
+          {
+            role: "system",
+            content: "You are a helpful assistant that suggests logical next learning topics based on a user's recent progress.",
+          },
+          {
+            role: "user",
+            content: inputText,
+          }
+        ],
+        max_tokens: 800,
+        temperature: 0.7
       }),
     });
 
     if (!response.ok) {
       const responseBody = await response.text();
-      console.error("Hugging Face API Error:", response.status, responseBody);
-      throw new Error(`Failed to fetch from Hugging Face: ${response.status}`);
+      console.error("Groq API Error:", response.status, responseBody);
+      throw new Error(`Failed to fetch from Groq API: ${response.status}`);
     }
 
     const data = await response.json();
-    const generatedText = data?.[0]?.generated_text || "";
-
-    // console.log("Raw Generated Text:", generatedText);
+    const generatedText = data?.choices?.[0]?.message?.content || "";
 
     // Extract JSON from the response
     const jsonRegex = /\{\s*"topic"\s*:\s*"[^"]*"\s*,\s*"description"\s*:\s*"[^"]*"\s*,\s*"prerequisites"\s*:\s*\[\s*"[^"]*"\s*(?:,\s*"[^"]*")*\s*\]\s*\}/g;
