@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { User } from "@/models/user";  // Assuming you have the User model imported
-import mongoose from "mongoose";
 import { ISkillTracker } from "@/models/skillTracker";
 export async function GET(req: Request, { params }: { params: { userId: string } }) {
   const { userId } = await params;

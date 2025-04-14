@@ -41,25 +41,45 @@ export async function POST(req: NextRequest) {
     const { skill, topic, description }: TaskInput = await req.json();
 
     // Step 1: Generate learning plan as free text
-    const inputPrompt = `Given the user's learning request:
-    Skill: ${skill}
-    Topic: ${topic}
-    Description: ${description}
+    const inputPrompt = `The user wants to learn a specific programming concept. Please generate a structured learning unit based on their request:
 
-    Generate a structured Content, task, and few links with:
-    1. Content: Theory, syntax, examples, best practices
-    2. Task: A coding exercise to practice the concept
-    3. Links: At least 3 useful resources
+      - **Skill**: ${skill}
+      - **Topic**: ${topic}
+      - **Description**: ${description}
 
-    The task should be of the form {
-      "topic": "Topic Name",
-      "content": "Detailed explanation",
-      "task": "Coding task",
-      "links": ["Link 1", "Link 2", "Link 3"]
-    }
-    
-    You just have to create one such task, to understand the topic clearly. The objective is that user reads the content to understand the topic, then does the task to practice the concept, and finally checks the links for more information.
-    `;
+      Create one learning module in the following JSON format:
+
+      {
+        "topic": "Name of the topic",
+        "content": "A well-structured markdown section covering theory, syntax, examples, and best practices for the topic.",
+        "task": "A coding exercise that allows the user to practice and reinforce their understanding of the topic.",
+        "links": [
+          "A relevant and high-quality resource link 1",
+          "Link 2",
+          "Link 3"
+        ]
+      }
+
+      ### Guidelines:
+      1. **Content** should be written in markdown and include:
+        - A clear explanation of the concept (theory)
+        - Syntax and common patterns
+        - Real-world examples
+        - Best practices or common pitfalls
+
+      2. **Task** should be:
+        - Practical and relevant to the topic
+        - Clearly explained with expected outcomes
+        - Beginner-friendly unless specified otherwise
+
+      3. **Links** should be:
+        - Authoritative (e.g., official docs, reputable blogs or tutorials)
+        - Directly related to the topic
+        - Complementary to the content
+
+      The goal is for the user to read the content to understand the topic, complete the task to apply their knowledge, and use the links for deeper exploration.
+      `;
+
 
     const learningPlan = await callGroq([
       {
@@ -71,14 +91,14 @@ export async function POST(req: NextRequest) {
         content: inputPrompt,
       },
     ]);
-
+    console.log(learningPlan);
     // Step 2: Parse the free text into structured JSON
-    const jsonParsePrompt = `Convert the following task into JSON format strictly as:
+    const jsonParsePrompt = `Given the following text, extract the JSON object that contains the learning module details. The JSON should be in the format:
     {
       "topic": "Topic Name",
       "content": "Detailed explanation",
       "task": "Coding task",
-      "links": ["Link 1", "Link 2", "Link 3"]
+      "links": ["Link 1", "Link 2", "Link 3", ...]
     }
 
     Text:
