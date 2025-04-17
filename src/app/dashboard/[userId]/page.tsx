@@ -7,7 +7,6 @@ import UserSkillBars from "@/components/dashboard/UserSkillBars";
 import PieChartCard from "@/components/dashboard/PieChartCard";
 import BadgesCard from "@/components/dashboard/BadgesCard";
 import StreakGrid from "@/components/dashboard/StreakGrid";
-import ProgressCarousel from "@/components/dashboard/ProgressCarousel";
 import TaskHistory from "@/components/dashboard/TaskHistory";
 import Chatbot from "@/components/dashboard/Chatbot";
 import { IUser } from "../../../models/user";
@@ -21,7 +20,9 @@ const Dashboard = () => {
   const [tasksHistoryData, setTasksHistoryData] = useState<{ date: Date; topic: string; skill: string; }[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [dialogBoxOpen, setDialogBoxOpen] = useState(false);
+  const [skill, setSkill] = useState("");
+  const [deleteDialogBoxOpen, setDeleteDialogBoxOpen] = useState(false);
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -77,6 +78,61 @@ const Dashboard = () => {
     }
   }, [userId]);
 
+  const handleAddSkill = () => {
+    setDialogBoxOpen(false);
+    fetch(`/dashboard/${userId}/api/addSkill`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ skill }),
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Failed to add skill");
+        return response.json();
+      })
+      .then((data) => {
+        progressData.push({ skill, progress: 0 });
+        tasksDoneData.push({ skill, tasksDone: 0 });
+      })
+      .then((data) => {
+        setSkill("");
+      })
+      .catch((err) => {
+        console.error(err);
+        setError(err.message);
+      });
+  };
+
+  const onDeleteSkill = (skill: string) => {
+    setSkill(skill);
+    setDeleteDialogBoxOpen(true);
+  }
+  const handleDeleteSkill = () => {
+    setDeleteDialogBoxOpen(false);
+    fetch(`/dashboard/${userId}/api/deleteSkill`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ skill }),
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Failed to delete skill");
+        return response.json();
+      })
+      .then((data) => {
+        setProgressData(progressData.filter((item => item.skill !== skill)));
+        setTasksDoneData(tasksDoneData.filter((item => item.skill !== skill)));
+      })
+      .then((data) => {
+        setSkill("");
+      })
+      .catch((err) => {
+        console.error(err);
+        setError(err.message);
+      });
+  }
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900 text-gray-100">
@@ -89,11 +145,11 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 overflow-x-hidden">
-      <Navbar user={{ name: user.name, streak: 0, id: user._id.toString() }} />
+      <Navbar user={{ name: user.name, streak: 0, id: user._id.toString() }} setDialogBoxOpen={setDialogBoxOpen} />
       <div className="container flex p-4 overflow-y-auto scrollbar-custom">
         <div className="w-1/4 bg-gray-800 p-4 rounded-lg mr-4">
           <UserDetails user={{ name: user.name, badges: user.badges }} />
-          <UserSkillBars skillProgressData={progressData} />
+          <UserSkillBars skillProgressData={progressData} onDeleteSkill={onDeleteSkill}/>
         </div>
         <div className="w-3/4 flex-1">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -108,6 +164,61 @@ const Dashboard = () => {
         </div>
       </div>
       <Chatbot />
+      {dialogBoxOpen && (
+      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div className="bg-gray-800 p-8 rounded-lg shadow-xl w-96 max-w-md">
+          <h2 className="text-2xl font-semibold mb-6 text-white">Add Skill</h2>
+          <input
+            type="text"
+            placeholder="Enter a skill"
+            value={skill}
+            onChange={(e) => setSkill(e.target.value)}
+            className="w-full px-4 py-3 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+            required
+          />
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={handleAddSkill}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Add
+            </button>
+            <button
+              type="button"
+              onClick={() => setDialogBoxOpen(false)}
+              className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {deleteDialogBoxOpen && (
+      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div className="bg-gray-800 p-8 rounded-lg shadow-xl w-96 max-w-md">
+          <h2 className="text-2xl font-semibold mb-6 text-white">Delete Skill</h2>
+          <p className="text-white mb-6">Are you sure you want to delete the skill: <span className="font-bold">{skill}</span>?</p>
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={handleDeleteSkill}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Yes
+            </button>
+            <button
+              type="button"
+              onClick={() => setDeleteDialogBoxOpen(false)}
+              className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+            >
+              No
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
     </div>
   );
 };

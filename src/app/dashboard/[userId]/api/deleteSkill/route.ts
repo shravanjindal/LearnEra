@@ -1,0 +1,52 @@
+import { NextResponse } from "next/server";
+import { User } from "@/models/user";
+import { SkillTracker } from "@/models/skillTracker";
+
+export async function POST(req: Request, { params }: { params: { userId: string } }) {
+  const { userId } = await params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const { skill } = await req.json();
+    if (!skill) {
+      return NextResponse.json({ error: "Skill is required" }, { status: 400 });
+    }
+
+    const normalizedSkill = skill.toLowerCase();
+
+    const hasSkill = user.skills.some((s : string) => s.toLowerCase() === normalizedSkill);
+    if (!hasSkill) {
+    return NextResponse.json({ error: "Skill not found" }, { status: 404 });
+    }
+
+
+    // Remove from skills array (case-insensitive)
+    user.skills = user.skills.filter((s: string) => s.toLowerCase() !== normalizedSkill);
+
+    // Remove corresponding SkillTracker entry
+    const trackerEntry = user.skillTracker.find(
+    (entry: { skill: string }) => entry.skill.toLowerCase() === normalizedSkill
+    );
+
+    if (trackerEntry) {
+    await SkillTracker.findByIdAndDelete(trackerEntry._id);
+
+    // Remove tracker reference from user
+    user.skillTracker = user.skillTracker.filter(
+        (entry: { skill: string }) => entry.skill.toLowerCase() !== normalizedSkill
+    );
+    }
+
+
+    await user.save();
+
+    return NextResponse.json({ message: "Skill deleted successfully" }, { status: 200 });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
+}

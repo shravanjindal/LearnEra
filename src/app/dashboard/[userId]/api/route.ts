@@ -18,7 +18,7 @@ export async function GET(req: NextRequest, context: { params: { userId: string 
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
-    console.log(user);
+    // console.log(user);
     return NextResponse.json(user, { status: 200 });
   } catch (error) {
     console.error("Error fetching user:", error);

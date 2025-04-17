@@ -33,11 +33,9 @@ export async function GET(
           });
         }
       });
-    console.log(tasks)
     // Sort tasks by date (most recent first) and get the latest 10
     tasks.sort((a, b) => b.date.getTime() - a.date.getTime());
     const latestTasks = tasks.slice(0, 10);
-    console.log(latestTasks)
     return NextResponse.json(latestTasks);
   } catch (error) {
     console.error("Error fetching task history:", error);

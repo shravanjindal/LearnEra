@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";  // Import Next.js Link for navigation
 import { ParamValue } from "next/dist/server/request/params";
+import { Button } from "../ui/button";
 
 type NavbarProps = {
   user: {
@@ -8,18 +9,17 @@ type NavbarProps = {
     name: string;
     id: ParamValue;
   };
+  setDialogBoxOpen: (value: boolean) => void;
 };
 
-const Navbar = ({ user }: NavbarProps) => {
+const Navbar = ({ user, setDialogBoxOpen }: NavbarProps) => {
   return (
     <nav className="bg-gray-800 p-4">
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-xl font-bold">LearnEra</h1>
         <div className="flex space-x-6">
-          <Link href="#" className="text-gray-300 hover:text-white">Roadmap</Link>
           <Link href={`/tasks/${user.id}`} className="text-gray-300 hover:text-white">Tasks</Link> {/* Updated Link */}
-          <Link href={`/tests/${user.id}`} className="text-gray-300 hover:text-white">Tests</Link>
-          <Link href="#progress-section" className="text-gray-300 hover:text-white">Progress</Link>
+          <button onClick={() => setDialogBoxOpen(true)} className="text-gray-300 hover:text-white">Add Skill</button>
         </div>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
