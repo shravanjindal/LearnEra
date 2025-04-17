@@ -21,6 +21,6 @@ export async function GET(req: Request, { params }: { params: { userId: string }
     // Return the progress data as a response
     return NextResponse.json(progressData);
   } catch (err) {
-    return NextResponse.json({ error: "Error fetching progress data" }, { status: 500 });
+    return NextResponse.json({ error: `Error fetching progress data : ${err}` }, { status: 500 });
   }
 }

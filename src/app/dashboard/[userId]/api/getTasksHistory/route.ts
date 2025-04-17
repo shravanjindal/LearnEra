@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { User } from "@/models/user";
-
+import { ISkillTracker } from "@/models/skillTracker";
 export async function GET(
   req: Request,
   { params }: { params: { userId: string } }
@@ -19,7 +19,7 @@ export async function GET(
     }
 
     // Extract tasks from all skillTrackers
-    let tasks: { date: Date; topic: string; skill: string }[] = [];
+    const tasks: { date: Date; topic: string; skill: string }[] = [];
 
      // Extract tasks from tasksDone array across all skillTrackers
      user.skillTracker.forEach((tracker: any) => {

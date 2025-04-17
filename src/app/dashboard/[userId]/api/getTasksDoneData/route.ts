@@ -23,6 +23,6 @@ export async function GET(req: Request, { params }: { params: { userId: string }
     // Return the tasks done data as a response
     return NextResponse.json(tasksDoneData);
   } catch (err) {
-    return NextResponse.json({ error: "Error fetching tasks done data" }, { status: 500 });
+    return NextResponse.json({ error: `Error fetching tasks done data : ${err}` }, { status: 500 });
   }
 }
