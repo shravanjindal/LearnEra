@@ -9,7 +9,7 @@ interface PricingCardProps {
   perks?: string[]; // Make perks optional and define it as an array of strings
 }
 
-const handlePayments = (text) => {
+const handlePayments = (text : any) => {
   if (text === "Get Started") return "/onboarding";
   else return "";
 };
