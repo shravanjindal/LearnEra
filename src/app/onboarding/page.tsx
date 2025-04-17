@@ -60,7 +60,7 @@ const OnboardingPage = () => {
           console.log('User created successfully:', data.user);
       
           if (data.user && data.user._id) {
-            alert('Onboarding complete!');
+            alert(`Onboarding complete! ${data.message}`);
             router.push(`/dashboard/${data.user._id}`); // Redirect to the dashboard with user ID
           } else {
             console.error('User ID missing in response');

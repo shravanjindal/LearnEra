@@ -12,6 +12,7 @@ export interface IUser extends Document {
     _id: mongoose.Schema.Types.ObjectId;
   }[];
   badges: string[];
+  isVerified: boolean;
 }
 
 const userSchema: Schema = new mongoose.Schema({
@@ -58,7 +59,10 @@ const userSchema: Schema = new mongoose.Schema({
   badges:[{
     type: String
   }],
-
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const User = mongoose.models.User || mongoose.model<IUser>('User', userSchema);

@@ -1,21 +1,47 @@
-// pages/api/createUser.ts
 import dbConnect from '@/lib/dbConnect';
-import {User} from '@/models/user';
+import { User } from '@/models/user';
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { SkillTracker } from '@/models/skillTracker';
 import { IUser } from "@/models/user";
 import mongoose from 'mongoose';
+import nodemailer from 'nodemailer'; // Import Nodemailer
+
+// Function to send verification email
+const sendVerificationEmail = async (userEmail: string, verificationToken: string) => {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail', // Example using Gmail, replace with your email service
+    auth: {
+      user: process.env.EMAIL_USER, // Your email address
+      pass: process.env.EMAIL_PASS, // Your email password or app-specific password
+    },
+  });
+
+  const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL}/verify-email?token=${verificationToken}`;
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: userEmail,
+    subject: 'Email Verification',
+    html: '<h1>Click <a href="' + verificationUrl + '">here</a> to verify your email address.</h1>',
+  };
+  
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Verification email sent');
+  } catch (error) {
+    console.error('Error sending email: ', error);
+    throw new Error('Failed to send verification email.');
+  }
+};
 
 export async function POST(request: Request) {
   try {
-    // Parse the request body
     const userDetails: IUser = await request.json();
-    // Connect to the database
     await dbConnect();
 
-    // Check if the email already exists
     const existingUser = await User.findOne({ email: userDetails.email });
     if (existingUser) {
       return NextResponse.json(
@@ -24,13 +50,13 @@ export async function POST(request: Request) {
       );
     }
 
-    // adding skill progress == 0
     const skills = userDetails.skills;
-    let skillTracker = skills.map((e)=>{
+    let skillTracker = skills.map((e) => {
       return {
-        skill : e,
-      }
+        skill: e,
+      };
     });
+
     let userSkillTrackers = await Promise.all(
       skillTracker.map(async (tracker) => {
         const newTracker = new SkillTracker(tracker);
@@ -38,39 +64,56 @@ export async function POST(request: Request) {
         return { skill: tracker.skill, _id: instance._id };
       })
     );
-  
-    // Hash the password
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(userDetails.password, salt);
 
-    // Create a new user with the hashed password
-    const newUser = new User({ ...userDetails, password: hashedPassword, skillTracker: userSkillTrackers, streakData: []});
+    const newUser = new User({
+      ...userDetails,
+      password: hashedPassword,
+      skillTracker: userSkillTrackers,
+    });
 
-    // Generate JWT token
     const token = jwt.sign(
       { userId: newUser._id, email: newUser.email },
       process.env.JWT_SECRET as string,
       { expiresIn: '1h' }
     );
 
-    // Store JWT token in the user document
     newUser.token = token;
-    console.log(newUser)
+
+    // Save the user and send verification email
     const addedUser = await newUser.save();
-    // Iterate over each skillTracker and update it with the userId
+
+    // Generate a unique verification token (could be a JWT or a random string)
+    const verificationToken = jwt.sign(
+      { userId: addedUser._id },
+      process.env.JWT_SECRET as string,
+      { expiresIn: '24h' } // 24 hours validity
+    );
+
+    // Send verification email
+    await sendVerificationEmail(addedUser.email, verificationToken);
+
     await Promise.all(
       addedUser.skillTracker.map(async (tracker: { _id: mongoose.Schema.Types.ObjectId }) => {
         await SkillTracker.findByIdAndUpdate(tracker._id, { userId: addedUser._id });
       })
     );
+
     return NextResponse.json(
-      { message: 'User created successfully', user: newUser, token },
+      { message: 'Please check your email to verify your account.', user: newUser, token },
       { status: 201 }
     );
   } catch (error) {
     console.error('Error creating user:', error);
+  
+    const errorMessage = error instanceof Error
+      ? error.message
+      : 'Failed to create user';
+  
     return NextResponse.json(
-      { message: 'Failed to create user.' },
+      { message: errorMessage },
       { status: 500 }
     );
   }

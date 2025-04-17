@@ -23,6 +23,7 @@ const Dashboard = () => {
   const [dialogBoxOpen, setDialogBoxOpen] = useState(false);
   const [skill, setSkill] = useState("");
   const [deleteDialogBoxOpen, setDeleteDialogBoxOpen] = useState(false);
+  const [verified, setVerified] = useState(false);
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -38,6 +39,7 @@ const Dashboard = () => {
         const data = await response.json();
         setUser(data);
 
+        setVerified(data.isVerified);
         // Fetch the streak data after user data
         const streakResponse = await fetch(`/dashboard/${userId}/api/getStreakData`);
         if (!streakResponse.ok) throw new Error("Failed to fetch streak data");
@@ -108,6 +110,7 @@ const Dashboard = () => {
     setSkill(skill);
     setDeleteDialogBoxOpen(true);
   }
+
   const handleDeleteSkill = () => {
     setDeleteDialogBoxOpen(false);
     fetch(`/dashboard/${userId}/api/deleteSkill`, {
@@ -133,6 +136,24 @@ const Dashboard = () => {
         setError(err.message);
       });
   }
+  const handleResendVerification = async () => {
+    try {
+      const response = await fetch("/api/resend-verification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: user?.email }),
+      });
+  
+      const data = await response.json();
+      alert(data.message);
+    } catch (err) {
+      console.error("Failed to resend verification email", err);
+      alert("Something went wrong while resending the email.");
+    }
+  };
+  
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900 text-gray-100">
@@ -145,7 +166,20 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 overflow-x-hidden">
-      <Navbar user={{ name: user.name, streak: 0, id: user._id.toString() }} setDialogBoxOpen={setDialogBoxOpen} />
+      {!verified && (
+        <div className="bg-yellow-500 text-black p-4 text-center">
+          <p>
+            Your email is not verified. Please verify to unlock full access.
+            <button
+              onClick={handleResendVerification}
+              className="ml-4 bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
+            >
+              Resend Email
+            </button>
+          </p>
+        </div>
+      )}
+      <Navbar user={{ name: user.name, streak: 0, id: user._id.toString(), verified }} setDialogBoxOpen={setDialogBoxOpen} />
       <div className="container flex p-4 overflow-y-auto scrollbar-custom">
         <div className="w-1/4 bg-gray-800 p-4 rounded-lg mr-4">
           <UserDetails user={{ name: user.name, badges: user.badges }} />
@@ -218,6 +252,7 @@ const Dashboard = () => {
         </div>
       </div>
     )}
+    
 
     </div>
   );

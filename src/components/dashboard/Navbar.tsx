@@ -8,6 +8,7 @@ type NavbarProps = {
     streak: number;
     name: string;
     id: ParamValue;
+    verified : boolean;
   };
   setDialogBoxOpen: (value: boolean) => void;
 };
@@ -18,7 +19,7 @@ const Navbar = ({ user, setDialogBoxOpen }: NavbarProps) => {
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-xl font-bold">LearnEra</h1>
         <div className="flex space-x-6">
-          <Link href={`/tasks/${user.id}`} className="text-gray-300 hover:text-white">Tasks</Link> {/* Updated Link */}
+          {user.verified && <Link href={`/tasks/${user.id}`} className="text-gray-300 hover:text-white">Tasks</Link> }
           <button onClick={() => setDialogBoxOpen(true)} className="text-gray-300 hover:text-white">Add Skill</button>
         </div>
         <div className="flex items-center space-x-4">
