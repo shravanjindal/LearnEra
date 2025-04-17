@@ -3,11 +3,11 @@ import { User } from "@/models/user";  // Assuming you have the User model impor
 
 export async function GET(req: Request, context : { params: Promise<{ userId: string }> }) {
   const { userId } = await context.params;
-
+  
   try {
     // Find the user by userId and populate the skillTracker field
     const user = await User.findById(userId).populate("skillTracker._id");
-
+    
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -45,6 +45,7 @@ export async function GET(req: Request, context : { params: Promise<{ userId: st
     // Return the aggregated streak data as a response
     return NextResponse.json(streakData);
   } catch (err) {
+    console.error("Error fetching streak data:", err);
     return NextResponse.json({ error: `Error fetching streak data : ${err}` }, { status: 500 });
   }
 }

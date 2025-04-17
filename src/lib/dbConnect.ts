@@ -1,27 +1,26 @@
 import mongoose from "mongoose";
+import "@/models/skillTracker"; // ✅ Ensure the model is registered globally
+import "@/models/user"; // ✅ Ensure User model is also registered
 
 const MONGODB_URI = process.env.MONGODB_URI as string;
 
-if (!MONGODB_URI) throw new Error("Please define the MONGODB_URI environment variable");
-
-let cached = (global as any).mongoose;
-
-if (!cached) {
-  cached = (global as any).mongoose = { conn: null, promise: null };
+if (!MONGODB_URI) {
+    throw new Error("Please define the MONGODB_URI environment variable");
 }
 
 export default async function dbConnect() {
-  if (cached.conn) return cached.conn;
+    if (mongoose.connection.readyState >= 1) {
+        return; // Already connected
+    }
 
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI, {
-      dbName: "learneraDB",
-      bufferCommands: false,
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
-    });
-  }
-
-  cached.conn = await cached.promise;
-  return cached.conn;
+    try {
+        await mongoose.connect(MONGODB_URI, {
+            dbName: "learneraDB",
+            bufferCommands: false,
+        });
+        console.log("Database connected ✅");
+        console.log("Registered Models:", mongoose.modelNames()); // ✅ Debugging line
+    } catch (error) {
+        console.error("Database connection error:", error);
+    }
 }
