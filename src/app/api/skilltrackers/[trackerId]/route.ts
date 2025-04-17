@@ -1,17 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { SkillTracker } from "@/models/skillTracker";
+
 import mongoose from "mongoose";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { trackerId: string } }
-) {
+export async function GET(req: NextRequest) {
   await dbConnect();
 
   try {
-    const trackerId = new mongoose.Types.ObjectId(params.trackerId);
-    const skillTracker = await SkillTracker.findById(trackerId);
+    const url = new URL(req.url);
+    const segments = url.pathname.split("/");
+    const trackerId = segments[segments.length - 1]; // last segment of the URL
+
+    const id = new mongoose.Types.ObjectId(trackerId);
+    const skillTracker = await SkillTracker.findById(id);
 
     if (!skillTracker) {
       return NextResponse.json({ error: "Skill tracker not found" }, { status: 404 });
