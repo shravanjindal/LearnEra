@@ -24,9 +24,8 @@ const sendVerificationEmail = async (userEmail: string, verificationToken: strin
     from: process.env.EMAIL_USER,
     to: userEmail,
     subject: 'Email Verification',
-    html: '<h1>Click <a href="' + verificationUrl + '">here</a> to verify your email address.</h1>',
+    html: `<h1>Click <a href="${verificationUrl}">here</a> to verify your email address.</h1>`,
   };
-  
 
   try {
     await transporter.sendMail(mailOptions);
@@ -40,8 +39,11 @@ const sendVerificationEmail = async (userEmail: string, verificationToken: strin
 export async function POST(request: Request) {
   try {
     const userDetails: IUser = await request.json();
+
+    // Make sure the database is connected before proceeding
     await dbConnect();
 
+    // Check if the user already exists
     const existingUser = await User.findOne({ email: userDetails.email });
     if (existingUser) {
       return NextResponse.json(
@@ -50,14 +52,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const skills = userDetails.skills;
-    let skillTracker = skills.map((e) => {
-      return {
-        skill: e,
-      };
-    });
+    // Process skills for skillTracker
+    const skillTracker = userDetails.skills.map((e) => ({
+      skill: e,
+    }));
 
-    let userSkillTrackers = await Promise.all(
+    const userSkillTrackers = await Promise.all(
       skillTracker.map(async (tracker) => {
         const newTracker = new SkillTracker(tracker);
         const instance = await newTracker.save();
@@ -65,15 +65,18 @@ export async function POST(request: Request) {
       })
     );
 
+    // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(userDetails.password, salt);
 
+    // Create a new user
     const newUser = new User({
       ...userDetails,
       password: hashedPassword,
       skillTracker: userSkillTrackers,
     });
 
+    // Generate JWT token for the user
     const token = jwt.sign(
       { userId: newUser._id, email: newUser.email },
       process.env.JWT_SECRET as string,
@@ -82,19 +85,20 @@ export async function POST(request: Request) {
 
     newUser.token = token;
 
-    // Save the user and send verification email
+    // Save the new user
     const addedUser = await newUser.save();
 
-    // Generate a unique verification token (could be a JWT or a random string)
+    // Generate a verification token for email
     const verificationToken = jwt.sign(
       { userId: addedUser._id },
       process.env.JWT_SECRET as string,
-      { expiresIn: '24h' } // 24 hours validity
+      { expiresIn: '24h' }
     );
 
     // Send verification email
     await sendVerificationEmail(addedUser.email, verificationToken);
 
+    // Update skillTracker with the userId
     await Promise.all(
       addedUser.skillTracker.map(async (tracker: { _id: mongoose.Schema.Types.ObjectId }) => {
         await SkillTracker.findByIdAndUpdate(tracker._id, { userId: addedUser._id });
@@ -107,11 +111,11 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.error('Error creating user:', error);
-  
+
     const errorMessage = error instanceof Error
       ? error.message
       : 'Failed to create user';
-  
+
     return NextResponse.json(
       { message: errorMessage },
       { status: 500 }
