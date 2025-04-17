@@ -18,9 +18,7 @@ export default async function dbConnect() {
         await mongoose.connect(MONGODB_URI, {
             dbName: "learneraDB", // Optional if you're using a specific DB
             bufferCommands: false, // Disable mongoose buffering
-            useNewUrlParser: true, // Ensures compatibility with the MongoDB URL parser
-            useUnifiedTopology: true, // Enables the new connection management engine
-        } as mongoose.ConnectOptions); // Ensures the correct TypeScript type for connection options
+        } as mongoose.ConnectOptions); // Ensure the correct TypeScript type for connection options
         
         console.log("Database connected ✅");
 
