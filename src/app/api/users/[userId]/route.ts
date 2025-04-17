@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import {User} from "@/models/user";
 
-export async function GET(req: NextRequest, { params }: { params: { userId: string } }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ userId: string }> }) {
   await dbConnect();
 
   try {
-    const {userId} = await params;
+    const {userId} = await context.params;
     const user = await User.findById(userId);
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
