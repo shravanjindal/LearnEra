@@ -21,11 +21,11 @@ interface UserDocument {
 // Handle GET request
 export async function GET(
     req: NextRequest,
-    { params }: { params: { userId: string } }
+    context: { params: Promise<{ userId: string }> }
 ) {
     await dbConnect();
 
-    let { userId } = await params;
+    let { userId } = await context.params;
     userId = userId.toString();
     try {
         console.log(mongoose.modelNames());

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { User } from "@/models/user";  // Assuming you have the User model imported
 import { ISkillTracker } from "@/models/skillTracker";
-export async function GET(req: Request, { params }: { params: { userId: string } }) {
-  const { userId } = await params;
+export async function GET(req: Request, context: { params: Promise<{ userId: string }> }) {
+  const { userId } = await context.params;
 
   try {
     // Find the user by userId and populate the skillTracker field

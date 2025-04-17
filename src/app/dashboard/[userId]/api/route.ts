@@ -2,13 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { User } from "@/models/user";
 
-export async function GET(req: NextRequest, context: { params: { userId: string } }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ userId: string }> }) {
   await dbConnect();
 
   try {
     // Destructure the params object with await
-    const { params } = context;
-    const { userId } = await params;
+    const { userId } = await context.params;
 
     if (!userId) {
       return NextResponse.json({ message: "User ID is required" }, { status: 400 });

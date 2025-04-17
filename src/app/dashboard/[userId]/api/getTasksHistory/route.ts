@@ -4,12 +4,12 @@ import { User } from "@/models/user";
 import { ISkillTracker } from "@/models/skillTracker";
 export async function GET(
   req: Request,
-  { params }: { params: { userId: string } }
+  context: { params: Promise<{ userId: string }> }
 ) {
   try {
     await dbConnect();
 
-    const { userId } = await params;
+    const { userId } = await context.params;
 
     // Fetch user with skillTracker populated
     const user = await User.findById(userId).populate("skillTracker._id");

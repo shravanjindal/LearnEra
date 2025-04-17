@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { User } from "@/models/user";
 import { SkillTracker } from "@/models/skillTracker";
 
-export async function POST(req: Request, { params }: { params: { userId: string } }) {
-  const { userId } = params;
+export async function POST(req: Request, context: { params: Promise<{ userId: string }> }) {
+  const { userId } = await context.params;
 
   try {
     const user = await User.findById(userId);
