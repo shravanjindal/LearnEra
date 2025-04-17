@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import {SkillTracker} from "@/models/skillTracker";
+import mongoose from "mongoose";
 
-export async function GET(req: NextRequest, { params }: { params: { trackerId: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { trackerId: mongoose.Schema.Types.ObjectId } }) {
   await dbConnect();
 
   try {
