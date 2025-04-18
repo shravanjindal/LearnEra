@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 
     await transporter.sendMail(mailOptions);
 
-    return NextResponse.json({ message: 'Verification email resent successfully' }, { status: 200 });
+    return NextResponse.json({ message: `Verification email resent successfully to ${email}` }, { status: 200 });
 
   } catch (error) {
     console.error('Error in resend-verification:', error);

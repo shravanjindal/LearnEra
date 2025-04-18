@@ -23,8 +23,6 @@ export async function GET(request: NextRequest) {
       badges: ['Beginner'],
     });
 
-    console.log(`✅ Created user: ${user.email}`);
-
     // Create tasks for each skill
     const allTasks = [];
     for (const skill of skills) {
