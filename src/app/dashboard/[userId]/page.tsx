@@ -197,7 +197,7 @@ const Dashboard = () => {
           <TaskHistory taskHistory={tasksHistoryData} />
         </div>
       </div>
-      <Chatbot />
+      <Chatbot  userId = {String(userId)} progressData={progressData}/>
       {dialogBoxOpen && (
       <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
         <div className="bg-gray-800 p-8 rounded-lg shadow-xl w-96 max-w-md">

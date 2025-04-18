@@ -25,7 +25,7 @@ const SkillsToLearn = ({ skills, onSelectSkill }: { skills: Skill[]; onSelectSki
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-bold mb-4">📚 Skills to Learn</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {skills.map((skill, index) => (
           <motion.div
             key={index}

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import TutorChatbot from "@/components/TutorChatbot";
+import TutorChatbot from "@/components/tasks/TutorChatbot";
 import { Button } from "@/components/ui/button";
 
 // Define test structure

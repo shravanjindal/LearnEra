@@ -5,12 +5,11 @@ import { useParams } from "next/navigation";
 import SkillsToLearn from "@/components/tasks/skillsToLearn";
 import TaskList from "@/components/tasks/taskList";
 import Task from "@/components/tasks/task";
-import TutorChatbot from "@/components/TutorChatbot";
-import { Message } from "@/components/TutorChatbot";
+import TutorChatbot, { Message } from "@/components/tasks/TutorChatbot";
 import TutorComments from "@/components/TutorComments";
-
-// Define TypeScript Interfaces
-interface TaskData {
+import mongoose from "mongoose";
+// TypeScript Interfaces
+interface TaskData1 {
   day: string;
   tasks: number;
 }
@@ -18,12 +17,21 @@ interface TaskData {
 interface SkillProgress {
   idx: string;
   skill: string;
-  data: TaskData[];
+  data: TaskData1[];
 }
 
 interface SelectedTask {
   topic: string;
   description: string;
+}
+interface TaskData {
+  _id: string;
+  skill: string;
+  topic: string;
+  content: string;
+  task: string;
+  links: string[];
+  createdAt: Date;
 }
 
 const TasksPage: React.FC = () => {
@@ -31,8 +39,12 @@ const TasksPage: React.FC = () => {
   const userId = params.userId as string;
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
   const [selectedTask, setSelectedTask] = useState<SelectedTask | null>(null);
+  const [taskData, setTaskData] = useState<TaskData | null>(null);
   const [messages, setMessages] = useState<Message[]>([
-    { sender: "bot", text: "I have analyzed your progress! Keep going strong! 💪" },
+    {
+      sender: "bot",
+      text: "I have analyzed your progress! Keep going strong! 💪",
+    },
   ]);
   const [input, setInput] = useState("");
   const [skillProgress, setSkillProgress] = useState<SkillProgress[]>([]);
@@ -54,50 +66,83 @@ const TasksPage: React.FC = () => {
     fetchSkillProgress();
   }, [userId]);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-    setMessages([...messages, { sender: "user", text: input }]);
+  const handleSend = async () => {
+    if (!input.trim() || !taskData) return;
+  
+    // Add user message to local state (optional depending on where this lives)
+    setMessages((prev) => [...prev, { sender: "user", text: input }]);
+  
+    try {
+      const res = await fetch(`/tasks/${userId}/api/doubtSession`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: input,
+          context: taskData,
+        }),
+      });
+  
+      const data = await res.json();
+  
+      // Add bot reply
+      setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setMessages((prev) => [...prev, { sender: "bot", text: "Oops! Something went wrong." }]);
+    }
+  
     setInput("");
-
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          sender: "bot",
-          text: "I'm here to help with your learning journey! What questions do you have about your tasks?",
-        },
-      ]);
-    }, 1000);
   };
 
   return (
     <div className="flex min-h-screen bg-gray-900 text-gray-100">
-      <div className="w-3/4 p-8">
-        {/* Hide everything else when a task is selected */}
-        {!selectedTask && <TutorComments />}
-        {selectedTask ? (
-          <Task 
-            userId={userId} 
-            skill={selectedSkill as string} 
-            topic={selectedTask.topic} 
-            description={selectedTask.description} 
-            setSelectedTask = {setSelectedTask}
-            setSelectedSkill = {setSelectedSkill}
-          />
-        ) : selectedSkill ? (
-          <TaskList 
-            skill={selectedSkill} 
-            onGoBack={() => setSelectedSkill(null)} 
-            userId={userId}
-            onStartTask={(task) => setSelectedTask(task)}  
-          />
-        ) : (
-          <SkillsToLearn skills={skillProgress} onSelectSkill={setSelectedSkill} />
-        )}
-      </div>
 
-      {/* Hide chatbot if a task is selected */}
-      <TutorChatbot messages={messages} input={input} setInput={setInput} handleSend={handleSend} />
+      {selectedTask ? (
+        <div className="p-5">
+
+          <div className="grid grid-cols-3">
+            <div className="w-[68vw]">
+            <Task
+                userId={userId}
+                skill={selectedSkill as string}
+                topic={selectedTask.topic}
+                description={selectedTask.description} 
+                taskData={taskData}
+                setTaskData={setTaskData}
+              />
+            </div>
+
+            <TutorChatbot
+              messages={messages}
+              input={input}
+              setInput={setInput}
+              handleSend={handleSend}
+            />
+          </div>
+        </div>
+      ) : selectedSkill ? (
+        <div className="p-8">
+          {!selectedTask && <TutorComments />}
+
+          <TaskList
+            skill={selectedSkill}
+            onGoBack={() => setSelectedSkill(null)}
+            userId={userId}
+            onStartTask={(task) => setSelectedTask(task)}
+          />
+        </div>
+
+      ) : (
+        <div className="p-8">
+          {!selectedTask && <TutorComments />}
+
+          <SkillsToLearn
+            skills={skillProgress}
+            onSelectSkill={setSelectedSkill}
+          />
+        </div>
+
+      )}
     </div>
   );
 };

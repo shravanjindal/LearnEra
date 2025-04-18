@@ -78,6 +78,10 @@ export async function POST(req: NextRequest) {
         - Complementary to the content
 
       The goal is for the user to read the content to understand the topic, complete the task to apply their knowledge, and use the links for deeper exploration.
+
+      You must return only JSON without any additional text or explanation. The JSON should be well-structured and valid. If you cannot generate a task, return an empty JSON object {}.
+      The JSON should not contain any new lines or extra spaces. The JSON should be parsable without any errors. The JSON should be in a single line without any indentation. 
+      There should be no bad escaping characters. I will parse this text using json.parse() in JavaScript. It should have good UI when wrapped in a <ReactMarkdown> component.
       `;
 
 
@@ -92,33 +96,13 @@ export async function POST(req: NextRequest) {
       },
     ]);
     console.log(learningPlan);
-    // Step 2: Parse the free text into structured JSON
-    const jsonParsePrompt = `Given the following text, extract the JSON object that contains the learning module details. The JSON should be in the format:
-    {
-      "topic": "Topic Name",
-      "content": "Detailed explanation",
-      "task": "Coding task",
-      "links": ["Link 1", "Link 2", "Link 3", ...]
-    }
-
-    Text:
-    ${learningPlan}`;
-    const parsedJsonText = await callGroq([
-      {
-        role: "system",
-        content: "You are a helpful assistant that only returns valid JSON with no explanation or markdown.",
-      },
-      {
-        role: "user",
-        content: jsonParsePrompt,
-      },
-    ]);
-    console.log("Parsed JSON:", parsedJsonText);
+    let sanitizedLearningPlan = learningPlan.replace(/\n/g, '').replace(/\r/g, '');
+    
     let generatedTask;
     try {
-      generatedTask = JSON.parse(parsedJsonText);
+      generatedTask = JSON.parse(sanitizedLearningPlan.trim());
     } catch (err) {
-      console.error("Failed to parse JSON:", parsedJsonText);
+      console.error("Failed to parse JSON:", err);
       return NextResponse.json({ error: "Could not parse JSON output" }, { status: 500 });
     }
 

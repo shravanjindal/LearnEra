@@ -65,3 +65,28 @@
     @apply bg-background text-foreground;
   }
 }
+/* Style scrollbars for the message container */
+::-webkit-scrollbar {
+  width: 8px; /* Set the width of the scrollbar */
+  height: 8px; /* Set the height for horizontal scroll */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #4A4A4A; /* Dark thumb color */
+  border-radius: 4px; /* Rounded corners for the thumb */
+}
+
+::-webkit-scrollbar-track {
+  background-color: #2A2A2A; /* Background color of the scrollbar track */
+  border-radius: 4px; /* Rounded corners for the track */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #6D6D6D; /* Lighter thumb color on hover */
+}
+
+/* For Firefox (using scrollbar-width and scrollbar-color) */
+.scrollable {
+  scrollbar-width: thin; /* Thin scrollbar */
+  scrollbar-color: #4A4A4A #2A2A2A; /* thumb color and track color */
+}

@@ -4,24 +4,11 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { Button } from "../ui/button";
-import mongoose from "mongoose";
 import StarRatings from "react-star-ratings";
 
-interface SelectedTask {
-  topic: string;
-  description: string;
-}
 
-interface TaskProps {
-  userId: string;
-  skill: string;
-  topic: string;
-  description: string;
-  setSelectedTask: (task: SelectedTask | null) => void;
-  setSelectedSkill: (task: string | null) => void;
-}
 interface TaskData {
-  _id: mongoose.Schema.Types.ObjectId;
+  _id: string;
   skill: string;
   topic: string;
   content: string;
@@ -30,8 +17,17 @@ interface TaskData {
   createdAt: Date;
 }
 
-const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, setSelectedTask, setSelectedSkill }) => {
-  const [taskData, setTaskData] = useState<TaskData | null>(null);
+
+interface TaskProps {
+  userId: string;
+  skill: string;
+  topic: string;
+  description: string;
+  taskData: TaskData | null;
+  setTaskData: (data: TaskData | null) => void;
+}
+
+const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData, setTaskData}) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [time, setTime] = useState(0);
@@ -62,6 +58,7 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, setSelec
         if (!response.ok) throw new Error("Failed to generate task content");
 
         const data = await response.json();
+
         setTaskData(data);
       } catch (err) {
         console.error("Error fetching task content:", err);
