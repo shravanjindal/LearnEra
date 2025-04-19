@@ -30,7 +30,7 @@ const OnboardingPage = () => {
     skills: [],
     badges: ["newbie"],
   });
-
+  const [buttonText, setButtonText] = useState<String>("Submit");
   const nextStep = () => {
     if (validateStep(step, formData)) {
       if (step < 4) setStep(step + 1);
@@ -40,11 +40,15 @@ const OnboardingPage = () => {
   const prevStep = () => {
     if (step > 1) setStep(step - 1);
   };
-
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push('/login');
+  }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateStep(step, formData)) {
       try {
+        setButtonText("Process Initiated!")
         // Send a POST request to the backend API
         const response = await fetch('/onboarding/api/createUser', {
           method: 'POST',
@@ -63,12 +67,15 @@ const OnboardingPage = () => {
             alert(`Onboarding complete! ${data.message}`);
             router.push(`/dashboard/${data.user._id}`); // Redirect to the dashboard with user ID
           } else {
+            setButtonText("Submit");
+
             console.error('User ID missing in response');
             alert('User created, but no ID received.');
           }
         } else {
           // Handle errors from the server
           const errorData = await response.json();
+          setButtonText("Submit");
           alert(`Failed to create user: ${errorData.message}`);
           // alert('Failed to save user data. Please try again.');
         }
@@ -76,6 +83,7 @@ const OnboardingPage = () => {
         // Handle network or other errors
         console.error('Error submitting form:', error);
         alert('An error occurred. Please try again.');
+        setButtonText("Submit");
       }
       
     }
@@ -130,6 +138,15 @@ const OnboardingPage = () => {
               />
             )}
             <div className="flex justify-between mt-6">
+              {step == 1 && (
+                <button
+                  type="button"
+                  onClick={handleLogin}
+                  className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  <p>Already have an account ?</p>
+                </button>
+              )}
               {step > 1 && (
                 <button
                   type="button"
@@ -153,7 +170,7 @@ const OnboardingPage = () => {
                   onClick={handleSubmit}
                   className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                 >
-                  Submit
+                  {buttonText}
                 </button>
               )}
             </div>

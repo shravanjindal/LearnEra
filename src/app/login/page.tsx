@@ -15,7 +15,9 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
-  const handleSignupClick = () => {
+  const [buttonText, setButtonText] = useState<String>("Login");
+  const handleSignupClick = (e: React.FormEvent) => {
+    e.preventDefault();
     router.push('/onboarding'); // Navigate to the /onboarding page
   };
   const validateStep = (formData: FormData): boolean => {
@@ -32,9 +34,10 @@ const LoginPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (validateStep(formData)) {
       try {
+        setButtonText("Process Initiated!");
         const response = await fetch("/login/api", {
           method: "POST",
           headers: {
@@ -42,7 +45,7 @@ const LoginPage = () => {
           },
           body: JSON.stringify(formData),
         });
-
+  
         if (response.ok) {
           const data = await response.json();
           alert("Logged in!");
@@ -50,12 +53,14 @@ const LoginPage = () => {
         } else {
           const errorData = await response.json();
           alert(`Failed to login. ${errorData.message}`);
+          setButtonText("Login");
         }
       } catch (error) {
         alert(`An error occurred. Please try again`);
+        setButtonText("Login");
       }
     }
-  };
+  };  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-500 to-indigo-600 p-4">
@@ -96,12 +101,12 @@ const LoginPage = () => {
             </motion.div>
             <div className="flex gap-3 text-center mt-4">
               <Button type="submit" className="w-full bg-purple-700 px-4 py-2 text-white rounded-lg hover:bg-blue-700 transition-colors mt-4">
-                Login
+                {buttonText}
               </Button>
               <Button onClick={handleSignupClick} className="w-full px-4 bg-purple-700 py-2 text-white rounded-lg hover:bg-blue-700 transition-colors mt-4">
                 or Signup
               </Button>
-          </div>
+            </div>
           </form>
         </div>
       </motion.div>
