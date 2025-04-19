@@ -1,40 +1,49 @@
 import { NextRequest, NextResponse } from "next/server";
-
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_INFERENCE = process.env.GROQ_INFERENCE;
 const GROQ_MODEL = process.env.GROQ_MODEL;
 
+interface TasksDone {
+  taskDone : string;
+  topic : string;
+  rating : number;
+  feedback : string;
+}
 interface UserData {
   skill: string;
-  tasksDone: string[];
+  tasksDone: TasksDone[];
   purpose: string;
 }
 
 export async function POST(req: NextRequest) {
   try {
     const { user_data }: { user_data: UserData } = await req.json();
+    
+    const inputText = `You are a personalized learning assistant helping users progress in their skill development journey.
 
-    const inputText = `Given the user's learning progress:
-    Skill: ${user_data.skill}
-    Recent Tasks: ${user_data.tasksDone.join(", ")}
-    Learning Goal: ${user_data.purpose}
-
-    Generate 2-3 logical next sub-topics that:
-    1. Build directly on their most recently completed topics
-    2. Represent incremental, achievable next steps
-    3. Follow a natural learning progression toward their goal
-
-    For example, if they just completed "CSS Flexbox", suggest "CSS Grid" rather than jumping to "Advanced JavaScript".
-
-    Return your recommendations as a JSON array:
+    Based on the following user profile:
+    - Skill: ${user_data.skill}
+    - Learning Goal: ${user_data.purpose}
+    - Recently Completed Tasks:
+    ${user_data.tasksDone.map((task, i) => `  ${i + 1}. "${task.taskDone}" (Topic: ${task.topic}, Rating: ${task.rating}, Feedback: "${task.feedback}")`).join('\n')}
+    
+    Your task is to suggest the next 3–4 logical sub-topics to learn. The recommendations should:
+    
+    1. Build directly on recently completed topics
+    2. Be achievable, incremental next steps
+    3. Give priority to user feedback and ratings (e.g., suggest reinforcement for low-rated or negatively-reviewed topics)
+    4. Follow a natural progression toward the user's learning goal
+    5. If no tasks are available, start from the very fundamental concepts of the skill
+    
+    Respond with a JSON array in the following format:
     [
       {
-        "topic": "Topic Name",
-        "description": "Brief explanation of what this topic covers and why it's valuable for their goal",
-        "prerequisites": ["Any specific prerequisite knowledge"]
+        "topic": "Sub-topic Name",
+        "description": "What this topic covers and how it supports the user’s goal",
+        "prerequisites": ["List any specific prerequisite concepts, or leave empty if none"]
       },
       ...
-    ]`;
+    ]`;    
 
     const response = await fetch(`${GROQ_INFERENCE}`, {
       method: "POST",

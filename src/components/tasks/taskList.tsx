@@ -39,9 +39,22 @@ const TaskList = ({ skill, onGoBack, userId, onStartTask }: TaskListProps) => {
 
       const skillTrackerResponse = await fetch(`/api/skilltrackers/${skillTracker._id}`);
       if (!skillTrackerResponse.ok) throw new Error("Failed to fetch skill tracker");
+
       const skillTrackerData = await skillTrackerResponse.json();
 
-      fetchTopics(skillTrackerData.tasksDone, userData.purpose);
+      // Get the last 5 tasksDone, sorted by most recent endTime
+      const last5TasksDone = skillTrackerData.tasksDone
+        .sort((a: any, b: any) => new Date(b.endTime).getTime() - new Date(a.endTime).getTime())
+        .slice(0, 5)
+        .map((element: any) => ({
+          feedback: element.feedback || "no user feedback",
+          rating: element.rating || "no rating",
+          taskDone: element.taskId?.task ?? "Task not found",
+          topic: element.topic,
+        }));
+
+      // console.log(userSkillProgress);
+      fetchTopics(last5TasksDone, userData.purpose);
     } catch (error) {
       console.error("Error fetching user data:", error);
       setError("Failed to load user data. Please try again later.");

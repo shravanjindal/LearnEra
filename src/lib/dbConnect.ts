@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import "@/models/skillTracker"; // ✅ Ensure the model is registered globally
 import "@/models/user"; // ✅ Ensure User model is also registered
+import "@/models/task"; // ✅ Ensure Task model is also registered
 
 const MONGODB_URI = process.env.MONGODB_URI as string;
 

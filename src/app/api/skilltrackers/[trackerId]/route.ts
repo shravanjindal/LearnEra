@@ -7,7 +7,10 @@ export async function GET(req: NextRequest, context: { params: Promise<{ tracker
 
   try {
     const {trackerId} = await context.params;
-    const skillTracker = await SkillTracker.findById(trackerId);
+    const skillTracker = await SkillTracker.findById(trackerId).populate({
+      path: 'tasksDone.taskId',
+      select: 'task'  // Only populate the 'task' field from the Task model
+    });
     if (!skillTracker) {
       return NextResponse.json({ error: "Skill tracker not found" }, { status: 404 });
     }

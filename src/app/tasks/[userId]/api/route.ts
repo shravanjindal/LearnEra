@@ -28,12 +28,12 @@ export async function GET(
     let { userId } = await context.params;
     userId = userId.toString();
     try {
-        console.log(mongoose.modelNames());
-        console.log("--------------------------------");
+        // console.log(mongoose.modelNames());
+        // console.log("--------------------------------");
 
         const user: UserDocument | null = await User.findById(userId).populate("skillTracker._id");
-        console.log("--------------------------------");
-        console.log(user?.skillTracker[0]._id);
+        // console.log("--------------------------------");
+        // console.log(user?.skillTracker[0]._id);
         if (!user || !user.skillTracker) {
             return NextResponse.json({ error: "User or skills not found" }, { status: 404 });
         }
