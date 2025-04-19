@@ -202,13 +202,38 @@ const Dashboard = () => {
 
   if (loading)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-gray-100">
-        <p className="text-lg font-semibold animate-pulse">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-950 text-gray-100">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="relative">
+            <div className="h-12 w-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-sm font-semibold text-blue-300">AI</span>
+            </div>
+          </div>
+          <p className="text-base font-medium tracking-wide text-gray-300">Just a moment...</p>
+        </div>
       </div>
     );
-
-  if (error) return <p>Error: {error}</p>;
-  if (!user) return <p>No user found</p>;
+  
+  
+  if (error)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-950 text-red-300">
+        <div className="text-center">
+          <p className="text-lg font-medium">⚠️ Error: {error}</p>
+        </div>
+      </div>
+    );
+  
+  if (!user)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-950 text-gray-300">
+        <div className="text-center">
+          <p className="text-lg font-medium">No user data available.</p>
+        </div>
+      </div>
+    );
+  
 
   return (
     <div className="min-h-screen bg-[#121212] text-gray-100 overflow-x-hidden">

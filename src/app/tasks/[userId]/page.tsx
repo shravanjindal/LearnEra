@@ -6,7 +6,7 @@ import SkillsToLearn from "@/components/tasks/skillsToLearn";
 import TaskList from "@/components/tasks/taskList";
 import Task from "@/components/tasks/task";
 import TutorChatbot, { Message } from "@/components/tasks/TutorChatbot";
-import TutorComments from "@/components/TutorComments";
+import TutorComments from "@/components/tasks/TutorComments";
 import mongoose from "mongoose";
 // TypeScript Interfaces
 interface TaskData1 {
@@ -95,55 +95,52 @@ const TasksPage: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-900 text-gray-100">
-
-      {selectedTask ? (
-        <div className="p-5">
-
-          <div className="grid grid-cols-3">
-            <div className="w-[68vw]">
-            <Task
-                userId={userId}
-                skill={selectedSkill as string}
-                topic={selectedTask.topic}
-                description={selectedTask.description} 
-                taskData={taskData}
-                setTaskData={setTaskData}
-              />
-            </div>
-
-            <TutorChatbot
-              messages={messages}
-              input={input}
-              setInput={setInput}
-              handleSend={handleSend}
-            />
-          </div>
-        </div>
-      ) : selectedSkill ? (
-        <div className="p-8">
-          {!selectedTask && <TutorComments />}
-
-          <TaskList
-            skill={selectedSkill}
-            onGoBack={() => setSelectedSkill(null)}
+    <div className="min-h-screen bg-[#121212] text-gray-100 overflow-x-hidden">
+  <div className="container flex p-6 overflow-y-auto scrollbar-custom">
+    {selectedTask ? (
+      <div className="flex w-full">
+        <div className="w-[68vw] bg-[#1e1e1e] p-6 rounded-xl shadow-md mr-6">
+          <Task
             userId={userId}
-            onStartTask={(task) => setSelectedTask(task)}
+            skill={selectedSkill as string}
+            topic={selectedTask.topic}
+            description={selectedTask.description}
+            taskData={taskData}
+            setTaskData={setTaskData}
           />
         </div>
 
-      ) : (
-        <div className="p-8">
-          {!selectedTask && <TutorComments />}
-
-          <SkillsToLearn
-            skills={skillProgress}
-            onSelectSkill={setSelectedSkill}
+        <div className="w-1/3 p-6 rounded-xl shadow-md">
+          <TutorChatbot
+            messages={messages}
+            input={input}
+            setInput={setInput}
+            handleSend={handleSend}
           />
         </div>
+      </div>
+    ) : selectedSkill ? (
+      <div className="w-full p-8">
+        <TutorComments />
+        <TaskList
+          skill={selectedSkill}
+          onGoBack={() => setSelectedSkill(null)}
+          userId={userId}
+          onStartTask={(task) => setSelectedTask(task)}
+        />
+      </div>
+    ) : (
+      <div className="w-full p-8">
+        <TutorComments />
+        <SkillsToLearn
+          skills={skillProgress}
+          onSelectSkill={setSelectedSkill}
+        />
+      </div>
+    )}
+  </div>
+</div>
 
-      )}
-    </div>
   );
 };
 

@@ -4,6 +4,7 @@ import { MessageSquare, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useRef } from "react";
+import ReactMarkdown from "react-markdown"
 interface ProgressItem {
   skill: string;
   progress: number;
@@ -72,12 +73,15 @@ const Chatbot = ({ userId, progressData }: ChatbotProps) => {
   };
 
   return (
-    <motion.div className="fixed bottom-4 right-4 flex flex-col items-end" animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+    <div className="fixed bottom-4 right-4 flex flex-col items-end">
       {isOpen && (
-        <div className="w-[50vw] bg-gray-800 text-gray-100 m-4 p-3 rounded-lg shadow-lg flex flex-col">
-          <div className="flex justify-between items-center border-b pb-2 mb-2">
+        <div className="w-[50vw] bg-[#1e1e1e] text-gray-100 m-4 p-3 rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col">
+          <div className="flex justify-between items-center border-b pb-2 mb-2 border-[#2c2c2c]">
             <span className="text-lg font-semibold">🎓 LearnEra Coach</span>
-            <X className="cursor-pointer" onClick={() => setIsOpen(false)} />
+            <X
+              className="cursor-pointer text-gray-300 hover:text-white"
+              onClick={() => setIsOpen(false)}
+            />
           </div>
 
           <div className="h-[50vh] overflow-y-auto mb-2 px-2 space-y-2">
@@ -86,11 +90,15 @@ const Chatbot = ({ userId, progressData }: ChatbotProps) => {
                 key={index}
                 className={`p-2 rounded-lg max-w-[80%] ${
                   msg.sender === "bot"
-                    ? "bg-gray-700 text-left self-start"
+                    ? "bg-[#2a2a2a] text-left self-start"
                     : "bg-blue-600 text-right self-end"
                 }`}
               >
-                {msg.text}
+                <ReactMarkdown>
+                  
+                  {msg.text}
+                </ReactMarkdown>
+                
               </div>
             ))}
             {isLoading && (
@@ -103,7 +111,7 @@ const Chatbot = ({ userId, progressData }: ChatbotProps) => {
           <div className="flex items-center gap-2">
             <input
               type="text"
-              className="p-2 flex-1 bg-gray-900 border border-gray-700 rounded text-sm"
+              className="p-2 flex-1 bg-[#2a2a2a] border border-[#3a3a3a] rounded text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
@@ -113,7 +121,11 @@ const Chatbot = ({ userId, progressData }: ChatbotProps) => {
               }}
               placeholder="Ask me anything..."
             />
-            <Button className="px-2 text-sm" onClick={handleSend} disabled={isLoading}>
+            <Button
+              className="px-2 text-sm bg-blue-600 hover:bg-blue-500 text-white"
+              onClick={handleSend}
+              disabled={isLoading}
+            >
               📩
             </Button>
           </div>
@@ -121,15 +133,15 @@ const Chatbot = ({ userId, progressData }: ChatbotProps) => {
       )}
 
       <motion.button
-        className="rounded-full p-3 bg-blue-600 shadow-lg"
+        className="rounded-full p-3 bg-blue-600 shadow-lg hover:bg-blue-500 transition-colors duration-300"
         onClick={() => setIsOpen(!isOpen)}
-        animate={{ y: [0, -5, 0] }}
+        animate={isOpen ? {} : { y: [0, -5, 0] }}  // Bouncy effect only when closed
         transition={{ repeat: Infinity, duration: 1.5 }}
         aria-label="Toggle chatbot"
       >
-        <MessageSquare size={24} />
+        <MessageSquare size={24} className="text-white" />
       </motion.button>
-    </motion.div>
+    </div>
   );
 };
 

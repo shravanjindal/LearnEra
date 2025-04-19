@@ -1,12 +1,8 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { Button } from "../ui/button";
 import StarRatings from "react-star-ratings";
-
-
 interface TaskData {
   _id: string;
   skill: string;
@@ -26,10 +22,65 @@ interface TaskProps {
   taskData: TaskData | null;
   setTaskData: (data: TaskData | null) => void;
 }
+const renderMarkdown = (content: string) => (
+  <ReactMarkdown
+    components={{
+      h1: ({ node, ...props }) => (
+        <h1 className="text-4xl font-extrabold text-blue-400 mb-4 border-b border-gray-700 pb-1" {...props} />
+      ),
+      h2: ({ node, ...props }) => (
+        <h2 className="text-3xl font-bold text-blue-300 mb-3 border-b border-gray-800 pb-1" {...props} />
+      ),
+      h3: ({ node, ...props }) => (
+        <h3 className="text-2xl font-semibold text-blue-200 mb-2" {...props} />
+      ),
+      p: ({ node, ...props }) => (
+        <p className="text-base leading-relaxed text-gray-300 mb-4" {...props} />
+      ),
+      ul: ({ node, ...props }) => (
+        <ul className="list-disc pl-6 space-y-2 text-gray-300" {...props} />
+      ),
+      ol: ({ node, ...props }) => (
+        <ol className="list-decimal pl-6 space-y-2 text-gray-300" {...props} />
+      ),
+      li: ({ node, ...props }) => (
+        <li className="text-gray-300" {...props} />
+      ),
+      a: ({ node, ...props }) => (
+        <a className="text-blue-400 hover:underline hover:text-blue-300 transition-colors" {...props} />
+      ),
+      blockquote: ({ node, ...props }) => (
+        <blockquote
+          className="bg-[#1e1e1e] border-l-4 border-blue-500 p-4 italic text-gray-400 mb-4 rounded"
+          {...props}
+        />
+      ),
+      code: ({ className, children, ...props }) => {
+        const isInline = !className;
+        return isInline ? (
+          <code className="bg-gray-800 text-blue-300 px-1 rounded font-mono">{children}</code>
+        ) : (
+          <pre className="bg-black text-gray-100 p-4 rounded-md mb-4 overflow-x-auto text-sm font-mono">
+            <code className={className}>{children}</code>
+          </pre>
+        );
+      },
+      img: ({ node, ...props }) => (
+        <img className="rounded-md mb-4 border border-gray-700" {...props} />
+      ),
+    }}
+  >
+    {content}
+  </ReactMarkdown>
+);
 
-const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData, setTaskData}) => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+
+
+const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData, setTaskData }) => {
+  const [fetchState, setFetchState] = useState<{ loading: boolean; error: string | null }>({
+    loading: true,
+    error: null,
+  });
   const [time, setTime] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [rating, setRating] = useState(0);
@@ -45,9 +96,7 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
 
   useEffect(() => {
     const fetchTask = async () => {
-      setLoading(true);
-      setError(null);
-
+      setFetchState({ loading: true, error: null });
       try {
         const response = await fetch(`/tasks/api/generateTask`, {
           method: "POST",
@@ -58,13 +107,11 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
         if (!response.ok) throw new Error("Failed to generate task content");
 
         const data = await response.json();
-
         setTaskData(data);
       } catch (err) {
-        console.error("Error fetching task content:", err);
-        setError("Failed to load task. Please try again later.");
+        setFetchState({ loading: false, error: "Failed to load task. Please try again later." });
       } finally {
-        setLoading(false);
+        setFetchState((prevState) => ({ ...prevState, loading: false }));
       }
     };
 
@@ -76,7 +123,6 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
   };
 
   const handleFeedbackSubmit = async () => {
-    
     if (!taskData) return;
 
     try {
@@ -91,7 +137,7 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
           endTime: Date.now(),
           feedback,
           rating,
-          topic
+          topic,
         }),
       });
 
@@ -107,134 +153,83 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
   };
 
   return (
-    <div className="mt-8 p-6 bg-gray-800 rounded-lg shadow-lg">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">📌 {taskData?.topic || topic}</h2>
-        <p className="text-lg font-semibold text-gray-300">⏳ Time: {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, '0')}</p>
-      </div>
+    <div className="mt-8 bg-[#1e1e1e] rounded-lg shadow-lg transition-all duration-300 hover:shadow-2xl">
+  <div className="flex justify-between items-center mb-4">
+    <h2 className="text-2xl font-bold text-gray-100">📌 {taskData?.topic || topic}</h2>
+    <p className="text-lg font-semibold text-gray-400">
+      ⏳ Time: {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, "0")}
+    </p>
+  </div>
 
-      {loading && (
-        <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-        </div>
-      )}
+  {fetchState.loading && (
+    <div className="flex justify-center items-center py-12">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400"></div>
+    </div>
+  )}
 
-      {error && (
-        <div className="bg-red-900/30 border border-red-500 rounded-lg p-4 mb-6">
-          <p className="text-red-200">{error}</p>
-          <button className="mt-3 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded" onClick={() => window.location.reload()}>Try Again</button>
-        </div>
-      )}
+  {fetchState.error && (
+    <div className="bg-red-950 border border-red-600 rounded-lg p-4 mb-6">
+      <p className="text-red-300">{fetchState.error}</p>
+      <button
+        className="mt-3 bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded transition duration-300"
+        onClick={() => window.location.reload()}
+      >
+        Try Again
+      </button>
+    </div>
+  )}
 
-      {!loading && !error && taskData && (
-       <motion.div
-       initial={{ opacity: 0, y: 20 }}
-       animate={{ opacity: 1, y: 0 }}
-       transition={{ duration: 0.5 }}
-       className="p-5 bg-gray-900 rounded-lg text-gray-200"
-     >
-       <div className="prose prose-invert max-w-none">
-         <ReactMarkdown
-           components={{
-             h1: ({ node, ...props }) => <h1 className="text-4xl font-extrabold text-blue-400 mb-4" {...props} />,
-             h2: ({ node, ...props }) => <h2 className="text-3xl font-semibold text-blue-300 mb-3" {...props} />,
-             h3: ({ node, ...props }) => <h3 className="text-2xl font-medium text-blue-200 mb-2" {...props} />,
-             p: ({ node, ...props }) => <p className="text-lg leading-relaxed text-gray-300 mb-4" {...props} />,
-             ul: ({ node, ...props }) => <ul className="list-disc pl-6 space-y-2" {...props} />,
-             ol: ({ node, ...props }) => <ol className="list-decimal pl-6 space-y-2" {...props} />,
-             li: ({ node, ...props }) => <li className="text-gray-400" {...props} />,
-             a: ({ node, ...props }) => <a className="text-blue-400 hover:underline" {...props} />,
-             blockquote: ({ node, ...props }) => (
-               <blockquote className="bg-gray-800 p-4 italic text-gray-200 border-l-4 border-blue-400 mb-4" {...props} />
-             ),
-             code: ({ className, children, ...props }) => {
-              const isInline = !className;
-              return isInline ? (
-                <code className="bg-gray-800 text-blue-300 px-1 rounded">{children}</code>
-              ) : (
-                <pre className="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto">
-                  <code className={className}>{children}</code>
-                </pre>
-              );
-            },
-            
-             img: ({ node, ...props }) => <img className="rounded-md mb-4" {...props} />
-           }}
-         >
-           {taskData.content}
-         </ReactMarkdown>
-       </div>
-     
-       <hr className="border-gray-700 my-5" />
-     
-       <div className="prose prose-invert max-w-none">
-       <ReactMarkdown
-           components={{
-             h1: ({ node, ...props }) => <h1 className="text-4xl font-extrabold text-blue-400 mb-4" {...props} />,
-             h2: ({ node, ...props }) => <h2 className="text-3xl font-semibold text-blue-300 mb-3" {...props} />,
-             h3: ({ node, ...props }) => <h3 className="text-2xl font-medium text-blue-200 mb-2" {...props} />,
-             p: ({ node, ...props }) => <p className="text-lg leading-relaxed text-gray-300 mb-4" {...props} />,
-             ul: ({ node, ...props }) => <ul className="list-disc pl-6 space-y-2" {...props} />,
-             ol: ({ node, ...props }) => <ol className="list-decimal pl-6 space-y-2" {...props} />,
-             li: ({ node, ...props }) => <li className="text-gray-400" {...props} />,
-             a: ({ node, ...props }) => <a className="text-blue-400 hover:underline" {...props} />,
-             blockquote: ({ node, ...props }) => (
-               <blockquote className="bg-gray-800 p-4 italic text-gray-200 border-l-4 border-blue-400 mb-4" {...props} />
-             ),
-             code: ({ className, children, ...props }) => {
-              const isInline = !className;
-              return isInline ? (
-                <code className="bg-gray-800 text-blue-300 px-1 rounded">{children}</code>
-              ) : (
-                <pre className="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto">
-                  <code className={className}>{children}</code>
-                </pre>
-              );
-            },
-            
-             img: ({ node, ...props }) => <img className="rounded-md mb-4" {...props} />
-           }}
-         >
-           {taskData.task}
-         </ReactMarkdown>
-       </div>
-     
-       <hr className="border-gray-700 my-5" />
-     
-       <h2 className="text-lg font-semibold text-gray-300">Useful Links:</h2>
-       <div className="prose prose-invert max-w-none">
-          {taskData.links.map((link, index) => {
-            return (
-              <div key={index}>
-              <a
-                href={link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-400 hover:underline"
-              >
-                {link}
-              </a>
-              </div>
-            );
-          })}
-        </div>
-       <hr className="border-gray-700 my-5" />
-     
-       <Button onClick={handleSubmit} className="bg-blue-900">
-         Mark as completed
-       </Button>
-     </motion.div>
-     
+  {!fetchState.loading && !fetchState.error && taskData && (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="p-5 bg-[#2f2f2f] rounded-lg text-gray-300 border border-[#2c2c2c]"
+    >
+      {renderMarkdown(taskData.content)}
+
+      <hr className="border-[#333] my-5" />
+      {renderMarkdown(taskData.task)}
+
+     <hr className="border-gray-700 my-5" />
+
+<h2 className="text-lg font-semibold text-blue-300 mb-2">Useful Links:</h2>
+
+<div className="prose prose-invert max-w-none">
+  {taskData.links.map((link, index) => (
+    <div key={index}>
+      <a
+        href={link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-400 hover:text-blue-300 transition duration-300"
+      >
+        {link}
+      </a>
+    </div>
+  ))}
+</div>
+
+<hr className="border-gray-700 my-5" />
+
+<Button className="bg-blue-600 hover:bg-blue-700 transition duration-300" onClick={handleSubmit}>
+  Mark as completed
+</Button>
+</ motion.div>
+  )}
+
+
+
+
+
+      {showFeedback && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm p-4">
+        <div className="bg-[#1e1e1e] text-white w-full max-w-md p-6 rounded-lg border border-[#2c2c2c]">
+          <h2 className="text-xl font-semibold text-blue-400 mb-4">📝 Provide Feedback</h2>
       
-      )}
-
-{showFeedback && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-gray-800 p-6 rounded-lg w-96">
-            <h2 className="text-lg font-bold mb-4">Give Your Feedback</h2>
-            
-            {/* Star Rating Component */}
-            <label className="block mb-2">Rating:</label>
+          {/* Star Rating Component */}
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2">Rating:</label>
             <StarRatings
               rating={rating}
               starRatedColor="gold"
@@ -244,15 +239,36 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
               starDimension="30px"
               starSpacing="5px"
             />
-
-            <label className="block mb-2 mt-4">Feedback:</label>
-            <textarea value={feedback} onChange={(e) => setFeedback(e.target.value)} className="w-full p-2 rounded bg-gray-700 text-white" rows={4}></textarea>
-            <div className="flex justify-end mt-4">
-              <Button onClick={() => setShowFeedback(false)} className="mr-2 bg-red-600">Cancel</Button>
-              <Button onClick={handleFeedbackSubmit} className="bg-green-600">Submit</Button>
-            </div>
+          </div>
+      
+          {/* Feedback Textarea */}
+          <label className="block text-gray-300 mb-2">Your Feedback:</label>
+          <textarea
+            value={feedback}
+            onChange={(e) => setFeedback(e.target.value)}
+            className="w-full p-3 rounded-md bg-[#2a2a2a] text-white placeholder-gray-400 border border-[#3a3a3a] focus:outline-none focus:ring-2 focus:ring-blue-500 mb-5"
+            rows={4}
+            placeholder="Share your thoughts..."
+          />
+      
+          {/* Action Buttons */}
+          <div className="flex justify-end space-x-3">
+            <button
+              onClick={() => setShowFeedback(false)}
+              className="px-5 py-2 bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white rounded-md text-sm"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleFeedbackSubmit}
+              className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
+            >
+              Submit
+            </button>
           </div>
         </div>
+      </div>
+      
       )}
     </div>
   );
