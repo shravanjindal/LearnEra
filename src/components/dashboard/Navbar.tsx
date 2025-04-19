@@ -1,35 +1,50 @@
 import React from "react";
 import Link from "next/link";  // Import Next.js Link for navigation
 import { ParamValue } from "next/dist/server/request/params";
-import { Button } from "../ui/button";
 
 type NavbarProps = {
   user: {
-    streak: number;
     name: string;
     id: ParamValue;
-    verified : boolean;
+    verified: boolean;
   };
-  setDialogBoxOpen: (value: boolean) => void;
+  setSkillDialogBoxOpen: (value: boolean) => void;
+  setGoalDialogBoxOpen: (value: boolean) => void;
 };
 
-const Navbar = ({ user, setDialogBoxOpen }: NavbarProps) => {
+const Navbar = ({ user, setSkillDialogBoxOpen, setGoalDialogBoxOpen }: NavbarProps) => {
   return (
-    <nav className="bg-gray-800 p-4">
+    <nav className="bg-[#1e1e1e] p-4 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-xl font-bold">LearnEra</h1>
-        <div className="flex space-x-6">
-          {user.verified && <Link href={`/tasks/${user.id}`} className="text-gray-300 hover:text-white">Tasks</Link> }
-          <button onClick={() => setDialogBoxOpen(true)} className="text-gray-300 hover:text-white">Add Skill</button>
+        {/* Logo/Title */}
+        <h1 className="text-xl font-bold text-white">LearnEra</h1>
+        
+        {/* Navbar Links and Actions */}
+        <div className="flex items-center space-x-8">
+          {user.verified && (
+            <Link href={`/tasks/${user.id}`} className="text-gray-300 hover:text-white transition duration-200">
+              Tasks
+            </Link>
+          )}
+          
+          <button
+            onClick={() => setSkillDialogBoxOpen(true)}
+            className="text-gray-300 hover:text-white transition duration-200"
+          >
+            Add Skill
+          </button>
+          
+          <button
+            onClick={() => setGoalDialogBoxOpen(true)}
+            className="text-gray-300 hover:text-white transition duration-200"
+          >
+            Set Goals
+          </button>
         </div>
+        
+        {/* User Name */}
         <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <span className="text-sm">Streak:</span>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${user.streak > 0 ? "bg-green-500" : "bg-gray-700"}`}>
-              <span className="text-sm">{user.streak}</span>
-            </div>
-          </div>
-          <span className="text-sm">{user.name}</span>
+          <span className="text-sm text-white">{user.name}</span>
         </div>
       </div>
     </nav>
