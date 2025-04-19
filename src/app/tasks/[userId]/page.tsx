@@ -8,6 +8,7 @@ import Task from "@/components/tasks/task";
 import TutorChatbot, { Message } from "@/components/tasks/TutorChatbot";
 import TutorComments from "@/components/tasks/TutorComments";
 import mongoose from "mongoose";
+import Chatbot from "@/components/tasks/SmallScreenBot";
 // TypeScript Interfaces
 interface TaskData1 {
   day: string;
@@ -96,29 +97,40 @@ const TasksPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#121212] text-gray-100 overflow-x-hidden">
-  <div className="container flex p-6 overflow-y-auto scrollbar-custom">
+  <div className="flex flex-col lg:flex-row p-4 md:p-6 overflow-y-auto scrollbar-custom space-y-4 lg:space-y-0 lg:space-x-6">
+    
     {selectedTask ? (
-      <div className="flex w-full">
-        <div className="w-[68vw] bg-[#1e1e1e] p-6 rounded-xl shadow-md mr-6">
-          <Task
-            userId={userId}
-            skill={selectedSkill as string}
-            topic={selectedTask.topic}
-            description={selectedTask.description}
-            taskData={taskData}
-            setTaskData={setTaskData}
-          />
-        </div>
-
-        <div className="w-1/3 p-6 rounded-xl shadow-md">
-          <TutorChatbot
-            messages={messages}
-            input={input}
-            setInput={setInput}
-            handleSend={handleSend}
-          />
-        </div>
+      <>
+      {/* Task Section */}
+      <div className="w-full lg:w-[68vw] bg-[#1e1e1e] p-4 md:p-6 rounded-xl shadow-md">
+        <Task
+          userId={userId}
+          skill={selectedSkill as string}
+          topic={selectedTask.topic}
+          description={selectedTask.description}
+          taskData={taskData}
+          setTaskData={setTaskData}
+        />
       </div>
+
+      {/* Chatbot Section */}
+      <div className="hidden lg:block w-full lg:w-1/3 bg-[#1e1e1e] p-4 md:p-6 rounded-xl shadow-md">
+        <TutorChatbot
+          messages={messages}
+          input={input}
+          setInput={setInput}
+          handleSend={handleSend}
+        />
+      </div>
+      <div className="lg:hidden">
+        <Chatbot 
+          messages={messages}
+          input={input}
+          setInput={setInput}
+          handleSend={handleSend}
+        />
+      </div>
+    </>
     ) : selectedSkill ? (
       <div className="w-full p-8">
         <TutorComments />

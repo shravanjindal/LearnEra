@@ -195,20 +195,21 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
 
 <h2 className="text-lg font-semibold text-blue-300 mb-2">Useful Links:</h2>
 
-<div className="prose prose-invert max-w-none">
+<div className="prose prose-invert max-w-none break-words overflow-x-auto">
   {taskData.links.map((link, index) => (
     <div key={index}>
       <a
         href={link}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-blue-400 hover:text-blue-300 transition duration-300"
+        className="text-blue-400 hover:text-blue-300 transition duration-300 break-all"
       >
         {link}
       </a>
     </div>
   ))}
 </div>
+
 
 <hr className="border-gray-700 my-5" />
 

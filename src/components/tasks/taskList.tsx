@@ -62,7 +62,7 @@ const TaskList = ({ skill, onGoBack, userId, onStartTask }: TaskListProps) => {
     }
   };
 
-  const fetchTopics = async (tasksDone: string[], purpose: string) => {
+  const fetchTopics = async (tasksDone: string[], purpose: string[]) => {
     try {
       const response = await fetch(`/tasks/api/getTopics`, {
         method: "POST",

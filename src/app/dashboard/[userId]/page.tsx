@@ -29,6 +29,8 @@ const Dashboard = () => {
   const [goal, setGoal] = useState("");
   const [deleteDialogBoxOpen, setDeleteDialogBoxOpen] = useState(false);
   const [verified, setVerified] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -255,26 +257,37 @@ const Dashboard = () => {
         user={{ name: user.name, id: user._id.toString(), verified }}
         setSkillDialogBoxOpen={setSkillDialogBoxOpen}
         setGoalDialogBoxOpen={setGoalDialogBoxOpen}
+        setSidebarOpen={setSidebarOpen}
       />
       
-      <div className="container flex p-6 overflow-y-auto scrollbar-custom">
-        <div className="w-1/4 bg-[#1e1e1e] p-6 rounded-xl shadow-md mr-6">
+      <div className="flex p-6 overflow-y-auto scrollbar-custom">
+        {/* Sidebar for desktop */}
+        <div className="hidden lg:block w-1/4 bg-[#1e1e1e] p-6 rounded-xl shadow-md mr-6">
           <UserDetails user={{ name: user.name, badges: user.badges }} />
           <UserSkillBars skillProgressData={progressData} onDeleteSkill={onDeleteSkill} />
         </div>
+
+        {/* Sidebar for mobile, toggled by hamburger */}
+        {sidebarOpen && (
+          <div className="lg:hidden fixed top-0 left-0 w-3/4 h-full bg-[#1e1e1e] p-6 shadow-lg z-50">
+            <button
+              className="text-white text-2xl mb-4"
+              onClick={() => setSidebarOpen(false)}
+            >
+              ×
+            </button>
+            <UserDetails user={{ name: user.name, badges: user.badges }} />
+            <UserSkillBars skillProgressData={progressData} onDeleteSkill={onDeleteSkill} />
+          </div>
+        )}
+
         
         <div className="w-3/4 flex-1">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <PieChartCard tasksDoneData={tasksDoneData} />
             <BadgesCard user={{ badges: user.badges }} />
           </div>
-          
           <StreakGrid streakData={streakData} />
-          
-          <div id="progress-section">
-            {/* <ProgressCarousel user={user} performanceData={user} /> */}
-          </div>
-          
           <TaskHistory taskHistory={tasksHistoryData} />
         </div>
       </div>

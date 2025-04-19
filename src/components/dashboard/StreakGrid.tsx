@@ -55,7 +55,7 @@ const StreakGrid: React.FC<StreakGridProps> = ({ streakData }) => {
                 </div>
 
                 {/* Streak Grid */}
-                <div className="grid grid-rows-7 grid-flow-col gap-1">
+                <div className="grid lg:grid-rows-7 md:grid-rows-7 grid-rows-12 grid-flow-col gap-1">
                     {days.map((day, index) => (
                         <div
                             key={index}

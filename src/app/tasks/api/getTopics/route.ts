@@ -12,18 +12,17 @@ interface TasksDone {
 interface UserData {
   skill: string;
   tasksDone: TasksDone[];
-  purpose: string;
+  purpose: string[];
 }
 
 export async function POST(req: NextRequest) {
   try {
     const { user_data }: { user_data: UserData } = await req.json();
-    
     const inputText = `You are a personalized learning assistant helping users progress in their skill development journey.
 
     Based on the following user profile:
     - Skill: ${user_data.skill}
-    - Learning Goal: ${user_data.purpose}
+    - Learning Goal: ${user_data.purpose.join(", ")}
     - Recently Completed Tasks:
     ${user_data.tasksDone.map((task, i) => `  ${i + 1}. "${task.taskDone}" (Topic: ${task.topic}, Rating: ${task.rating}, Feedback: "${task.feedback}")`).join('\n')}
     
