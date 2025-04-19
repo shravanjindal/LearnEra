@@ -13,7 +13,7 @@ import { IUser } from "../../../models/user";
 import AddSkillDialogBox from "@/components/dashboard/AddSkillDialogBox";
 import GoalDialogBox from "@/components/dashboard/GoalDialogBox";
 import DeleteSkillDialogBox from "@/components/dashboard/DeleteSkillDialogBox";
-
+import Link from "next/link";  
 const Dashboard = () => {
   const { userId } = useParams();
   const [user, setUser] = useState<(IUser & { _id: string }) | null>(null);
@@ -269,17 +269,50 @@ const Dashboard = () => {
 
         {/* Sidebar for mobile, toggled by hamburger */}
         {sidebarOpen && (
-          <div className="lg:hidden fixed top-0 left-0 w-3/4 h-full bg-[#1e1e1e] p-6 shadow-lg z-50">
+          <div className="lg:hidden fixed top-0 left-0 w-3/4 h-full bg-[#1e1e1e] p-6 shadow-lg z-50 overflow-y-auto">
             <button
               className="text-white text-2xl mb-4"
               onClick={() => setSidebarOpen(false)}
             >
               ×
             </button>
+
             <UserDetails user={{ name: user.name, badges: user.badges }} />
             <UserSkillBars skillProgressData={progressData} onDeleteSkill={onDeleteSkill} />
+
+            <div className="lg:hidden md:hidden sm:block mt-6 space-y-4">
+              {user.isVerified && (
+                <Link
+                  href={`/tasks/${user._id}`}
+                  className="block text-gray-300 hover:text-white transition duration-200"
+                >
+                  Tasks
+                </Link>
+              )}
+
+              <button
+                onClick={() => {
+                  setSkillDialogBoxOpen(true);
+                  setSidebarOpen(false);
+                }}
+                className="block text-gray-300 hover:text-white transition duration-200"
+              >
+                Add Skill
+              </button>
+
+              <button
+                onClick={() => {
+                  setGoalDialogBoxOpen(true);
+                  setSidebarOpen(false);
+                }}
+                className="block text-gray-300 hover:text-white transition duration-200"
+              >
+                Set Goals
+              </button>
+            </div>
           </div>
         )}
+
 
         
         <div className="w-3/4 flex-1">

@@ -32,14 +32,14 @@ const Chatbot = ({ messages, input, setInput, handleSend }: ChatbotProps) => {
       {isOpen && (
         <div className="w-[80vw] bg-[#1e1e1e] text-gray-100 m-4 p-3 rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col">
           <div className="flex justify-between items-center border-b pb-2 mb-2 border-[#2c2c2c]">
-            <span className="text-lg font-semibold">🎓 LearnEra Coach</span>
+            <span className="text-lg font-semibold">🎓 Tutor</span>
             <X
               className="cursor-pointer text-gray-300 hover:text-white"
               onClick={() => setIsOpen(false)}
             />
           </div>
 
-          <div className="h-[70vh] overflow-y-auto mb-2 px-2 space-y-2">
+          <div className="h-[50vh] overflow-y-auto mb-2 px-2 space-y-2">
             {messages.map((msg, index) => (
               <div
                 key={index}

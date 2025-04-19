@@ -70,7 +70,7 @@ const TutorChatbot: React.FC<TutorChatbotProps> = ({ messages, input, setInput, 
 >
   {/* Header */}
   <div className="flex justify-between items-center border-b border-[#2a2a2a] pb-3 mb-3">
-    <h2 className="text-xl font-semibold text-gray-200">👨🏻‍🏫 Tutor</h2>
+    <h2 className="text-xl font-semibold text-gray-200">🎓 Tutor</h2>
   </div>
 
   {/* Messages Section */}

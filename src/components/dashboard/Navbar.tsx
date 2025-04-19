@@ -27,7 +27,7 @@ const Navbar = ({ user, setSkillDialogBoxOpen, setGoalDialogBoxOpen, setSidebarO
           ☰
         </button>
         {/* Navbar Links and Actions */}
-        <div className="flex items-center space-x-8">
+        <div className="hidden md:flex items-center space-x-8">
           {user.verified && (
             <Link href={`/tasks/${user.id}`} className="text-gray-300 hover:text-white transition duration-200">
               Tasks

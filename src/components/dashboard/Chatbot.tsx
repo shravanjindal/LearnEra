@@ -75,7 +75,7 @@ const Chatbot = ({ userId, progressData }: ChatbotProps) => {
   return (
     <div className="fixed bottom-4 right-4 flex flex-col items-end">
       {isOpen && (
-        <div className="w-[50vw] bg-[#1e1e1e] text-gray-100 m-4 p-3 rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col">
+        <div className="w-[75vw] bg-[#1e1e1e] text-gray-100 m-4 p-3 rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col">
           <div className="flex justify-between items-center border-b pb-2 mb-2 border-[#2c2c2c]">
             <span className="text-lg font-semibold">🎓 LearnEra Coach</span>
             <X
