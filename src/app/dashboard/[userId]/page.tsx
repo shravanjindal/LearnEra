@@ -222,7 +222,7 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-950 text-red-300">
         <div className="text-center">
-          <p className="text-lg font-medium">⚠️ Error: {error}</p>
+          <p className="text-lg font-medium">⚠️ Sorry, some error occurred. Consider refreshing!</p>
         </div>
       </div>
     );
