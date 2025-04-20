@@ -1,9 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import ReactMarkdown from "react-markdown";
 import { useEffect, useRef, useState } from "react";
-
+import { renderMarkdown } from "./task";
 export interface Message {
   sender: "bot" | "user";
   text: string;
@@ -87,7 +86,7 @@ const TutorChatbot: React.FC<TutorChatbotProps> = ({ messages, input, setInput, 
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: index * 0.1 }}
       >
-        <ReactMarkdown>{msg.text}</ReactMarkdown>
+        {renderMarkdown(msg.text)}
       </motion.div>
     ))}
     <div ref={messagesEndRef} />

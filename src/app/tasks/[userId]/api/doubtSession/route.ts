@@ -1,3 +1,4 @@
+import { Message } from "@/components/tasks/TutorChatbot";
 import { NextRequest, NextResponse } from "next/server";
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
@@ -16,21 +17,32 @@ interface TaskData {
 
 export async function POST(req: NextRequest) {
   try {
-    const { message, context }: { message: string; context: TaskData } = await req.json();
-
+    const { message, context, input }: { message: Message[]; context: TaskData, input: String } = await req.json();
     const prompt = `You are a tutor chatbot helping a student with a specific task.
 
-        Context:
-        - Skill: ${context.skill}
-        - Topic: ${context.topic}
-        - Task: ${context.task}
-        - Content: ${context.content}
-        - Helpful Links: ${context.links.join(", ")}
+    Context:
+    - Skill: ${context.skill}
+    - Topic: ${context.topic}
+    - Task: ${context.task}
+    - Content: ${context.content}
+    - Helpful Links: ${context.links.join(", ")}
 
-        Student's Message:
-        "${message}"
+    Conversation History of user and you:
+    ${
+      message.length === 5 
+        ? message.slice(-4, -1).map(msg => `${msg.sender}: ${msg.text}`).join('\n') 
+        : message.slice(0, -1).map(msg => `${msg.sender}: ${msg.text}`).join('\n')
+    }
 
-        Based on the above, provide a helpful and concise response to the student's doubt.`;
+    > user messages are student messages
+    > bot messages are your messages.
+
+    User's Doubt:
+    "${input}"
+
+    Based on the content the user is studying and conversation history of user and you,
+    provide a helpful and concise response to the user's doubt.`;
+
 
     const response = await fetch(`${GROQ_INFERENCE}`, {
       method: "POST",

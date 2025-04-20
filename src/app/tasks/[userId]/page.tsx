@@ -7,7 +7,6 @@ import TaskList from "@/components/tasks/taskList";
 import Task from "@/components/tasks/task";
 import TutorChatbot, { Message } from "@/components/tasks/TutorChatbot";
 import TutorComments from "@/components/tasks/TutorComments";
-import mongoose from "mongoose";
 import Chatbot from "@/components/tasks/SmallScreenBot";
 // TypeScript Interfaces
 interface TaskData1 {
@@ -44,12 +43,19 @@ const TasksPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: "bot",
-      text: "I have analyzed your progress! Keep going strong! 💪",
+      text: `Hello! I'm here to help you with anything related to ${selectedTask?.topic}. Feel free to ask me any questions! 💡`,
     },
   ]);
   const [input, setInput] = useState("");
   const [skillProgress, setSkillProgress] = useState<SkillProgress[]>([]);
-
+  useEffect(()=> {
+    setMessages([
+      {
+        sender: "bot",
+        text: `Hello! I'm here to help you with anything related to ${selectedTask?.topic}. Feel free to ask me any questions! 💡`,
+      },
+    ])
+  },[selectedTask])
   useEffect(() => {
     if (!userId) return;
 
@@ -69,7 +75,7 @@ const TasksPage: React.FC = () => {
 
   const handleSend = async () => {
     if (!input.trim() || !taskData) return;
-  
+    setInput("");
     // Add user message to local state (optional depending on where this lives)
     setMessages((prev) => [...prev, { sender: "user", text: input }]);
   
@@ -78,8 +84,9 @@ const TasksPage: React.FC = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: input,
+          message: messages.slice(-5),
           context: taskData,
+          input: input
         }),
       });
   
@@ -92,7 +99,7 @@ const TasksPage: React.FC = () => {
       setMessages((prev) => [...prev, { sender: "bot", text: "Oops! Something went wrong." }]);
     }
   
-    setInput("");
+    
   };
 
   return (

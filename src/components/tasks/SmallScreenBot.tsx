@@ -4,7 +4,7 @@ import { MessageSquare, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useRef } from "react";
-import ReactMarkdown from "react-markdown"
+import { renderMarkdown } from "./task";
 export interface Message {
     sender: "bot" | "user";
     text: string;
@@ -49,10 +49,7 @@ const Chatbot = ({ messages, input, setInput, handleSend }: ChatbotProps) => {
                     : "bg-blue-600 text-right self-end"
                 }`}
               >
-                <ReactMarkdown>
-                  
-                  {msg.text}
-                </ReactMarkdown>
+                {renderMarkdown(msg.text)}
                 
               </div>
             ))}

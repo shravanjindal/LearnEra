@@ -5,7 +5,8 @@ import { Button } from "../ui/button";
 import StarRatings from "react-star-ratings";
 import { RotateCcw } from "lucide-react";
 import CodeBlock from "./CodeBlock";
-import { nanoid } from 'nanoid'; 
+import { nanoid } from 'nanoid';
+import LinkCards from "./LinkCards";
 
 interface TaskData {
   _id: string;
@@ -28,7 +29,7 @@ interface TaskProps {
 }
 
 
-const renderMarkdown = (content: string) => (
+export const renderMarkdown = (content: string) => (
   <ReactMarkdown
     components={{
       h1: ({ node, ...props }) => (
@@ -63,7 +64,7 @@ const renderMarkdown = (content: string) => (
       ),
       code: ({ className, children, node, ...props }) => {
         const isInline = !className;
-      
+
         if (isInline) {
           return (
             <code className="bg-gray-800 text-blue-300 px-1 rounded font-mono">
@@ -71,11 +72,11 @@ const renderMarkdown = (content: string) => (
             </code>
           );
         }
-      
+
         const blockKey = node?.position?.start?.line?.toString() ?? nanoid();
-      
+
         return <CodeBlock className={className} blockKey={blockKey}>{children}</CodeBlock>;
-      },    
+      },
       img: ({ node, ...props }) => (
         <img className="rounded-md mb-4 border border-gray-700" {...props} />
       ),
@@ -126,7 +127,7 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
       setFetchState((prevState) => ({ ...prevState, loading: false }));
     }
   };
-  
+
   useEffect(() => {
     fetchTask();
   }, [userId, skill, topic, description]);
@@ -167,75 +168,65 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
 
   return (
     <div className="mt-8 bg-[#1e1e1e] rounded-lg shadow-lg transition-all duration-300 hover:shadow-2xl">
-    <div className="flex justify-between items-center mb-4">
-      <h2 className="text-2xl font-bold text-gray-100">📌 {taskData?.topic || topic}</h2>
-      <Button
-        className="bg-[#2f2f2f] hover:bg-blue-700 text-white p-2 rounded transition duration-300"
-        onClick={fetchTask}>
-          <RotateCcw size={20} />
-        </Button>
-      <p className="text-lg font-semibold text-gray-400">
-        ⏳ Time: {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, "0")}
-      </p>
-    </div>
+      <div className="lg:flex md:flex justify-between items-center mb-4">
+        <div className="flex justify-end">
+          <h2 className="text-2xl font-bold text-gray-100 mr-5">📌 {taskData?.topic || topic}</h2>
+          <Button
+            className="bg-[#2f2f2f] hover:bg-blue-700 text-white p-2 rounded transition duration-300"
+            onClick={fetchTask}
+            title="Regenerate Task"
+          >
+            <RotateCcw size={20} />
+          </Button>
+        </div>
+        <p className="text-lg font-semibold text-gray-400">
+          ⏳ Time: {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, "0")}
+        </p>
+      </div>
 
-  {fetchState.loading && (
-    <div className="flex justify-center items-center py-12">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400"></div>
-    </div>
-  )}
+      {fetchState.loading && (
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400"></div>
+        </div>
+      )}
 
-  {fetchState.error && (
-    <div className="bg-red-950 border border-red-600 rounded-lg p-4 mb-6">
-      <p className="text-red-300">{fetchState.error}</p>
-      <button
-        className="mt-3 bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded transition duration-300"
-        onClick={() => window.location.reload()}
-      >
-        Try Again
-      </button>
-    </div>
-  )}
+      {fetchState.error && (
+        <div className="bg-red-950 border border-red-600 rounded-lg p-4 mb-6">
+          <p className="text-red-300">{fetchState.error}</p>
+          <button
+            className="mt-3 bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded transition duration-300"
+            onClick={fetchTask}
+          >
+            Try Again
+          </button>
+        </div>
+      )}
 
-  {!fetchState.loading && !fetchState.error && taskData && (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="p-5 bg-[#2f2f2f] rounded-lg text-gray-300 border border-[#2c2c2c]"
-    >
-      {renderedMarkdown}
+      {!fetchState.loading && !fetchState.error && taskData && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="p-5 bg-[#2f2f2f] rounded-lg text-gray-300 border border-[#2c2c2c]"
+        >
+          {renderedMarkdown}
 
-      <hr className="border-[#333] my-5" />
-      {renderMarkdown(taskData.task)}
+          <hr className="border-[#333] my-5" />
+          {renderMarkdown("### Task")}
+          {renderMarkdown(taskData.task)}
 
-     <hr className="border-gray-700 my-5" />
+          <hr className="border-gray-700 my-5" />
+          {renderMarkdown("### Useful Links ")}
 
-<h2 className="text-lg font-semibold text-blue-300 mb-2">Useful Links:</h2>
+          <LinkCards links={taskData.links}/>
 
-<div className="prose prose-invert max-w-none break-words overflow-x-auto">
-  {taskData.links.map((link, index) => (
-    <div key={index}>
-      <a
-        href={link}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-400 hover:text-blue-300 transition duration-300 break-all"
-      >
-        {link}
-      </a>
-    </div>
-  ))}
-</div>
+          <hr className="border-gray-700 my-5" />
 
-
-<hr className="border-gray-700 my-5" />
-
-<Button className="bg-blue-600 hover:bg-blue-700 transition duration-300" onClick={handleSubmit}>
-  Mark as completed
-</Button>
-</ motion.div>
-  )}
+          <Button className="bg-blue-600 hover:bg-blue-700 transition duration-300" onClick={handleSubmit}>
+            Mark as completed
+          </Button>
+        </ motion.div>
+      )}
 
 
 
@@ -243,51 +234,51 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
 
       {showFeedback && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm p-4">
-        <div className="bg-[#1e1e1e] text-white w-full max-w-md p-6 rounded-lg border border-[#2c2c2c]">
-          <h2 className="text-xl font-semibold text-blue-400 mb-4">📝 Provide Feedback</h2>
-      
-          {/* Star Rating Component */}
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2">Rating:</label>
-            <StarRatings
-              rating={rating}
-              starRatedColor="gold"
-              changeRating={(newRating) => setRating(newRating)}
-              numberOfStars={5}
-              name="rating"
-              starDimension="30px"
-              starSpacing="5px"
+          <div className="bg-[#1e1e1e] text-white w-full max-w-md p-6 rounded-lg border border-[#2c2c2c]">
+            <h2 className="text-xl font-semibold text-blue-400 mb-4">📝 Provide Feedback</h2>
+
+            {/* Star Rating Component */}
+            <div className="mb-4">
+              <label className="block text-gray-300 mb-2">Rating:</label>
+              <StarRatings
+                rating={rating}
+                starRatedColor="gold"
+                changeRating={(newRating) => setRating(newRating)}
+                numberOfStars={5}
+                name="rating"
+                starDimension="30px"
+                starSpacing="5px"
+              />
+            </div>
+
+            {/* Feedback Textarea */}
+            <label className="block text-gray-300 mb-2">Your Feedback:</label>
+            <textarea
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              className="w-full p-3 rounded-md bg-[#2a2a2a] text-white placeholder-gray-400 border border-[#3a3a3a] focus:outline-none focus:ring-2 focus:ring-blue-500 mb-5"
+              rows={4}
+              placeholder="Share your thoughts..."
             />
-          </div>
-      
-          {/* Feedback Textarea */}
-          <label className="block text-gray-300 mb-2">Your Feedback:</label>
-          <textarea
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-            className="w-full p-3 rounded-md bg-[#2a2a2a] text-white placeholder-gray-400 border border-[#3a3a3a] focus:outline-none focus:ring-2 focus:ring-blue-500 mb-5"
-            rows={4}
-            placeholder="Share your thoughts..."
-          />
-      
-          {/* Action Buttons */}
-          <div className="flex justify-end space-x-3">
-            <button
-              onClick={() => setShowFeedback(false)}
-              className="px-5 py-2 bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white rounded-md text-sm"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleFeedbackSubmit}
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
-            >
-              Submit
-            </button>
+
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowFeedback(false)}
+                className="px-5 py-2 bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white rounded-md text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleFeedbackSubmit}
+                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
+              >
+                Submit
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      
+
       )}
     </div>
   );
