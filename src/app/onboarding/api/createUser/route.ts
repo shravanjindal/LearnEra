@@ -23,9 +23,26 @@ const sendVerificationEmail = async (userEmail: string, verificationToken: strin
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: userEmail,
-    subject: 'Email Verification',
-    html: `<h1>Click <a href="${verificationUrl}">here</a> to verify your email address.</h1>`,
+    subject: 'Verify your email address - Learnera',
+    html: `
+      <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px; background-color: #f9f9f9;">
+        <h2 style="text-align: center; color: #4a4a4a;">Welcome to <span style="color: #3f51b5;">Learnera</span>!</h2>
+        <p>Hi there,</p>
+        <p>Thanks for signing up for <strong>Learnera</strong> - your personalized AI-powered learning platform.</p>
+        <p>To complete your registration, please verify your email address by clicking the button below:</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${verificationUrl}" style="display: inline-block; padding: 12px 24px; background-color: #3f51b5; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 600;">Verify Email</a>
+        </div>
+  
+        <p>If the button above doesn't work, copy and paste this URL into your browser:</p>
+        <p style="word-break: break-all;"><a href="${verificationUrl}">${verificationUrl}</a></p>
+  
+        <p style="margin-top: 40px; font-size: 0.9em; color: #666;">If you didn't sign up for Learnera, you can ignore this email.</p>
+      </div>
+    `,
   };
+  
 
   try {
     await transporter.sendMail(mailOptions);

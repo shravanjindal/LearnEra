@@ -1,7 +1,7 @@
 import { Task } from "@/models/task";
 import { NextRequest, NextResponse } from "next/server";
 
-const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_API_KEY = process.env.GROQ_API_KEY_FREE;
 const GROQ_INFERENCE = process.env.GROQ_INFERENCE;
 const GROQ_MODEL = process.env.GROQ_MODEL;
 

@@ -13,7 +13,9 @@ import { IUser } from "../../../models/user";
 import AddSkillDialogBox from "@/components/dashboard/AddSkillDialogBox";
 import GoalDialogBox from "@/components/dashboard/GoalDialogBox";
 import DeleteSkillDialogBox from "@/components/dashboard/DeleteSkillDialogBox";
+import { buyTokens } from "@/lib/buyTokens";
 import Link from "next/link";  
+import BuyTokensDialogBox from "@/components/dashboard/BuyTokensDialogBox";
 const Dashboard = () => {
   const { userId } = useParams();
   const [user, setUser] = useState<(IUser & { _id: string }) | null>(null);
@@ -30,6 +32,10 @@ const Dashboard = () => {
   const [deleteDialogBoxOpen, setDeleteDialogBoxOpen] = useState(false);
   const [verified, setVerified] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [price, setPrice] = useState("0.1");
+  const [priceDialogBoxOpen, setPriceDialogBoxOpen] = useState(false);
+  const [amount, setAmount] = useState<string>("0");
+  const [tokenCount, setTokenCount] = useState<string>("0");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -205,7 +211,19 @@ const Dashboard = () => {
       alert("Something went wrong while resending the email.");
     }
   };
+  const handleConfirm = async () => {
+    await buyTokens(parseInt(amount), parseInt(tokenCount), user?.email!);
+    setPriceDialogBoxOpen(false);
+    setTokenCount("0");
+    setAmount("0");
+  };
 
+  const handleTokenChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+    const tokens = e.target.value;
+    setTokenCount(tokens);
+    const totalAmount = parseFloat(tokens) * parseFloat(price);
+    setAmount(isNaN(totalAmount) ? "0" : totalAmount.toFixed(2));
+  };
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-950 text-gray-100">
@@ -242,6 +260,7 @@ const Dashboard = () => {
   
 
   return (
+    
     <div className="min-h-screen bg-[#121212] text-gray-100 overflow-x-hidden">
       {!verified && (
         <div className="bg-[#ff9900] text-black p-4 text-center">
@@ -262,6 +281,7 @@ const Dashboard = () => {
         setSkillDialogBoxOpen={setSkillDialogBoxOpen}
         setGoalDialogBoxOpen={setGoalDialogBoxOpen}
         setSidebarOpen={setSidebarOpen}
+        setPriceDialogBoxOpen={setPriceDialogBoxOpen}
       />
       
       <div className="flex p-6 overflow-y-auto scrollbar-custom">
@@ -361,6 +381,16 @@ const Dashboard = () => {
           setDeleteDialogBoxOpen={setDeleteDialogBoxOpen}
         />
       )}
+      {priceDialogBoxOpen && (
+        <BuyTokensDialogBox 
+          tokenCount={parseInt(tokenCount)}
+          amount={parseFloat(amount)}
+          handleTokenChange={handleTokenChange}
+          handleConfirm={handleConfirm}
+          setPriceDialogBoxOpen={setPriceDialogBoxOpen}
+        />
+    )}
+
     </div>
 
   );

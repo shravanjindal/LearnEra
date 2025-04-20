@@ -1,7 +1,7 @@
 "use client";
-import Link from 'next/link';
 import React from 'react';
-
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 interface PricingCardProps {
   plan: string;
   target: string;
@@ -9,19 +9,17 @@ interface PricingCardProps {
   perks?: string[]; // Make perks optional and define it as an array of strings
 }
 
-const handlePayments = (text : any) => {
-  if (text === "Get Started") return "/onboarding";
-  else return "";
-};
-
 const PricingCard: React.FC<PricingCardProps> = ({ plan, target, price, perks = [] }) => {
   // Determine button text based on the plan
-  const buttonText = plan.toUpperCase() === "FREE" ? "Get Started" : "Contact us";
-
+  const buttonText = plan.toUpperCase() === "FREE" ? "Get Started" : "Login";
+  const router = useRouter();
   // Determine card size and border based on the plan
   const cardClasses = `bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 flex flex-col`;
   const cardId = `${plan === "PREMIUM" ? "premium" : ""}`;
-
+  const handlePayments = (text : any) => {
+    if (text === "Get Started") return router.push("/onboarding");
+    else if (text === "Login") return router.push("/login");
+  };
   return (
     <div id={cardId} className={cardClasses}>
       {/* Card Header */}
@@ -34,7 +32,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, target, price, perks = 
       <div className="p-6 text-center flex flex-col flex-grow">
         {/* Price */}
         <p className="text-4xl font-bold text-gray-800">
-          {price}<span className="text-lg text-gray-600">/day</span>
+        <b>₹</b> {price}<span className="text-lg text-gray-600">/token</span>
         </p>
 
         {/* Features List */}
@@ -48,13 +46,11 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, target, price, perks = 
         </ul>
 
         {/* Dynamic Button */}
-        <Link href={handlePayments(buttonText)}>
-          <button
-            className="mt-8 w-full px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold rounded-lg hover:from-purple-600 hover:to-indigo-700 transition-colors duration-300"
-          >
-            Get Started
-          </button>
-        </Link>
+        <Button 
+        onClick={() => handlePayments(buttonText)}
+        className="mt-8 w-full px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold rounded-lg hover:from-purple-600 hover:to-indigo-700 transition-colors duration-300">
+            {buttonText=="Get Started" ? <>Get Started</> : <>Login</>}
+        </Button>
       </div>
     </div>
   );

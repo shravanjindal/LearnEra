@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_API_KEY = process.env.GROQ_API_KEY_FREE;
 const GROQ_INFERENCE = process.env.GROQ_INFERENCE;
 const GROQ_MODEL = process.env.GROQ_MODEL;
 
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     - Recently Completed Tasks:
     ${user_data.tasksDone.map((task, i) => `  ${i + 1}. "${task.taskDone}" (Topic: ${task.topic}, Rating: ${task.rating}, Feedback: "${task.feedback}")`).join('\n')}
     
-    Your task is to suggest the next 3–4 logical sub-topics to learn. The recommendations should:
+    Your task is to suggest the next 3-4 logical sub-topics to learn. The recommendations should:
     
     1. Build directly on recently completed topics
     2. Be achievable, incremental next steps
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     [
       {
         "topic": "Sub-topic Name",
-        "description": "What this topic covers and how it supports the user’s goal",
+        "description": "What this topic covers and how it supports the user's goal",
         "prerequisites": ["List any specific prerequisite concepts, or leave empty if none"]
       },
       ...

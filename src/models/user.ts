@@ -13,6 +13,9 @@ export interface IUser extends Document {
   }[];
   badges: string[];
   isVerified: boolean;
+  tokenBalance: number;
+  isPremium: boolean;
+  createdAt: Date;
 }
 
 const userSchema: Schema = new mongoose.Schema({
@@ -24,6 +27,11 @@ const userSchema: Schema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    lowercase: true,
+    match: [
+      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+      'Please enter a valid email address',
+    ],
   },
   password: {
     type: String,
@@ -60,6 +68,14 @@ const userSchema: Schema = new mongoose.Schema({
     type: String
   }],
   isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  tokenBalance: {
+    type: Number,
+    default: 100,
+  },
+  isPremium: {
     type: Boolean,
     default: false,
   },
