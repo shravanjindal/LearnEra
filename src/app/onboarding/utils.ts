@@ -1,5 +1,3 @@
-import mongoose from "mongoose";
-
 export type FormData = {
     name: string;
     email: string;
@@ -9,26 +7,21 @@ export type FormData = {
     skills: string[];
     badges:string[];
 };
-export type CurrentRole = 'BTech Student' | 'PhD Student' | 'Working Professional';
 
-export const currentRoleOptions: CurrentRole[] = ['BTech Student', 'PhD Student', 'Working Professional'];
+export const currentRoleOptions: string[] = ['College Student', 'Working Professional','Other'];
 
 export const purposeOptions = {
-    'BTech Student': ['Learn new skills in tech', 'Prepare for internships/jobs', 'Build projects'],
-    'PhD Student': ['Research assistant', 'Learn advanced topics', 'Publish papers'],
-    'Working Professional': ['Career growth', 'Upskill in tech', 'Switch domains'],
+    'College Student': ['Learn new skills in tech', 'Prepare for internships/jobs', 'Build projects'],
+    'Working Professional': ['Career growth', 'Upskill in tech', 'Learn advanced topics'],
 };
 
 export const skillsOptions = {
     'Learn new skills in tech': ['Web Development', 'Data Science', 'Machine Learning', 'Cloud Computing'],
     'Prepare for internships/jobs': ['Coding Interviews', 'Resume Building', 'Networking'],
     'Build projects': ['Full-Stack Development', 'Mobile App Development', 'IoT Projects'],
-    'Research assistant': ['AI/ML Research', 'Data Analysis', 'Scientific Computing'],
     'Learn advanced topics': ['Deep Learning', 'Blockchain', 'Quantum Computing'],
-    'Publish papers': ['Academic Writing', 'Research Methodology', 'Data Visualization'],
     'Career growth': ['Leadership Skills', 'Technical Certifications', 'Mentorship'],
     'Upskill in tech': ['DevOps', 'Cybersecurity', 'Big Data'],
-    'Switch domains': ['From Non-Tech to Tech', 'From Hardware to Software', 'From Testing to Development'],
 };
 
 export const handleChange = (

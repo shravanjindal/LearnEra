@@ -119,13 +119,14 @@ const OnboardingPage = () => {
             {step === 2 && (
               <CurrentRole
                 formData={formData}
-                handleChange={(e) => handleChange(setFormData, e)}
+                setFormData={setFormData}
                 currentRoleOptions={currentRoleOptions}
               />
             )}
             {step === 3 && (
               <Purpose
                 formData={formData}
+                setFormData={setFormData}
                 handlePurposeChange={(purpose) => handlePurposeChange(setFormData, purpose)}
                 purposeOptions={purposeOptions[formData.currentRole as keyof typeof purposeOptions] || []}
               />
@@ -133,6 +134,7 @@ const OnboardingPage = () => {
             {step === 4 && (
               <Skills
                 formData={formData}
+                setFormData={setFormData}
                 handleSkillChange={(skill) => handleSkillChange(setFormData, skill)}
                 skillsOptions={skillsOptions}
               />

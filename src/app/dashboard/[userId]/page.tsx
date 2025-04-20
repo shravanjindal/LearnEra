@@ -101,6 +101,10 @@ const Dashboard = () => {
         return response.json();
       })
       .then((data) => {
+        if (data.message == "Skill already exists") {
+          alert("Skill already exists");
+          return;
+        }
         progressData.push({ skill, progress: 0 });
         tasksDoneData.push({ skill, tasksDone: 0 });
       })

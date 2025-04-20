@@ -27,7 +27,7 @@ const GoalDialogBox: React.FC<GoalDialogBoxProps> = ({
         <p className="text-sm text-gray-300 mb-4 leading-relaxed">
           <span className="text-white font-medium">Tutor:</span> Hi{" "}
           <span className="font-semibold text-blue-300">{user.name}</span>!<br />
-          I know you want to{" "}
+          Current Goals : {" "}
           <span className="italic text-blue-200">
             {user.purpose.length === 1
               ? user.purpose[0]

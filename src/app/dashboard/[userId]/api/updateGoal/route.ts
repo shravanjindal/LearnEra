@@ -15,9 +15,9 @@ export async function POST(req: NextRequest, context: { params: Promise<{ userId
 
     const user = await User.findByIdAndUpdate(
       userId,
-      { $push: { purpose: goal } },
-      { new: true } // return the updated document
-    );
+      { $addToSet: { purpose: goal } },
+      { new: true }
+    );    
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });

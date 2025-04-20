@@ -18,7 +18,7 @@ export async function POST(req: Request, context: { params: Promise<{ userId: st
 
     const skillExists = user.skills.includes(skill.toLowerCase());
     if (skillExists) {
-      return NextResponse.json({ error: "Skill already exists" }, { status: 400 });
+      return NextResponse.json({ message: "Skill already exists" }, { status: 200 });
     }
 
     // Add to skills array
