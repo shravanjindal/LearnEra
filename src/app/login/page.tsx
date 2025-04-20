@@ -45,6 +45,7 @@ const LoginPage = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(formData),
+          credentials: "include", // Include credentials in the request
         });
   
         if (response.ok) {
