@@ -106,7 +106,9 @@ const TutorChatbot: React.FC<TutorChatbotProps> = ({ messages, input, setInput, 
       }}
       placeholder="Ask me anything..."
     />
-    <Button className="p-3 flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white transition">
+    <Button 
+    onClick={handleSend}
+    className="p-3 flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white transition">
       Send
     </Button>
   </div>
