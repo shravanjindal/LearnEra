@@ -77,7 +77,7 @@ const userSchema: Schema = new mongoose.Schema({
   },
   isPremium: {
     type: Boolean,
-    default: false,
+    default: true,
   },
 });
 

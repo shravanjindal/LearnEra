@@ -37,7 +37,8 @@ const LoginPage = () => {
   
     if (validateStep(formData)) {
       try {
-        setButtonText("Process Initiated!");
+        setButtonText("Processing...");
+  
         const response = await fetch("/login/api", {
           method: "POST",
           headers: {
@@ -56,11 +57,11 @@ const LoginPage = () => {
           setButtonText("Login");
         }
       } catch (error) {
-        alert(`An error occurred. Please try again`);
+        alert(`An error occurred. Please try again.`);
         setButtonText("Login");
       }
     }
-  };  
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-500 to-indigo-600 p-4">

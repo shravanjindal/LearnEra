@@ -16,6 +16,7 @@ import DeleteSkillDialogBox from "@/components/dashboard/DeleteSkillDialogBox";
 import { buyTokens } from "@/lib/buyTokens";
 import Link from "next/link";  
 import BuyTokensDialogBox from "@/components/dashboard/BuyTokensDialogBox";
+import ProfileBox from "@/components/dashboard/ProfileBox";
 const Dashboard = () => {
   const { userId } = useParams();
   const [user, setUser] = useState<(IUser & { _id: string }) | null>(null);
@@ -36,7 +37,7 @@ const Dashboard = () => {
   const [priceDialogBoxOpen, setPriceDialogBoxOpen] = useState(false);
   const [amount, setAmount] = useState<string>("0");
   const [tokenCount, setTokenCount] = useState<string>("0");
-
+  const [profileBoxOpen, setProfileBoxOpen] = useState<boolean>(false);
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -224,6 +225,11 @@ const Dashboard = () => {
     const totalAmount = parseFloat(tokens) * parseFloat(price);
     setAmount(isNaN(totalAmount) ? "0" : totalAmount.toFixed(2));
   };
+  const handleLogout = async () => {
+    await fetch('/api/logout', { method: 'POST' });
+    window.location.href = '/'; // redirect to login page
+  };
+  
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-950 text-gray-100">
@@ -282,8 +288,17 @@ const Dashboard = () => {
         setGoalDialogBoxOpen={setGoalDialogBoxOpen}
         setSidebarOpen={setSidebarOpen}
         setPriceDialogBoxOpen={setPriceDialogBoxOpen}
+        setProfileBoxOpen={setProfileBoxOpen}
       />
-      
+      {profileBoxOpen && (
+        <ProfileBox 
+          user={{ name: user.name, email: user.email, tokenBalance: user.tokenBalance }}
+          handleLogout={handleLogout}
+          setPriceDialogBoxOpen={setPriceDialogBoxOpen}
+          setProfileBoxOpen={setProfileBoxOpen}
+        />
+      )}
+
       <div className="flex p-6 overflow-y-auto scrollbar-custom">
         {/* Sidebar for desktop */}
         <div className="hidden lg:block w-1/4 bg-[#1e1e1e] p-6 rounded-xl shadow-md mr-6">

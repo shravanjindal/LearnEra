@@ -12,9 +12,10 @@ type NavbarProps = {
   setGoalDialogBoxOpen: (value: boolean) => void;
   setSidebarOpen: (value: boolean) => void;
   setPriceDialogBoxOpen: (value: boolean) => void;
+  setProfileBoxOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Navbar = ({ user, setSkillDialogBoxOpen, setGoalDialogBoxOpen, setSidebarOpen, setPriceDialogBoxOpen }: NavbarProps) => {
+const Navbar = ({ user, setSkillDialogBoxOpen, setGoalDialogBoxOpen, setSidebarOpen, setPriceDialogBoxOpen, setProfileBoxOpen }: NavbarProps) => {
   return (
     <nav className="bg-[#1e1e1e] p-4 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
@@ -57,9 +58,13 @@ const Navbar = ({ user, setSkillDialogBoxOpen, setGoalDialogBoxOpen, setSidebarO
         </div>
         
         {/* User Name */}
+        <button
+        onClick={() => setProfileBoxOpen(prev => !prev)}
+        >
         <div className="hidden lg:block flex items-center space-x-4">
-          <span className="text-sm text-white"><b>{user.name}</b></span>
+          <span className="text-md text-white"><b>{user.name}</b></span>
         </div>
+        </button>
         <div className="lg:hidden flex items-center space-x-4">
           <h1 className="text-xl font-bold text-white">LearnEra</h1>
         </div>

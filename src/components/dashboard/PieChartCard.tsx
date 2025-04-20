@@ -78,9 +78,12 @@ const PieChartCard = ({ tasksDoneData }: PieChartCardProps) => {
                   border: "none",
                   borderRadius: "8px",
                   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                  color: "#F3F4F6",
                 }}
+                labelStyle={{ color: "#F3F4F6" }} // label text (usually the x-axis value)
+                itemStyle={{ color: "#F3F4F6" }} // payload text (name: value)
+                cursor={{ fill: "transparent" }}
               />
+
               <Legend
                 wrapperStyle={{ color: "#F3F4F6", paddingTop: "10px" }}
                 iconType="circle"
