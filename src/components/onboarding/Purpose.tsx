@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FormData } from '@/app/onboarding/utils';
+import { FormData } from '@/utils/utils';
 
 type PurposeProps = {
   formData: FormData;

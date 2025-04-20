@@ -15,8 +15,8 @@ import {
   handleSkillChange,
   validateStep,
   leftSectionContent,
-} from './utils';
-import { FormData } from './utils'; // Assuming you have a types file for shared types
+} from '../../utils/utils';
+import { FormData } from '../../utils/utils'; // Assuming you have a types file for shared types
 
 const OnboardingPage = () => {
   const router = useRouter();
@@ -50,7 +50,7 @@ const OnboardingPage = () => {
       try {
         setButtonText("Process Initiated!")
         // Send a POST request to the backend API
-        const response = await fetch('/onboarding/api/createUser', {
+        const response = await fetch('/api/onboarding/createUser', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json', // Correct headers syntax

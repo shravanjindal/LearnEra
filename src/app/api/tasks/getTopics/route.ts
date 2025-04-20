@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     - Recently Completed Tasks:
     ${user_data.tasksDone.map((task, i) => `  ${i + 1}. "${task.taskDone}" (Topic: ${task.topic}, Rating: ${task.rating}, Feedback: "${task.feedback}")`).join('\n')}
     
-    Your task is to suggest the next 3-4 logical sub-topics to learn. The recommendations should:
+    Your task is to suggest atleast 3 next logical sub-topics to learn. The recommendations should:
     
     1. Build directly on recently completed topics
     2. Be achievable, incremental next steps

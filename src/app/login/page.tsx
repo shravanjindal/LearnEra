@@ -39,7 +39,7 @@ const LoginPage = () => {
       try {
         setButtonText("Processing...");
   
-        const response = await fetch("/login/api", {
+        const response = await fetch("/api/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

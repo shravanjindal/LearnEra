@@ -1,12 +1,10 @@
-// pages/api/login.ts
+// app/api/login/route.ts
 import dbConnect from '@/lib/dbConnect';
 import { User } from '@/models/user';
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
   try {
@@ -24,27 +22,23 @@ export async function POST(request: Request) {
     }
 
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user._id },
       process.env.JWT_SECRET || 'fallback_secret',
       { expiresIn: '1h' }
     );
 
-    const response = NextResponse.json(
-      { message: 'Login successful', user },
-      { status: 200 }
-    );
+    const cookieStore = await cookies();
+    cookieStore.set('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60,
+      path: '/',
+    });
 
-    // Set token in HttpOnly cookie
-    response.headers.set(
-      'Set-Cookie',
-      `token=${token}; HttpOnly; Path=/; Max-Age=3600; SameSite=Strict; Secure`
-    );  
-    return response;
+    return NextResponse.json({ message: 'Login successful', user }, { status: 200 });
   } catch (error) {
     console.error('Login error:', error);
-    return NextResponse.json(
-      { message: 'Failed to login' },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Failed to login' }, { status: 500 });
   }
 }

@@ -61,7 +61,7 @@ const TasksPage: React.FC = () => {
 
     const fetchSkillProgress = async () => {
       try {
-        const response = await fetch(`/tasks/${userId}/api`);
+        const response = await fetch(`/api/tasks/${userId}`);
         if (!response.ok) throw new Error("Failed to fetch data");
         const data: SkillProgress[] = await response.json();
         setSkillProgress(data);
@@ -80,7 +80,7 @@ const TasksPage: React.FC = () => {
     setMessages((prev) => [...prev, { sender: "user", text: input }]);
   
     try {
-      const res = await fetch(`/tasks/${userId}/api/doubtSession`, {
+      const res = await fetch(`/api/tasks/${userId}/doubtSession`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

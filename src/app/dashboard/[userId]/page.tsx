@@ -41,7 +41,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(`/dashboard/${userId}/api`, {
+        const response = await fetch(`/api/dashboard/${userId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -55,28 +55,28 @@ const Dashboard = () => {
 
         setVerified(data.isVerified);
         // Fetch the streak data after user data
-        const streakResponse = await fetch(`/dashboard/${userId}/api/getStreakData`);
+        const streakResponse = await fetch(`/api/dashboard/${userId}/getStreakData`);
         if (!streakResponse.ok) throw new Error("Failed to fetch streak data");
 
         const streakData = await streakResponse.json();
         setStreakData(streakData);
 
         // Fetch progress data
-        const progressResponse = await fetch(`/dashboard/${userId}/api/getProgressData`);
+        const progressResponse = await fetch(`/api/dashboard/${userId}/getProgressData`);
         if (!progressResponse.ok) throw new Error("Failed to fetch progress data");
 
         const progressData = await progressResponse.json();
         setProgressData(progressData);
 
         // Fetch tasks done data
-        const tasksDoneResponse = await fetch(`/dashboard/${userId}/api/getTasksDoneData`);
+        const tasksDoneResponse = await fetch(`/api/dashboard/${userId}/getTasksDoneData`);
         if (!tasksDoneResponse.ok) throw new Error("Failed to fetch tasks done data");
 
         const tasksDoneData = await tasksDoneResponse.json();
         setTasksDoneData(tasksDoneData);
 
         // Fetch tasks history data
-        const tasksHistoryResponse = await fetch(`/dashboard/${userId}/api/getTasksHistory`);
+        const tasksHistoryResponse = await fetch(`/api/dashboard/${userId}/getTasksHistory`);
         if (!tasksHistoryResponse.ok) throw new Error("Failed to fetch tasks history");
 
         const tasksHistoryData = await tasksHistoryResponse.json();
@@ -96,7 +96,7 @@ const Dashboard = () => {
 
   const handleAddSkill = () => {
     setSkillDialogBoxOpen(false);
-    fetch(`/dashboard/${userId}/api/addSkill`, {
+    fetch(`/api/dashboard/${userId}/addSkill`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -124,7 +124,7 @@ const Dashboard = () => {
       });
   };
   const handleUpdateGoal = () => {
-    fetch(`/dashboard/${userId}/api/updateGoal`, {
+    fetch(`/api/dashboard/${userId}/updateGoal`, {
       method: 'POST',
       headers: {
         "Content-Type": "application/json",
@@ -145,7 +145,7 @@ const Dashboard = () => {
       });
   }
   const handleDeleteGoal = () => {
-    fetch(`/dashboard/${userId}/api/deleteGoal`, {
+    fetch(`/api/dashboard/${userId}/deleteGoal`, {
       method: 'DELETE',
       headers: {
         "Content-Type": "application/json",
@@ -172,7 +172,7 @@ const Dashboard = () => {
 
   const handleDeleteSkill = () => {
     setDeleteDialogBoxOpen(false);
-    fetch(`/dashboard/${userId}/api/deleteSkill`, {
+    fetch(`/api/dashboard/${userId}/deleteSkill`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -250,7 +250,7 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-950 text-red-300">
         <div className="text-center">
-          <p className="text-lg font-medium">⚠️ Sorry, some error occurred. Consider refreshing!</p>
+          <p className="text-lg font-medium">⚠️ Sorry, some error occurred. Consider refreshing! {error}</p>
         </div>
       </div>
     );

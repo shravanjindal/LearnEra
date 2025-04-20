@@ -111,7 +111,7 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
   const fetchTask = async () => {
     setFetchState({ loading: true, error: null });
     try {
-      const response = await fetch(`/tasks/api/generateTask`, {
+      const response = await fetch(`/api/tasks/generateTask`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ skill, topic, description }),
@@ -140,7 +140,7 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
     if (!taskData) return;
 
     try {
-      const response = await fetch(`/tasks/${userId}/api/updateUserProgress`, {
+      const response = await fetch(`/api/tasks/${userId}/updateUserProgress`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

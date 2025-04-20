@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FormData } from '@/app/onboarding/utils';
+import { FormData } from '@/utils/utils';
 
 type SkillsProps = {
   formData: FormData;
@@ -14,23 +14,23 @@ const Skills = ({
   setFormData,
   skillsOptions,
 }: SkillsProps) => {
-  const [customSkillInputs, setCustomSkillInputs] = useState<{ [key: string]: string }>({});
+  const [customSkillInput, setCustomSkillInput] = useState('');
 
-  const handleAddCustomSkill = (key: string) => {
-    const input = customSkillInputs[key]?.trim();
+  const handleAddCustomSkill = () => {
+    const input = customSkillInput.trim();
     if (input && !formData.skills.includes(input)) {
       setFormData({
         ...formData,
         skills: [...formData.skills, input],
       });
     }
-    setCustomSkillInputs((prev) => ({ ...prev, [key]: '' }));
+    setCustomSkillInput('');
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, key: string) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      handleAddCustomSkill(key);
+      handleAddCustomSkill();
     }
   };
 
@@ -65,52 +65,33 @@ const Skills = ({
                     </label>
                   ))}
                 </div>
-
-                {/* Custom input under each valid purpose */}
-                <input
-                  type="text"
-                  placeholder="Add custom skill"
-                  value={customSkillInputs[purpose] || ''}
-                  onChange={(e) =>
-                    setCustomSkillInputs((prev) => ({ ...prev, [purpose]: e.target.value }))
-                  }
-                  onKeyDown={(e) => handleKeyDown(e, purpose)}
-                  className="w-full mt-2 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-                />
-
-                <button
-                  type="button"
-                  onClick={() => handleAddCustomSkill(purpose)}
-                  className="mt-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
-                >
-                  Add Skill
-                </button>
               </div>
             );
           })
         ) : (
-          // Only one box when all are empty
-          <div>
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Add Skills You Want to Learn</h3>
-            <input
-              type="text"
-              placeholder="Eg. Web development, DSA, etc."
-              value={customSkillInputs['general'] || ''}
-              onChange={(e) =>
-                setCustomSkillInputs((prev) => ({ ...prev, general: e.target.value }))
-              }
-              onKeyDown={(e) => handleKeyDown(e, 'general')}
-              className="w-full mt-2 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-            />
-            <button
-              type="button"
-              onClick={() => handleAddCustomSkill('general')}
-              className="mt-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
-            >
-              Add Skill
-            </button>
-          </div>
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            Add Skills You Want to Learn
+          </h3>
         )}
+
+        {/* Global Custom Skill Input */}
+        <div>
+          <input
+            type="text"
+            placeholder="Add custom skill"
+            value={customSkillInput}
+            onChange={(e) => setCustomSkillInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="w-full mt-2 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+          />
+          <button
+            type="button"
+            onClick={handleAddCustomSkill}
+            className="mt-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+          >
+            Add Skill
+          </button>
+        </div>
       </div>
     </div>
   );

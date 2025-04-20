@@ -47,7 +47,7 @@ const Chatbot = ({ userId, progressData }: ChatbotProps) => {
   const fetchBotReply = async (userMessage: string, isInitial = false) => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/dashboard/${userId}/api/botResponse`, {
+      const res = await fetch(`/api/dashboard/${userId}/botResponse`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
