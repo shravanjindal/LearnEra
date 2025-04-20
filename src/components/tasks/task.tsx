@@ -1,8 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { Button } from "../ui/button";
 import StarRatings from "react-star-ratings";
+import { RotateCcw } from "lucide-react";
+import CodeBlock from "./CodeBlock";
+import { nanoid } from 'nanoid'; 
+
 interface TaskData {
   _id: string;
   skill: string;
@@ -22,6 +26,8 @@ interface TaskProps {
   taskData: TaskData | null;
   setTaskData: (data: TaskData | null) => void;
 }
+
+
 const renderMarkdown = (content: string) => (
   <ReactMarkdown
     components={{
@@ -55,16 +61,21 @@ const renderMarkdown = (content: string) => (
           {...props}
         />
       ),
-      code: ({ className, children, ...props }) => {
+      code: ({ className, children, node, ...props }) => {
         const isInline = !className;
-        return isInline ? (
-          <code className="bg-gray-800 text-blue-300 px-1 rounded font-mono">{children}</code>
-        ) : (
-          <pre className="bg-black text-gray-100 p-4 rounded-md mb-4 overflow-x-auto text-sm font-mono">
-            <code className={className}>{children}</code>
-          </pre>
-        );
-      },
+      
+        if (isInline) {
+          return (
+            <code className="bg-gray-800 text-blue-300 px-1 rounded font-mono">
+              {children}
+            </code>
+          );
+        }
+      
+        const blockKey = node?.position?.start?.line?.toString() ?? nanoid();
+      
+        return <CodeBlock className={className} blockKey={blockKey}>{children}</CodeBlock>;
+      },    
       img: ({ node, ...props }) => (
         <img className="rounded-md mb-4 border border-gray-700" {...props} />
       ),
@@ -85,6 +96,8 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
   const [showFeedback, setShowFeedback] = useState(false);
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState("");
+  const renderedMarkdown = useMemo(
+    () => taskData ? renderMarkdown(taskData.content) : null, [taskData ? taskData.content : null]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -94,27 +107,27 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
     return () => clearInterval(timer);
   }, []);
 
+  const fetchTask = async () => {
+    setFetchState({ loading: true, error: null });
+    try {
+      const response = await fetch(`/tasks/api/generateTask`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ skill, topic, description }),
+      });
+
+      if (!response.ok) throw new Error("Failed to generate task content");
+
+      const data = await response.json();
+      setTaskData(data);
+    } catch (err) {
+      setFetchState({ loading: false, error: "Failed to load task. Please try again later." });
+    } finally {
+      setFetchState((prevState) => ({ ...prevState, loading: false }));
+    }
+  };
+  
   useEffect(() => {
-    const fetchTask = async () => {
-      setFetchState({ loading: true, error: null });
-      try {
-        const response = await fetch(`/tasks/api/generateTask`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ skill, topic, description }),
-        });
-
-        if (!response.ok) throw new Error("Failed to generate task content");
-
-        const data = await response.json();
-        setTaskData(data);
-      } catch (err) {
-        setFetchState({ loading: false, error: "Failed to load task. Please try again later." });
-      } finally {
-        setFetchState((prevState) => ({ ...prevState, loading: false }));
-      }
-    };
-
     fetchTask();
   }, [userId, skill, topic, description]);
 
@@ -154,12 +167,17 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
 
   return (
     <div className="mt-8 bg-[#1e1e1e] rounded-lg shadow-lg transition-all duration-300 hover:shadow-2xl">
-  <div className="flex justify-between items-center mb-4">
-    <h2 className="text-2xl font-bold text-gray-100">📌 {taskData?.topic || topic}</h2>
-    <p className="text-lg font-semibold text-gray-400">
-      ⏳ Time: {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, "0")}
-    </p>
-  </div>
+    <div className="flex justify-between items-center mb-4">
+      <h2 className="text-2xl font-bold text-gray-100">📌 {taskData?.topic || topic}</h2>
+      <Button
+        className="bg-[#2f2f2f] hover:bg-blue-700 text-white p-2 rounded transition duration-300"
+        onClick={fetchTask}>
+          <RotateCcw size={20} />
+        </Button>
+      <p className="text-lg font-semibold text-gray-400">
+        ⏳ Time: {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, "0")}
+      </p>
+    </div>
 
   {fetchState.loading && (
     <div className="flex justify-center items-center py-12">
@@ -186,7 +204,7 @@ const Task: React.FC<TaskProps> = ({ userId, skill, topic, description, taskData
       transition={{ duration: 0.5 }}
       className="p-5 bg-[#2f2f2f] rounded-lg text-gray-300 border border-[#2c2c2c]"
     >
-      {renderMarkdown(taskData.content)}
+      {renderedMarkdown}
 
       <hr className="border-[#333] my-5" />
       {renderMarkdown(taskData.task)}

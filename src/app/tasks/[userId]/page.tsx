@@ -114,7 +114,7 @@ const TasksPage: React.FC = () => {
       </div>
 
       {/* Chatbot Section */}
-      <div className="hidden lg:block w-full lg:w-1/3 bg-[#1e1e1e] p-4 md:p-6 rounded-xl shadow-md">
+      <div className="hidden lg:block w-full lg:w-1/3 bg-[#121212] p-4 md:p-6 rounded-xl shadow-md">
         <TutorChatbot
           messages={messages}
           input={input}
