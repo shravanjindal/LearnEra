@@ -78,12 +78,16 @@ export async function POST(req: NextRequest) {
         - Educational platforms (e.g., freeCodeCamp.org, GeeksforGeeks, W3Schools, CSS-Tricks)
         - Developer blogs (e.g., Dev.to, Medium posts by recognized authors or organizations)
         - Research papers (e.g., arXiv.org, Google Scholar, academic.edu)
-      - All links must be **real, accessible, and directly relevant** to the topic.
-      - Do **not** include: YouTube links, fake or placeholder links, login-required content, or unrelated material.
+        - Do **not** include: YouTube links, fake or placeholder links, login-required content, or unrelated material.
     
     The goal is for the user to read the content to understand the topic, complete the task to apply their knowledge, and use the links for deeper exploration.
     
-    You must return only JSON without any additional text or explanation. The JSON should be well-structured and valid. If you cannot generate a task, return an empty JSON object {}. The JSON should not contain any new lines or extra spaces. The JSON should be parsable without any errors. The JSON should be in a single line without any indentation. There should be no bad escaping characters. I will parse this text using json.parse() in JavaScript. It should have good UI when wrapped in a <ReactMarkdown> component.`;
+    You must return only JSON without any additional text or explanation. 
+    The JSON should be well-structured and valid. If you cannot generate a task, return an empty JSON object {}. 
+    The JSON should not contain any new lines or extra spaces. 
+    The JSON should be parsable without any errors. The JSON should be in a single line without any indentation. 
+    There should be no bad escaping characters. I will parse this text using json.parse() in JavaScript. 
+    It should have good UI when wrapped in a <ReactMarkdown> component.`;
     
 
 
