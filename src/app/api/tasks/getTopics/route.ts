@@ -34,7 +34,9 @@ export async function POST(req: NextRequest) {
     2. Be achievable, incremental next steps
     3. Give priority to user feedback and ratings (e.g., suggest reinforcement for low-rated or negatively-reviewed topics)
     4. Follow a natural progression toward the user's learning goal
-
+    5. Be relevant to the user's current role and aspirations
+    6. Next topics should cover different concepts of the skill and not just focus on specific areas.
+    7. Also generate a topic which is not related to the recently completed tasks but is a fundamental concept of the skill.
     Note : If no tasks are available in recently completed task,then start from the very basic fundamental concepts.
 
     
