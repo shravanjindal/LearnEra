@@ -1,33 +1,30 @@
-import { NextRequest, NextResponse } from 'next/server';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+// middleware.ts
+import { NextRequest, NextResponse } from 'next/server'
+import jwt from 'jsonwebtoken'
 
-export function middleware(req: NextRequest) {
-  const token = req.cookies.get('token')?.value; // Retrieve token from cookie
-  console.log('Token from cookie:', token);
-
-  if (token) {
-    try {
-      console.log('Token exists, verifying...');
-      
-      // Explicitly type the decoded token as JwtPayload
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret') as JwtPayload;
-      console.log('Decoded token:', decoded);
-
-      // Safely access userId from decoded token
-      const userId = decoded.userId;
-
-      // If token is valid, redirect to the user's dashboard
-      return NextResponse.redirect(new URL(`/dashboard/${userId}`, req.url));
-    } catch (err) {
-      console.error('Token verification failed:', err);
-
-      // If the token is invalid or expired, clear the cookie and redirect to login
-      const response = NextResponse.next();
-      response.cookies.delete('token'); // Delete the invalid token cookie
-      return response;
+export function middleware(request: NextRequest) {
+    const token = request.cookies.get('token')?.value
+    if (!token) {
+        // No token, proceed as usual
+        return NextResponse.next()
     }
-  }
 
-  // If there's no token, proceed as normal (let the user visit the login page)
-  return NextResponse.next();
+    try {
+        // Decode token (replace 'your-secret' with your actual secret if verifying)
+        const decoded = jwt.decode(token) as { userId?: string }
+        if (decoded?.userId) {
+            const url = new URL(`/dashboard/${decoded.userId}`, request.url)
+            return NextResponse.redirect(url)
+        }
+    } catch (error) {
+        console.error('Invalid token:', error)
+        // If token is invalid, proceed without redirect
+    }
+
+    return NextResponse.next()
+}
+
+// Define which paths this middleware runs on
+export const config = {
+    matcher: '/',
 }

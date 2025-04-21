@@ -4,7 +4,6 @@ import { User } from '@/models/user';
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
   try {
@@ -27,16 +26,18 @@ export async function POST(request: Request) {
       { expiresIn: '1h' }
     );
 
-    const cookieStore = await cookies();
-    cookieStore.set('token', token, {
+    const response = NextResponse.json({ message: 'Login successful', user }, { status: 200 });
+    response.cookies.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 60 * 60,
+      maxAge: 60 * 60 * 24 * 7,
       path: '/',
     });
+    
+      
+    return response;
 
-    return NextResponse.json({ message: 'Login successful', user }, { status: 200 });
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json({ message: 'Failed to login' }, { status: 500 });

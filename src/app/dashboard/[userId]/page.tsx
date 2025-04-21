@@ -1,4 +1,5 @@
 "use client";
+// app/dashboard/[userId]
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Navbar from "@/components/dashboard/Navbar";
@@ -226,8 +227,10 @@ const Dashboard = () => {
     setAmount(isNaN(totalAmount) ? "0" : totalAmount.toFixed(2));
   };
   const handleLogout = async () => {
-    await fetch('/api/logout', { method: 'POST' });
-    window.location.href = '/'; // redirect to login page
+    const response = await fetch('/api/logout', { method: 'POST' });
+    console.log(response)
+    if (response.ok)
+      window.location.href = '/'; // redirect to login page
   };
   
   if (loading)

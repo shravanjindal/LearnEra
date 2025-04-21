@@ -45,12 +45,12 @@ const LoginPage = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(formData),
-          credentials: "include", // Include credentials in the request
+          credentials: "include",
         });
   
         if (response.ok) {
           const data = await response.json();
-          alert("Logged in!");
+          // alert("Logged in!");
           router.push(`/dashboard/${data.user._id}`);
         } else {
           const errorData = await response.json();

@@ -20,7 +20,7 @@ type PieChartCardProps = {
 const getRandomColor = () => {
   const letters = "0123456789ABCDEF";
   let color = "#";
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 4; i++) {
     color += letters[Math.floor(Math.random() * 16)];
   }
   // Set alpha (opacity) to 0.7 (you can adjust this value as needed)
@@ -84,11 +84,11 @@ const PieChartCard = ({ tasksDoneData }: PieChartCardProps) => {
                 cursor={{ fill: "transparent" }}
               />
 
-              <Legend
+              {/* <Legend
                 wrapperStyle={{ color: "#F3F4F6", paddingTop: "10px" }}
                 iconType="circle"
                 iconSize={10}
-              />
+              /> */}
             </PieChart>
           )}
         </ResponsiveContainer>
