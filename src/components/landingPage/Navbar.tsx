@@ -28,11 +28,11 @@ const Navbar: NextPage = () => {
                 Premium
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link href="/explore" className="hover:text-blue-200 transition-colors duration-200">
                 Explore
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link href="/product" className="hover:text-blue-200 transition-colors duration-200">
                 Product
