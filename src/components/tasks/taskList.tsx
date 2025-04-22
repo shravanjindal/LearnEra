@@ -1,94 +1,34 @@
-"use client"
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface Topic {
+  skill: string;
   topic: string;
   description: string;
   prerequisites?: string[];
 }
 
 interface TaskListProps {
-  skill: string;
+  topics: Topic[];
+  loading: boolean;
+  error: string | null;
+  onRetry: () => void;
   onGoBack: () => void;
-  userId: string;
-  onStartTask: (task: { topic: string; description: string }) => void; // New prop
+  onStartTask: (task: { skill:string; topic: string; description: string }) => void;
 }
 
-const TaskList = ({ skill, onGoBack, userId, onStartTask }: TaskListProps) => {
-  const [topics, setTopics] = useState<Topic[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchUserData();
-  }, [skill, userId]);
-
-  const fetchUserData = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const userResponse = await fetch(`/api/users/${userId}`);
-      if (!userResponse.ok) throw new Error("Failed to fetch user data");
-      const userData = await userResponse.json();
-
-      const skillTracker = userData.skillTracker.find((tracker: any) => tracker.skill.toLowerCase() === skill.toLowerCase());
-      if (!skillTracker) throw new Error("Skill tracker not found");
-
-      const skillTrackerResponse = await fetch(`/api/skilltrackers/${skillTracker._id}`);
-      if (!skillTrackerResponse.ok) throw new Error("Failed to fetch skill tracker");
-
-      const skillTrackerData = await skillTrackerResponse.json();
-
-      // Get the last 5 tasksDone, sorted by most recent endTime
-      const last5TasksDone = skillTrackerData.tasksDone
-        .sort((a: any, b: any) => new Date(b.endTime).getTime() - new Date(a.endTime).getTime())
-        .slice(0, 5)
-        .map((element: any) => ({
-          feedback: element.feedback || "no user feedback",
-          rating: element.rating || "no rating",
-          taskDone: element.taskId?.task ?? "Task not found",
-          topic: element.topic,
-        }));
-
-      // console.log(userSkillProgress);
-      fetchTopics(last5TasksDone, userData.purpose, userData.currentRole);
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      setError("Failed to load user data. Please try again later.");
-      setLoading(false);
-    }
-  };
-
-  const fetchTopics = async (tasksDone: string[], purpose: string[], currentRole: string) => {
-    try {
-      const response = await fetch(`/api/tasks/getTopics`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_data: { skill: skill.toLowerCase(), tasksDone, purpose, currentRole},
-        }),
-      });
-      if (!response.ok) throw new Error("Failed to fetch topics");
-      const data = await response.json();
-      setTopics(data.generatedTopics || []);
-    } catch (error) {
-      console.error("Error fetching topics:", error);
-      setError("Failed to load tasks. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+const TaskList = ({ topics, loading, error, onRetry,onGoBack, onStartTask }: TaskListProps) => {
   return (
     <div className="mt-8">
       <div className="flex items-center gap-3 mb-4">
         <Button className="bg-gray-700 text-white px-4 py-2 flex items-center gap-2" onClick={onGoBack}>
           <ArrowLeft size={18} /> Go Back
         </Button>
-        <h2 className="text-2xl font-bold">🎯 Available Tasks for {skill}</h2>
+        <h2 className="text-2xl font-bold">🎯 Available Topics</h2>
       </div>
 
       {loading && (
@@ -100,7 +40,7 @@ const TaskList = ({ skill, onGoBack, userId, onStartTask }: TaskListProps) => {
       {error && (
         <div className="bg-red-900/30 border border-red-500 rounded-lg p-4 mb-6">
           <p className="text-red-200">{error}</p>
-          <Button className="mt-3 bg-red-600 hover:bg-red-700 text-white" onClick={fetchUserData}>
+          <Button className="mt-3 bg-red-600 hover:bg-red-700 text-white" onClick={onRetry}>
             Try Again
           </Button>
         </div>
@@ -108,9 +48,9 @@ const TaskList = ({ skill, onGoBack, userId, onStartTask }: TaskListProps) => {
 
       {!loading && !error && topics.length === 0 && (
         <div className="bg-gray-800 rounded-lg p-6 text-center">
-          <p className="text-gray-300 mb-4">No tasks available for this skill yet.</p>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={fetchUserData}>
-            Refresh Tasks
+          <p className="text-gray-300 mb-4">No topics available yet.</p>
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={onRetry}>
+            Refresh Topics
           </Button>
         </div>
       )}
@@ -138,13 +78,15 @@ const TaskList = ({ skill, onGoBack, userId, onStartTask }: TaskListProps) => {
                 </div>
               )}
 
-              <Button className="mt-auto bg-black w-full text-white" onClick={() => onStartTask({ topic: topic.topic, description: topic.description })}>
+              <Button
+                className="mt-auto bg-black w-full text-white"
+                onClick={() => onStartTask({ skill: topic.skill, topic: topic.topic, description: topic.description })}
+              >
                 Start Now
-              </Button>          
+              </Button>
             </motion.div>
           ))}
         </div>
-
       )}
     </div>
   );

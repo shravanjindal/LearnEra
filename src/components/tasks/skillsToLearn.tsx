@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import {
@@ -10,6 +12,9 @@ import {
   TooltipProps,
 } from "recharts";
 import { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
+import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
 
 type Skill = {
   idx: string;
@@ -29,16 +34,30 @@ const CustomTooltip = ({ active, payload }: TooltipProps<ValueType, NameType>) =
   return null;
 };
 
-const SkillsToLearn = ({
-  skills,
-  onSelectSkill,
-}: {
-  skills: Skill[];
-  onSelectSkill: (skill: string) => void;
-}) => {
+const SkillsToLearn = ({ skills }: { skills: Skill[] }) => {
+  const router = useRouter();
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(()=>{
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserId(storedUserId);
+      console.log("User ID from localStorage:", storedUserId);
+    } else {
+      router.push("/login");
+    }
+  },[])
+  const handleLearnMore = (trackerId: string) => {
+    router.push(`/skilltrackers/${trackerId}/tasks`);
+  };
+
   return (
     <div className="mt-8">
-      <h2 className="text-2xl font-bold text-white mb-4">📚 Skills to Learn</h2>
+      <div className="flex gap-3">
+        <Button className="bg-gray-700 text-white px-4 py-2 flex items-center gap-2" onClick={()=>{router.push(`/dashboard/${userId}`)}}>
+            <ArrowLeft size={18} /> Dashboard
+        </Button>
+        <h2 className="text-2xl font-bold text-white mb-4">📚 Skills to Learn</h2>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {skills.map((skill, index) => (
           <motion.div
@@ -52,19 +71,19 @@ const SkillsToLearn = ({
               <BarChart
                 data={skill.data.map((d) => ({
                   ...d,
-                  displayTasks: d.tasks === 0 ? 0.1 : d.tasks, // Raise bar height for 0 tasks
-                  actualTasks: d.tasks, // Store actual task count for tooltip
+                  displayTasks: d.tasks === 0 ? 0.1 : d.tasks,
+                  actualTasks: d.tasks,
                 }))}
               >
                 <XAxis dataKey="day" stroke="#ccc" />
-                <YAxis domain={[0, "dataMax + 1"]} hide /> {/* Ensures bars are never at 0 */}
+                <YAxis domain={[0, "dataMax + 1"]} hide />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="displayTasks" fill="#3b82f6" radius={[5, 5, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
             <Button
               className="mt-3 bg-black text-white w-full rounded-lg py-2 hover:bg-gray-700 transition-colors"
-              onClick={() => onSelectSkill(skill.skill)}
+              onClick={() => handleLearnMore(skill.idx)}
             >
               Learn More
             </Button>

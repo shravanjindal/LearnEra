@@ -274,12 +274,18 @@ const Dashboard = () => {
       {!verified && (
         <div className="bg-[#ff9900] text-black p-4 text-center">
           <p>
-            Your email is not verified. Please verify to unlock full access.
+            We have sent an email for email verification. Please verify it to unlock full access.
             <button
               onClick={handleResendVerification}
               className="ml-4 bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
             >
               Resend Email
+            </button>
+            <button
+              onClick={handleResendVerification}
+              className="ml-4 bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
+            >
+              Change Email
             </button>
           </p>
         </div>
@@ -350,6 +356,12 @@ const Dashboard = () => {
                 className="block text-gray-300 hover:text-white transition duration-200"
               >
                 Set Goals
+              </button>
+              <button
+                onClick={handleLogout}
+                className="block text-gray-300 hover:text-white transition duration-200"
+              >
+                Logout
               </button>
             </div>
           </div>

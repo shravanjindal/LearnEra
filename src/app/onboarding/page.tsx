@@ -65,6 +65,7 @@ const OnboardingPage = () => {
       
           if (data.user && data.user._id) {
             alert(`Onboarding complete! ${data.message}`);
+            localStorage.setItem("userId", data.user._id);
             router.push(`/dashboard/${data.user._id}`); // Redirect to the dashboard with user ID
           } else {
             setButtonText("Submit");

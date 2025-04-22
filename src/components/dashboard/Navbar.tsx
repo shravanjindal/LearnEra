@@ -31,7 +31,7 @@ const Navbar = ({ user, setSkillDialogBoxOpen, setGoalDialogBoxOpen, setSidebarO
         {/* Navbar Links and Actions */}
         <div className="hidden md:flex items-center space-x-8">
           {user.verified && (
-            <Link href={`/tasks/${user.id}`} className="text-gray-300 hover:text-white transition duration-200">
+            <Link href={`/dashboard/${user.id}/skilltrackers`} className="text-gray-300 hover:text-white transition duration-200">
               Tasks
             </Link>
           )}
@@ -49,17 +49,17 @@ const Navbar = ({ user, setSkillDialogBoxOpen, setGoalDialogBoxOpen, setSidebarO
           >
             Set Goals
           </button>
-          <button
+          {/* <button
             onClick={() => setPriceDialogBoxOpen(true)}
             className="text-gray-300 hover:text-white transition duration-200"
           >
             Buy Tokens
-          </button>
+          </button> */}
         </div>
         
         {/* User Name */}
         <button
-        onClick={() => setProfileBoxOpen(prev => !prev)}
+        onClick={() => setProfileBoxOpen(true)}
         >
         <div className="hidden lg:block flex items-center space-x-4">
           <span className="text-md text-white"><b>{user.name}</b></span>

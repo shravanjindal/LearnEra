@@ -1,34 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
+import dbConnect from "@/lib/dbConnect";
+import { SkillTracker } from "@/models/skillTracker";
 const GROQ_API_KEY = process.env.GROQ_API_KEY_FREE;
 const GROQ_INFERENCE = process.env.GROQ_INFERENCE;
 const GROQ_MODEL = process.env.GROQ_MODEL;
 
-interface TasksDone {
-  taskDone : string;
-  topic : string;
-  rating : number;
-  feedback : string;
-}
-interface UserData {
-  skill: string;
-  tasksDone: TasksDone[];
-  purpose: string[];
-  currentRole : string;
-}
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest,
+  context: { params: Promise<{ trackerId: string }> }
+) {
   try {
-    const { user_data }: { user_data: UserData } = await req.json();
+    const { trackerId } = await context.params;
+    await dbConnect();
+    const tracker_data = await SkillTracker.findById(trackerId)
+    .populate("userId") // Populate the top-level userId
+    .populate({
+      path: "tasksDone.taskId", // Go into tasksDone array and populate taskId
+      select: "task",           // Only select the 'task' field from Task
+    });
+    
     const inputText = `You are a personalized learning assistant helping users progress in their skill development journey.
 
     Based on the following user profile:
-    - Learning Goal: ${user_data.purpose.join(", ")}
-    - User's Role : ${user_data.currentRole}
+    - Learning Goal: ${tracker_data.userId.purpose.join(", ")}
+    - User's Role : ${tracker_data.userId.currentRole}
     ------------------------------------------------------------------------------------------------------------------------------------------
     - Recently Completed Tasks:
-    ${user_data.tasksDone.map((task, i) => `  #${i + 1}). """${task.taskDone}""" \n\n (Topic: ${task.topic}, Rating: ${task.rating}, Feedback: "${task.feedback}")`).join('\n############################################################################################')}
+    ${tracker_data.tasksDone
+  .slice(-5) // get last 5 tasks
+  .map((task:any, i:number) => 
+    `#${i + 1}). """${task.taskDone || ''}"""\n\n(Topic: ${task.topic}, Rating: ${task.rating}, Feedback: "${task.feedback}")`
+  )
+  .join('\n############################################################################################')}
     ------------------------------------------------------------------------------------------------------------------------------------------
-    Your task is to suggest 3-4 next logical sub-topics for user to upskill in the field of " ${user_data.skill}". The recommendations should:
+    Your task is to suggest 3-4 next logical sub-topics for user to upskill in the field of " ${tracker_data.skill}". The recommendations should:
     
     1. Build directly on recently completed topics
     2. Be achievable, incremental next steps
@@ -43,6 +48,7 @@ export async function POST(req: NextRequest) {
     Respond with a JSON array in the following format:
     [
       {
+        "skill": ${tracker_data.skill},
         "topic": "Sub-topic Name",
         "description": "What this topic covers and how it supports the user's goal",
         "prerequisites": ["List any specific prerequisite concepts, or leave empty if none"]

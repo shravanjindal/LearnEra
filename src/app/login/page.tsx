@@ -50,7 +50,7 @@ const LoginPage = () => {
   
         if (response.ok) {
           const data = await response.json();
-          // alert("Logged in!");
+          localStorage.setItem("userId", data.user._id);
           router.push(`/dashboard/${data.user._id}`);
         } else {
           const errorData = await response.json();

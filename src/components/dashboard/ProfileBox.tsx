@@ -1,5 +1,6 @@
+"use client";
 import React from "react";
-
+import { useEffect, useRef } from "react";
 interface ProfileBoxProps {
   user: {
     name: string;
@@ -17,15 +18,31 @@ const ProfileBox: React.FC<ProfileBoxProps> = ({
   setPriceDialogBoxOpen,
     setProfileBoxOpen,
 }) => {
+  const boxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (boxRef.current && !boxRef.current.contains(event.target as Node)) {
+        setProfileBoxOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setProfileBoxOpen]);
   return (
-    <div className="absolute top-16 right-6 w-80 p-6 bg-[#1e1e1e] rounded-2xl shadow-xl z-50 border border-[#2c2c2c]">
+    <div
+    ref={boxRef}
+     className="absolute top-16 right-6 w-80 p-6 bg-[#1e1e1e] rounded-2xl shadow-xl z-50 border border-[#2c2c2c]">
         <h3 className="text-xl font-semibold text-white mb-4">User Profile</h3>
         <p className="text-sm text-gray-400 mb-2">User ID: <span className="text-gray-300">{user.email}</span></p>
         <p className="text-sm text-gray-400 mb-6">
             Token Balance: <span className="font-semibold text-white">{user.tokenBalance || 0}</span>
         </p>
 
-        <div className="flex justify-between items-center mb-4">
+        {/* <div className="flex justify-between items-center mb-4">
             <button
             onClick={() => {
                 setProfileBoxOpen(false)
@@ -36,7 +53,7 @@ const ProfileBox: React.FC<ProfileBoxProps> = ({
             Buy More Tokens
             </button>
             <span className="text-xs text-gray-500">Upgrade your account!</span>
-        </div>
+        </div> */}
 
         <button
             onClick={handleLogout}
