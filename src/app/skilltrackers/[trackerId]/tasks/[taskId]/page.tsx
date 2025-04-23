@@ -25,11 +25,6 @@ interface TaskData {
   endTime: string;
 }
 
-interface TaskProps {
-  trackerId: string;
-  taskId: string;
-}
-
 const renderMarkdown = (content: string) => (
   <ReactMarkdown
     components={{
@@ -57,7 +52,7 @@ const renderMarkdown = (content: string) => (
   </ReactMarkdown>
 );
 
-const Task: React.FC<TaskProps> = () => {
+const Task = () => {
   const { trackerId,taskId } = useParams();
 
   const [taskData, setTaskData] = useState<TaskData | null>(null);
