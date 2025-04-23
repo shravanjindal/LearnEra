@@ -58,6 +58,7 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, onRegenerate })
   const [showFeedback, setShowFeedback] = useState(false);
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const renderedMarkdown = useMemo(() => taskData ? renderMarkdown(taskData.content) : null, [taskData?.content]);
 
@@ -67,7 +68,12 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, onRegenerate })
   }, []);
 
   const handleFeedbackSubmit = async () => {
-    if (!taskData) return;
+    setIsSubmitting(true);
+    if (!taskData) {
+      setIsSubmitting(false);
+      return;
+    }
+    
 
     try {
       const response = await fetch(`/api/skilltrackers/${taskData.trackerId}/updateProgress`, {
@@ -89,6 +95,7 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, onRegenerate })
       console.log("Progress updated.");
     } catch (error) {
       console.error("Error submitting feedback:", error);
+      setIsSubmitting(false);
     }
 
     setShowFeedback(false);
@@ -176,12 +183,17 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, onRegenerate })
               >
                 Cancel
               </button>
-              <button
-                onClick={handleFeedbackSubmit}
-                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
-              >
-                Submit
-              </button>
+              {(!isSubmitting) && (
+                <button
+                  onClick={handleFeedbackSubmit}
+                  disabled={isSubmitting}
+                  className={`px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm ${
+                    isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  Submit
+                </button>
+              )}
             </div>
           </div>
         </div>
