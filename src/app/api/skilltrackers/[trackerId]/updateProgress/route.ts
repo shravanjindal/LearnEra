@@ -2,6 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { SkillTracker } from "@/models/skillTracker";
 import dbConnect from "@/lib/dbConnect";
 
+// Function to calculate elapsed time in minutes
+const calculateProgress = (startTime: string, endTime: string) => {
+  const start = new Date(startTime).getTime();
+  const end = new Date(endTime).getTime();
+  const elapsed = end - start; // milliseconds
+  const minutes = Math.floor(elapsed / 60000);
+  const seconds = Math.floor((elapsed % 60000) / 1000);
+
+  const totalMinutes = 100 * 60; // 100 hours = 6000 minutes
+  const rawProgress = (minutes + seconds / 60) / totalMinutes;
+  const progress = Number(Math.min(Math.max(rawProgress, 0)*100, 1).toFixed(1));
+  return progress;
+};
+
 export async function POST(req: NextRequest, context : { params: Promise<{ trackerId: string }> }) {
   try {
     const { trackerId }= await context.params;
@@ -18,8 +32,8 @@ export async function POST(req: NextRequest, context : { params: Promise<{ track
     if (!tracker) {
       return NextResponse.json({ error: "Tracker not found" }, { status: 404 });
     }
-
-    tracker.progress += 0.5;
+    const progress = calculateProgress(startTime, endTime)
+    tracker.progress += progress;
     tracker.tasksDone.push({
       topic,
       taskId,
