@@ -30,7 +30,7 @@ interface TaskProps {
   taskId: string;
 }
 
-export const renderMarkdown = (content: string) => (
+const renderMarkdown = (content: string) => (
   <ReactMarkdown
     components={{
       h1: (props) => <h1 className="text-4xl font-extrabold text-blue-400 mb-4 border-b border-gray-700 pb-1" {...props} />,
