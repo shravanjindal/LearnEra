@@ -24,7 +24,7 @@ const Dashboard = () => {
   const [streakData, setStreakData] = useState<{ date: Date; submissions: number }[]>([]);
   const [progressData, setProgressData] = useState<{ skill: string; progress: number }[]>([]);
   const [tasksDoneData, setTasksDoneData] = useState<{ skill: string; tasksDone: number }[]>([]);
-  const [tasksHistoryData, setTasksHistoryData] = useState<{ date: Date; topic: string; skill: string; }[]>([]);
+  const [tasksHistoryData, setTasksHistoryData] = useState<{ trackerId:string, taskId:string, date: Date; topic: string; skill: string; }[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [skillDialogBoxOpen, setSkillDialogBoxOpen] = useState(false);
@@ -226,6 +226,9 @@ const Dashboard = () => {
     const totalAmount = parseFloat(tokens) * parseFloat(price);
     setAmount(isNaN(totalAmount) ? "0" : totalAmount.toFixed(2));
   };
+  const handleTaskClick = (trackerId: string, taskId:string) => {
+    window.location.href = `/skilltrackers/${trackerId}/tasks/${taskId}`;
+  }
   const handleLogout = async () => {
     const response = await fetch('/api/logout', { method: 'POST' });
     console.log(response)
@@ -375,7 +378,7 @@ const Dashboard = () => {
             <BadgesCard user={{ badges: user.badges }} />
           </div>
           <StreakGrid streakData={streakData} />
-          <TaskHistory taskHistory={tasksHistoryData} />
+          <TaskHistory taskHistory={tasksHistoryData} handleTaskClick={handleTaskClick}/>
         </div>
       </div>
       

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { User } from "@/models/user";
-import { ISkillTracker } from "@/models/skillTracker";
 export async function GET(
   req: Request,
   context: { params: Promise<{ userId: string }> }
@@ -19,16 +18,17 @@ export async function GET(
     }
 
     // Extract tasks from all skillTrackers
-    const tasks: { date: Date; topic: string; skill: string }[] = [];
+    const tasks: { trackerId:string, taskId:string,date: Date; topic: string; skill: string }[] = [];
 
      // Extract tasks from tasksDone array across all skillTrackers
      user.skillTracker.forEach((tracker: any) => {
         const skill = tracker.skill;
-  
+        const trackerId = tracker._id._id;
         if (tracker._id?.tasksDone) {
           tracker._id.tasksDone.forEach((task: any) => {
             if (task.topic && task.endTime) {
-              tasks.push({ date: task.endTime, topic: task.topic, skill });
+              // console.log(trackerId)
+              tasks.push({ trackerId, taskId: task.taskId,date: task.endTime, topic: task.topic, skill });
             }
           });
         }

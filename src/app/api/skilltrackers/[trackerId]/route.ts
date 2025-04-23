@@ -14,6 +14,7 @@ export async function GET(req: NextRequest, context: { params: Promise<{ tracker
     if (!skillTracker) {
       return NextResponse.json({ error: "Skill tracker not found" }, { status: 404 });
     }
+    console.log("Skill tracker fetched:", skillTracker);
     return NextResponse.json(skillTracker);
   } catch (error) {
     console.error("Error fetching skill tracker:", error);
