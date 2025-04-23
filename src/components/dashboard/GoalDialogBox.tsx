@@ -31,19 +31,22 @@ const GoalDialogBox: React.FC<GoalDialogBoxProps> = ({
           Here are your current goals:
         </p>
 
-        <ul className="list-disc pl-5 mb-4 space-y-2">
-          {user.purpose.map((item, index) => (
-            <li key={index} className="flex items-center justify-between text-blue-200">
-              <span>{item}</span>
-              <button
-                onClick={() => handleDeleteGoal(index)}
-                className="ml-2 text-red-400 hover:text-red-600"
-              >
-                <Trash2 size={16} />
-              </button>
-            </li>
-          ))}
-        </ul>
+        <div className="max-h-40 overflow-y-auto mb-4 pr-1">
+          <ul className="list-disc pl-5 space-y-2">
+            {user.purpose.map((item, index) => (
+              <li key={index} className="flex items-center justify-between text-blue-200">
+                <span>{item}</span>
+                <button
+                  onClick={() => handleDeleteGoal(index)}
+                  className="ml-2 text-red-400 hover:text-red-600"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
 
         <input
           type="text"
