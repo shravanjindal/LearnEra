@@ -125,6 +125,7 @@ const Dashboard = () => {
       });
   };
   const handleUpdateGoal = () => {
+    setGoalDialogBoxOpen(false);
     fetch(`/api/dashboard/${userId}/updateGoal`, {
       method: 'POST',
       headers: {
@@ -138,6 +139,13 @@ const Dashboard = () => {
       })
       .then(() => {
         setGoalDialogBoxOpen(false);
+      })
+      .then(()=>{
+        if (user) {
+          const updatedUser = Object.assign(Object.create(Object.getPrototypeOf(user)), user);
+          updatedUser.purpose = [...user.purpose, goal];
+          setUser(updatedUser);
+        }
         setGoal("");
       })
       .catch((err) => {
@@ -145,13 +153,14 @@ const Dashboard = () => {
         setError(err.message);
       });
   }
-  const handleDeleteGoal = () => {
+  const handleDeleteGoal = (index : number) => {
+    setGoalDialogBoxOpen(false);
     fetch(`/api/dashboard/${userId}/deleteGoal`, {
       method: 'DELETE',
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ goal }),
+      body: JSON.stringify({ index }),
     })
       .then((response) => {
         if (!response.ok) throw new Error("Failed to delete goal");
@@ -160,6 +169,15 @@ const Dashboard = () => {
       .then(() => {
         setGoalDialogBoxOpen(false);
         setGoal("");
+        
+      })
+      .then(()=>{
+        if (user) {
+          const updatedUser = Object.assign(Object.create(Object.getPrototypeOf(user)), user);
+          updatedUser.purpose = user.purpose.filter((_, i) => i !== index);
+          setUser(updatedUser);
+        }      
+        
       })
       .catch((err) => {
         console.error(err);

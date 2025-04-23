@@ -7,17 +7,14 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ user
 
   try {
     const { userId } = await context.params;
-    const { goal } = await req.json(); // expecting { goal: "goal to delete" }
+    const { goalIdx } = await req.json(); // expecting { goal: "goal to delete" }
 
-    if (!goal || typeof goal !== "string") {
-      return NextResponse.json({ error: "Invalid goal input" }, { status: 400 });
+
+    const user = await User.findByIdAndUpdate(userId);
+    if (user) {
+      user.purpose.splice(goalIdx, 1);
+      await user.save();
     }
-
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { $pull: { purpose: goal } },
-      { new: true }
-    );
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -25,6 +22,7 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ user
 
     return NextResponse.json({ message: "Goal removed successfully", user });
   } catch (error) {
+    console.log(error)
     console.error("Error deleting goal:", error);
     return NextResponse.json({ error: "Failed to delete goal" }, { status: 500 });
   }
