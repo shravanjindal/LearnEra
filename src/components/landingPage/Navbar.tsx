@@ -44,7 +44,7 @@ const Navbar: NextPage = () => {
               </Link>
             </li>
           </ul>
-          <Link href='/onboarding'><Button className="mt-1 hover:bg-blue-200 hove:scale-105 bg-white text-blue-500 transition-colors duration-200">
+          <Link href='/welcome'><Button className="mt-1 hover:bg-blue-200 hove:scale-105 bg-white text-blue-500 transition-colors duration-200">
             Get Started
           </Button></Link>
           
@@ -95,7 +95,7 @@ const Navbar: NextPage = () => {
               </Link>
             </li>
             </ul>
-            <Link href='/onboarding'><Button className="mb-7 mt-1 hover:bg-blue-200 hove:scale-105 bg-white text-blue-500 transition-colors duration-200">
+            <Link href='/welcome'><Button className="mb-7 mt-1 hover:bg-blue-200 hove:scale-105 bg-white text-blue-500 transition-colors duration-200">
             Get Started
           </Button></Link>
           </div>

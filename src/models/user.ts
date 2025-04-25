@@ -3,10 +3,9 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IUser extends Document {
   name: string;
   email: string;
+  purpose: string[];
   password: string;
   currentRole: string;
-  purpose: string[];
-  skills: string[];
   skillTracker: {
     skill:string;
     _id: mongoose.Schema.Types.ObjectId;
@@ -23,6 +22,9 @@ const userSchema: Schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  purpose: [{
+    type: String,
+  }],
   email: {
     type: String,
     required: true,
@@ -41,18 +43,6 @@ const userSchema: Schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  purpose: [
-    {
-      type: String,
-      required: true,
-    }
-  ],
-  skills: [
-    {
-      type: String,
-      required: true,
-    }
-  ],
   skillTracker:[
     {
       skill:{

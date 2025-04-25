@@ -16,13 +16,13 @@ export async function POST(req: Request, context: { params: Promise<{ userId: st
       return NextResponse.json({ error: "Skill is required" }, { status: 400 });
     }
 
-    const skillExists = user.skills.includes(skill.toLowerCase());
+    const skillExists = user.skillTracker.includes({ skill : skill.toLowerCase() });
     if (skillExists) {
       return NextResponse.json({ message: "Skill already exists" }, { status: 200 });
     }
 
     // Add to skills array
-    user.skills.push(skill.toLowerCase());
+    // user.skills.push(skill.toLowerCase());
 
     // Create a new SkillTracker entry
     const newSkillTracker = await SkillTracker.create({

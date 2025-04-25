@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface ISkillTracker extends Document {
   userId: mongoose.Schema.Types.ObjectId;
   skill: string;
+  learningGoal: string;
   tasksDone: {
     topic: string;
     taskId: mongoose.Schema.Types.ObjectId;
@@ -20,6 +21,7 @@ export interface ISkillTracker extends Document {
     rating: number;
     score: number;
   }[];
+  currentLevel: string;
   progress: number;
 }
 
@@ -30,7 +32,9 @@ const skillTrackerSchema: Schema = new mongoose.Schema({
   },
   skill: {
     type: String,
-    required: true,
+  },
+  learningGoal: {
+    type: String,
   },
   tasksDone: [
     {
@@ -88,6 +92,10 @@ const skillTrackerSchema: Schema = new mongoose.Schema({
       },
     },
   ],
+  currentLevel : {
+    type: String,
+    default: "Beginner",
+  },
   progress: {
     type: Number,
     min: 0,

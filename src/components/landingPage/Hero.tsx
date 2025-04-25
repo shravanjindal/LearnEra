@@ -66,7 +66,7 @@ const Hero: NextPage = () => {
         >
           Live Demo
         </motion.button></Link>
-        <Link href="/onboarding">
+        <Link href="/welcome">
         <motion.button
           className="mx-3 px-8 py-3 bg-white text-blue-600 font-bold rounded-lg shadow-md hover:bg-gray-200"
           variants={buttonVariants}

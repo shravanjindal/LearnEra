@@ -11,6 +11,9 @@ export async function GET(req: NextRequest,
 ) {
   try {
     const { trackerId } = await context.params;
+    if (trackerId == "welcome") {
+      return NextResponse.json({ generatedTopics: [] });
+    }
     await dbConnect();
     const tracker_data = await SkillTracker.findById(trackerId)
     .populate("userId") // Populate the top-level userId
@@ -109,31 +112,9 @@ export async function GET(req: NextRequest,
       return NextResponse.json({ error: "Could not parse JSON output" }, { status: 500 });
     }
 
-    // if (!generatedTopics || Object.keys(generatedTopics).length === 0) {
-    //   return NextResponse.json({ error: "Empty topics generated" }, { status: 500 });
-    // }
-    // Extract JSON from the response
-    // const jsonRegex = /\{\s*"topic"\s*:\s*"[^"]*"\s*,\s*"description"\s*:\s*"[^"]*"\s*,\s*"prerequisites"\s*:\s*\[\s*"[^"]*"\s*(?:,\s*"[^"]*")*\s*\]\s*\}/g;
-    // const matches = [...generatedText.matchAll(jsonRegex)];
-
-    // if (!matches || matches.length === 0) {
-    //   console.error("No JSON pattern found in the generated text");
-    //   return NextResponse.json({ error: "No topics generated" }, { status: 500 });
-    // }
-    // matches.shift();
-    // console.log("Extracted JSON String:", matches);
-
-    // try {
-    //   const topics = matches.map(match => JSON.parse(match));
-    //   // console.log("Extracted Topics:", topics);
-    //   return NextResponse.json({ topics });
-    // } catch (error) {
-    //   console.error("Error parsing JSON:", error);
-    //   console.error("Sanitized JSON String:", matches);
-    //   return NextResponse.json({ error: "Failed to parse JSON" }, { status: 500 });
-    // }
   } catch (error) {
     console.error("Error fetching topics:", error);
     return NextResponse.json({ error: "Failed to generate topics" }, { status: 500 });
   }
 }
+

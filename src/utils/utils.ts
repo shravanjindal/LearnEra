@@ -1,3 +1,28 @@
+import mongoose from "mongoose";
+
+interface ISkillTracker {
+    skill: string;
+    learningGoal: string;
+    tasksDone: {
+      taskId:string;
+      topic: string;
+      startTime: Date;
+      endTime: Date;
+      feedback: string;
+      rating: number;
+    }[];
+    currentLevel: string;
+    progress: number;
+  }
+  
+export type SignupData = {
+    name : string;
+    email : string;
+    password : string;
+    currentRole : string;
+    skillTracker : ISkillTracker[];
+    badges : string[];
+}
 export type FormData = {
     name: string;
     email: string;

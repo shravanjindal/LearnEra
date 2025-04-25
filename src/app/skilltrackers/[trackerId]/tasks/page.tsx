@@ -8,6 +8,7 @@ import Task from "@/components/tasks/task";
 import TutorChatbot, { Message } from "@/components/tasks/TutorChatbot";
 import Chatbot from "@/components/tasks/SmallScreenBot";
 import { useRouter } from "next/navigation";
+import { SignupData } from "@/utils/utils";
 interface SelectedTask {
   skill: string;
   topic: string;
@@ -24,7 +25,11 @@ interface TaskData {
   links: string[];
   createdAt: Date;
 }
-
+interface UserData {
+  learningGoal : string;
+  role:string,
+  currentLevel:string;
+}
 interface Topic {
   skill: string;
   topic: string;
@@ -42,7 +47,9 @@ const TopicsAndTaskPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [welcome, setWelcome] = useState(false);
   const [input, setInput] = useState("");
+  const [user, setUser] = useState<UserData >();
   const router = useRouter();
 
   useEffect(() => {
@@ -50,10 +57,12 @@ const TopicsAndTaskPage: React.FC = () => {
     if (storedUserId) {
       setUserId(storedUserId);
       console.log("User ID from localStorage:", storedUserId);
-    } else {
-      router.push("/login");
     }
   },[]);
+  useEffect(() => {
+    console.log("Topics updated:", topics);
+  }, [topics]);
+  
   const fetchTopics = async () => {
     setLoading(true);
     setError(null);
@@ -61,7 +70,16 @@ const TopicsAndTaskPage: React.FC = () => {
       const response = await fetch(`/api/skilltrackers/${trackerId}/getTopics`);
       if (!response.ok) throw new Error("Failed to fetch topics");
       const data = await response.json();
-      setTopics(data.generatedTopics || []);
+      if (data.generatedTopics.length === 0) {
+        const topicsData = localStorage.getItem("topicsData");
+        const jsonTopics = await JSON.parse(topicsData || "[]");
+        const welcomingData = localStorage.getItem("welcomingData");
+        const jsonUserData = await JSON.parse(welcomingData || "{}");
+        setUser(jsonUserData)
+        setTopics(jsonTopics.generatedTopics);
+        setWelcome(true);
+      } else
+        setTopics(data.generatedTopics || []);
     } catch (err) {
       console.error("Error fetching topics:", err);
       setError("Failed to load topics. Please try again.");
@@ -89,12 +107,14 @@ const TopicsAndTaskPage: React.FC = () => {
     } catch (err) {
       console.error("Error fetching task:", err);
       setError("Failed to load task. Please try again later.");
-      setLoading(false);
+      setLoading(true);
     }
   };
 
   useEffect(() => {
-    fetchTopics();
+    if (trackerId) {
+      fetchTopics();
+    }
   }, [trackerId]);
 
   const handleStartTask = async (task: SelectedTask) => {
@@ -119,7 +139,26 @@ const TopicsAndTaskPage: React.FC = () => {
       setMessages((prev) => [...prev, { sender: "bot", text: "Oops! Something went wrong." }]);
     }
   };
-
+  const handleSignUp = async (data : SignupData) => {
+    
+    try {
+      const res = await fetch(`/api/signup` ,{
+        method : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      const res_data = await res.json();
+      if (res.ok) {
+        localStorage.setItem("userId", res_data.user);
+        router.push('/');
+      } else {
+        console.error('Signup failed:', res_data.message);
+      }
+    } catch(err) {
+      console.error(err);
+    }
+    
+  }
   useEffect(() => {
     if (selectedTask) {
       setMessages([
@@ -130,7 +169,7 @@ const TopicsAndTaskPage: React.FC = () => {
       ]);
     }
   }, [selectedTask]);
-
+  
   return (
     <div className="min-h-screen bg-[#121212] text-gray-100 overflow-x-hidden p-8">
       {!selectedTask ? (
@@ -141,7 +180,9 @@ const TopicsAndTaskPage: React.FC = () => {
             loading={loading}
             error={error}
             onRetry={fetchTopics}
-            onGoBack={() => {
+            onGoBack={welcome ? () => {
+              router.push(`/onboarding`);
+            }:() => {
               router.push(`/dashboard/${userId}/skilltrackers`);
             }}
             onStartTask={handleStartTask}
@@ -153,9 +194,13 @@ const TopicsAndTaskPage: React.FC = () => {
             <Task
               taskData={taskData}
               isLoading={loading}
+              isWelcome={welcome}
               error={error}
-              
               onRegenerate={() => fetchTaskData(selectedTask.skill, selectedTask.topic, selectedTask.description)}
+              handleSignUp={handleSignUp}
+              learningGoal={user?.learningGoal || "learner"}
+              currentLevel={user?.currentLevel || "beginner"}
+              currentRole={user?.role || "student"}
             />
           </div>
           <div className="hidden lg:block w-full lg:w-1/3 bg-[#121212] p-4 md:p-6 rounded-xl shadow-md">

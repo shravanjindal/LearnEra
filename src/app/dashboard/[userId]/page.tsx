@@ -18,6 +18,7 @@ import { buyTokens } from "@/lib/buyTokens";
 import Link from "next/link";  
 import BuyTokensDialogBox from "@/components/dashboard/BuyTokensDialogBox";
 import ProfileBox from "@/components/dashboard/ProfileBox";
+import EmailVerificationPopup from "@/components/dashboard/EmailVerificationPopUp";
 const Dashboard = () => {
   const { userId } = useParams();
   const [user, setUser] = useState<(IUser & { _id: string }) | null>(null);
@@ -53,6 +54,7 @@ const Dashboard = () => {
 
         const data = await response.json();
         setUser(data);
+        localStorage.setItem("userData", data._id);
 
         setVerified(data.isVerified);
         // Fetch the streak data after user data
@@ -292,25 +294,12 @@ const Dashboard = () => {
   return (
     
     <div className="min-h-screen bg-[#121212] text-gray-100 overflow-x-hidden">
-      {!verified && (
-        <div className="bg-[#ff9900] text-black p-4 text-center">
-          <p>
-            We have sent an email for email verification. Please verify it to unlock full access.
-            <button
-              onClick={handleResendVerification}
-              className="ml-4 bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
-            >
-              Resend Email
-            </button>
-            <button
-              onClick={handleResendVerification}
-              className="ml-4 bg-black text-white px-3 py-1 rounded hover:bg-gray-800"
-            >
-              Change Email
-            </button>
-          </p>
-        </div>
-      )}
+      
+      <EmailVerificationPopup
+      verified={verified}
+      handleResendVerification={handleResendVerification}
+    />
+
       
       <Navbar
         user={{ name: user.name, id: user._id.toString(), verified }}
@@ -350,14 +339,12 @@ const Dashboard = () => {
             <UserSkillBars skillProgressData={progressData} onDeleteSkill={onDeleteSkill} />
 
             <div className="lg:hidden md:hidden sm:block mt-6 space-y-4">
-              {user.isVerified && (
-                <Link
-                  href={`/tasks/${user._id}`}
-                  className="block text-gray-300 hover:text-white transition duration-200"
-                >
-                  Tasks
-                </Link>
-              )}
+              <Link
+                href={`/tasks/${user._id}`}
+                className="block text-gray-300 hover:text-white transition duration-200"
+              >
+                Tasks
+              </Link>
 
               <button
                 onClick={() => {

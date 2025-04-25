@@ -30,11 +30,11 @@ const Navbar = ({ user, setSkillDialogBoxOpen, setGoalDialogBoxOpen, setSidebarO
         </button>
         {/* Navbar Links and Actions */}
         <div className="hidden md:flex items-center space-x-8">
-          {user.verified && (
-            <Link href={`/dashboard/${user.id}/skilltrackers`} className="text-gray-300 hover:text-white transition duration-200">
-              Tasks
-            </Link>
-          )}
+          
+          <Link href={`/dashboard/${user.id}/skilltrackers`} className="text-gray-300 hover:text-white transition duration-200">
+            Tasks
+          </Link>
+          
           
           <button
             onClick={() => setSkillDialogBoxOpen(true)}

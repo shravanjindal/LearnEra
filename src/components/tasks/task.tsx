@@ -7,6 +7,7 @@ import { RotateCcw } from "lucide-react";
 import CodeBlock from "./CodeBlock";
 import { nanoid } from 'nanoid';
 import LinkCards from "./LinkCards";
+import { SignupData } from "@/utils/utils";
 
 interface TaskData {
   trackerId: string;
@@ -20,10 +21,15 @@ interface TaskData {
 }
 
 interface TaskProps {
+  currentRole : string;
+  currentLevel: string;
+  learningGoal: string;
   taskData: TaskData | null;
   isLoading: boolean;
+  isWelcome: boolean;
   error: string | null;
   onRegenerate?: () => void;
+  handleSignUp: (data : SignupData) => void;
 }
 
 export const renderMarkdown = (content: string) => (
@@ -53,13 +59,16 @@ export const renderMarkdown = (content: string) => (
   </ReactMarkdown>
 );
 
-const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, onRegenerate }) => {
+const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRegenerate, handleSignUp, currentRole, currentLevel, learningGoal }) => {
   const [time, setTime] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showSignUp, setShowSignUp] = useState(false);
   const renderedMarkdown = useMemo(() => taskData ? renderMarkdown(taskData.content) : null, [taskData?.content]);
 
   useEffect(() => {
@@ -73,33 +82,42 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, onRegenerate })
       setIsSubmitting(false);
       return;
     }
-    
+
 
     try {
-      const response = await fetch(`/api/skilltrackers/${taskData.trackerId}/updateProgress`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          taskId: taskData._id,
-          startTime: taskData.createdAt,
-          endTime: Date.now(),
-          feedback,
-          rating,
-          topic: taskData.topic,
-          skill: taskData.skill,
-        }),
-      });
+      if (!isWelcome) {
+        const response = await fetch(`/api/skilltrackers/${taskData.trackerId}/updateProgress`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            taskId: taskData._id,
+            startTime: taskData.createdAt,
+            endTime: Date.now(),
+            feedback,
+            rating,
+            topic: taskData.topic,
+            skill: taskData.skill,
+          }),
+        });
 
-      if (!response.ok) throw new Error("Failed to update user progress");
+        if (!response.ok) throw new Error("Failed to update user progress");
 
-      console.log("Progress updated.");
+        console.log("Progress updated.");
+        setShowFeedback(false);
+        window.location.reload();
+      } else {
+        setIsSubmitting(false);
+        setShowFeedback(false);
+        setShowSignUp(true);
+      }
     } catch (error) {
       console.error("Error submitting feedback:", error);
       setIsSubmitting(false);
+      setShowFeedback(false);
+
     }
 
-    setShowFeedback(false);
-    window.location.reload();
+    
   };
 
   return (
@@ -187,9 +205,8 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, onRegenerate })
                 <button
                   onClick={handleFeedbackSubmit}
                   disabled={isSubmitting}
-                  className={`px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm ${
-                    isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
+                  className={`px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                 >
                   Submit
                 </button>
@@ -198,6 +215,86 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, onRegenerate })
           </div>
         </div>
       )}
+      {showSignUp && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm p-4">
+          <div className="bg-[#1e1e1e] text-white w-full max-w-md p-6 rounded-lg border border-[#2c2c2c]">
+            <h2 className="text-xl font-semibold text-blue-400 mb-4">🔐 Oh shoot! I forgot to ask your name !?</h2>
+
+            <div className="mb-4">
+              <label className="block text-gray-300 mb-2">Your Name?</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full p-3 rounded-md bg-[#2a2a2a] text-white border border-[#3a3a3a]"
+                placeholder="Enter username"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-300 mb-2">Your Email?</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-3 rounded-md bg-[#2a2a2a] text-white border border-[#3a3a3a]"
+                placeholder="Enter email"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-300 mb-2">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-3 rounded-md bg-[#2a2a2a] text-white border border-[#3a3a3a]"
+                placeholder="Enter password"
+              />
+            </div>
+
+            <div className="flex justify-end space-x-3 mt-4">
+              <button
+                onClick={() => setShowSignUp(false)}
+                className="px-5 py-2 bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white rounded-md text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={ () => {
+                  if (!taskData) return;
+                  handleSignUp({
+                  name: username,
+                  email,
+                  password,
+                  currentRole,
+                  skillTracker: [{
+                    skill: taskData.skill,
+                    learningGoal,
+                    tasksDone: [{
+                      topic: taskData.topic,
+                      taskId: taskData._id,
+                      startTime: taskData.createdAt,
+                      endTime: new Date(Date.now()),
+                      feedback,
+                      rating,
+                    }],
+                    currentLevel,
+                    progress: 1
+                  }],    
+                  badges: ["newbie"]
+                })}}
+                disabled={isSubmitting}
+                className={`px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+              >
+                Sign Up
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

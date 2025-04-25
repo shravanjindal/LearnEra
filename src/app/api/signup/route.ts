@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import { SkillTracker } from '@/models/skillTracker';
 import mongoose from 'mongoose';
 import nodemailer from 'nodemailer'; // Import Nodemailer
-import { FormData } from '@/utils/utils';
+import { SignupData } from '@/utils/utils';
 // Function to send verification email
 const sendVerificationEmail = async (userEmail: string, verificationToken: string) => {
   const transporter = nodemailer.createTransport({
@@ -54,7 +54,7 @@ const sendVerificationEmail = async (userEmail: string, verificationToken: strin
 
 export async function POST(request: Request) {
   try {
-    const userDetails: FormData = await request.json();
+    const userDetails: SignupData = await request.json();
 
     // Make sure the database is connected before proceeding
     await dbConnect();
@@ -69,10 +69,10 @@ export async function POST(request: Request) {
     }
 
     const userSkillTrackers = await Promise.all(
-      userDetails.skills.map(async (skill) => {
-        const newTracker = new SkillTracker({});
+      userDetails.skillTracker.map(async (tracker) => {
+        const newTracker = new SkillTracker(tracker);
         const instance = await newTracker.save();
-        return { skill , _id: instance._id };
+        return { skill:tracker.skill , _id: instance._id };
       })
     );
 
@@ -80,15 +80,15 @@ export async function POST(request: Request) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(userDetails.password, salt);
     
-    // Remove the skills from userDetails
-    const { skills, ...userDetailsWithoutSkills } = userDetails;
 
     // Create a new user
     const newUser = new User({
-      ...userDetailsWithoutSkills,
+      ...userDetails,
       password: hashedPassword,
       skillTracker: userSkillTrackers,
     });
+
+    
 
     // Generate JWT token for the user
     const token = jwt.sign(
@@ -119,10 +119,19 @@ export async function POST(request: Request) {
       })
     );
 
-    return NextResponse.json(
-      { message: 'Please check your email to verify your account.', user: newUser, token },
-      { status: 201 }
-    );
+    // return NextResponse.json(
+    //   { message: 'Please check your email to verify your account.', user: newUser, token },
+    //   { status: 201 }
+    // );
+    const response = NextResponse.json({ message: 'Please check your email to verify your account.', user: addedUser._id }, { status: 200 });
+    response.cookies.set('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 24 * 7,
+      path: '/',
+    });
+    return response;
   } catch (error) {
     console.error('Error creating user:', error);
 

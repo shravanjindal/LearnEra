@@ -18,7 +18,6 @@ export async function GET(request: NextRequest) {
       password: 'hashedpassword',
       currentRole: faker.person.jobTitle(),
       purpose: ['Learning', 'Development'],
-      skills,
       skillTracker: [], // Initialize as empty
       badges: ['Beginner'],
     });
