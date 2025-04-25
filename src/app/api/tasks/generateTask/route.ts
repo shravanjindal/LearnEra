@@ -1,3 +1,4 @@
+import dbConnect from "@/lib/dbConnect";
 import { Task } from "@/models/task";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -115,7 +116,7 @@ export async function POST(req: NextRequest) {
     if (!generatedTask || Object.keys(generatedTask).length === 0) {
       return NextResponse.json({ error: "Empty task generated" }, { status: 500 });
     }
-
+    dbConnect();
     const newTask = new Task({ ...generatedTask, skill });
     const saved = await newTask.save();
     return NextResponse.json(saved);

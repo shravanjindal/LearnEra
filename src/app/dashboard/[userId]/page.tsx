@@ -249,6 +249,30 @@ const Dashboard = () => {
   const handleTaskClick = (trackerId: string, taskId:string) => {
     window.location.href = `/skilltrackers/${trackerId}/tasks/${taskId}`;
   }
+  const handleChangeEmail = async (email: string) => {
+    try {
+      if(user) {
+        const updatedUser = Object.assign(Object.create(Object.getPrototypeOf(user)), user);
+        updatedUser.email = email;
+        setUser(updatedUser)
+      }
+      const resOne = await fetch(`/api/users/${userId}/updateEmail`, {
+        method:"POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      })
+      if (resOne.ok) {
+        const data = await resOne.json();
+        alert(data.message);
+        
+      }
+    } catch(err) {
+      console.error(err)
+    }
+  }
+  
   const handleLogout = async () => {
     const response = await fetch('/api/logout', { method: 'POST' });
     console.log(response)
@@ -296,6 +320,8 @@ const Dashboard = () => {
     <div className="min-h-screen bg-[#121212] text-gray-100 overflow-x-hidden">
       
       <EmailVerificationPopup
+      currentEmail={user.email}
+      handleChangeEmail={handleChangeEmail}
       verified={verified}
       handleResendVerification={handleResendVerification}
     />

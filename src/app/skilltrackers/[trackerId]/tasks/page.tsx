@@ -107,7 +107,7 @@ const TopicsAndTaskPage: React.FC = () => {
     } catch (err) {
       console.error("Error fetching task:", err);
       setError("Failed to load task. Please try again later.");
-      setLoading(true);
+      setLoading(false);
     }
   };
 

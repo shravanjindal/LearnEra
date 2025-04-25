@@ -33,6 +33,7 @@ const TaskHistory = ({ taskHistory, handleTaskClick }: TaskHistoryProps) => {
         <div className="space-y-2">
           {taskHistory.map((task, index) => (
            <button
+           key={index}
            onClick={() => handleTaskClick(task.trackerId, task.taskId)}
            className="w-full"
          >
