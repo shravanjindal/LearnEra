@@ -43,7 +43,7 @@ const Chatbot = ({ messages, input, setInput, handleSend }: ChatbotProps) => {
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`p-2 rounded-lg max-w-[80%] ${
+                className={`p-2 rounded-lg ${
                   msg.sender === "bot"
                     ? "bg-[#2a2a2a] text-left self-start"
                     : "bg-blue-600 text-right self-end"
