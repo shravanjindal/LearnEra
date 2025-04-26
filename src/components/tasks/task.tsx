@@ -215,6 +215,7 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRe
           </div>
         </div>
       )}
+      {/* Welcome Sign Up */}
       {showSignUp && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm p-4">
           <div className="bg-[#1e1e1e] text-white w-full max-w-md p-6 rounded-lg border border-[#2c2c2c]">

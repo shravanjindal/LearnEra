@@ -59,9 +59,6 @@ const TopicsAndTaskPage: React.FC = () => {
       console.log("User ID from localStorage:", storedUserId);
     }
   },[]);
-  useEffect(() => {
-    console.log("Topics updated:", topics);
-  }, [topics]);
   
   const fetchTopics = async () => {
     setLoading(true);
@@ -91,7 +88,7 @@ const TopicsAndTaskPage: React.FC = () => {
   const fetchTaskData = async (skill: string, topic: string, description: string) => {
     setError(null);
     setLoading(true);
-    // setTaskData(null);
+    setTaskData(null);
     try {
       const response = await fetch(`/api/tasks/generateTask`, {
         method: "POST",
@@ -112,9 +109,7 @@ const TopicsAndTaskPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (trackerId) {
       fetchTopics();
-    }
   }, [trackerId]);
 
   const handleStartTask = async (task: SelectedTask) => {
