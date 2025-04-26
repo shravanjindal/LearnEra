@@ -366,7 +366,7 @@ const Dashboard = () => {
 
             <div className="lg:hidden md:hidden sm:block mt-6 space-y-4">
               <Link
-                href={`/tasks/${user._id}`}
+                href={`/dashboard/${userId}/skilltrackers`}
                 className="block text-gray-300 hover:text-white transition duration-200"
               >
                 Tasks
