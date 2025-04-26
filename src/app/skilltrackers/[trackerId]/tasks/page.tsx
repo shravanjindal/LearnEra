@@ -171,9 +171,9 @@ const TopicsAndTaskPage: React.FC = () => {
   }, [selectedTask]);
   
   return (
-    <div className="min-h-screen bg-[#121212] text-gray-100 overflow-x-hidden p-8">
+    <div className="min-h-screen bg-[#121212] text-gray-100 overflow-x-hidden" >
       {!selectedTask ? (
-        <>
+        <div className="p-8">
           <TutorComments />
           <TaskList
             topics={topics}
@@ -187,9 +187,9 @@ const TopicsAndTaskPage: React.FC = () => {
             }}
             onStartTask={handleStartTask}
           />
-        </>
+        </div>
       ) : (
-        <div className="flex flex-col lg:flex-row p-4 md:p-6 overflow-y-auto scrollbar-custom space-y-4 lg:space-y-0 lg:space-x-6">
+        <div className="flex flex-col lg:flex-row md:p-6 overflow-y-auto scrollbar-custom space-y-4 lg:space-y-0 lg:space-x-6">
           <div className="w-full lg:w-[68vw] bg-[#1e1e1e] p-4 md:p-6 rounded-xl shadow-md">
             <Task
               taskData={taskData}
