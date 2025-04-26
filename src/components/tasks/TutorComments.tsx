@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const TutorComments = () => {
   const userSummary =
-    "🚀 Based on your activity, you've shown strong skills in Web Development and Machine Learning. Your problem-solving speed has improved by 15% over the last month! Keep up the great work!";
+    "🚀 Based on your activity, you're making impressive progress in your skill development! Your growth and consistency are really shining through — keep pushing forward and great things will follow!";
 
   return (
     <motion.div
