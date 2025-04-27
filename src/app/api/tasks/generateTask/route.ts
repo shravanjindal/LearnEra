@@ -76,11 +76,13 @@ export async function POST(req: NextRequest) {
       - Best practices or common pitfalls
       - Ask questions to engage the user
       - Use code blocks for examples
+
+      NOTE :
       - Use headings and bullet points for clarity
       - Use emojis to make it more engaging
-      - Use markdown syntax for formatting
-      - content should be atleast 500 words long.
-    
+      - Give proper spacing between lines
+
+      
     2. **Task** should be:
       - Practical and relevant to the topic
       - Clearly explained with expected outcomes
@@ -93,6 +95,10 @@ export async function POST(req: NextRequest) {
         - Educational platforms (e.g., freeCodeCamp.org, GeeksforGeeks, W3Schools, CSS-Tricks)
         - Developer blogs (e.g., Dev.to, Medium posts by recognized authors or organizations)
         - Research papers (e.g., arXiv.org, Google Scholar, academic.edu)
+        - Only include a link which is latest and clickable, and does point to not-found page.
+        - It is very important to not include links which are not playable or not specific.
+        - Do not include : redundant youtube links, login-required content, or unrelated material.
+
         - Do **not** include: YouTube links, fake or placeholder links, login-required content, or unrelated material.
     
     The goal is for the user to read the content to understand the topic, complete the task to apply their knowledge, and use the links for deeper exploration.
