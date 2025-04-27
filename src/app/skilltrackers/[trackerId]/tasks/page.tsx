@@ -191,31 +191,6 @@ const TopicsAndTaskPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#121212] text-gray-100 overflow-x-hidden" >
-      <div className="absolute inset-0 pointer-events-none">
-        {balls.map((ball) => (
-          <motion.div
-            key={ball.id}
-            className="absolute w-2 h-2 rounded-full"
-            style={{
-              backgroundColor: ball.backgroundColor,
-              top: "-5%",
-              left: ball.left,
-            }}
-            animate={{
-              y: ["0vh", "100vh"],
-              x: [0, ball.x],
-              rotate: [0, ball.rotate],
-              opacity: [1, 0],
-            }}
-            transition={{
-              duration: ball.duration,
-              ease: "easeOut",
-              delay: ball.delay,
-            }}
-          />
-        ))}
-      </div>
-
       {!selectedTask ? (
         <div className="p-8">
           <TutorComments />

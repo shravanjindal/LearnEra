@@ -8,6 +8,7 @@ import CodeBlock from "./CodeBlock";
 import { nanoid } from 'nanoid';
 import LinkCards from "./LinkCards";
 import { SignupData } from "@/utils/utils";
+import confetti from 'canvas-confetti';
 
 interface TaskData {
   trackerId: string;
@@ -58,6 +59,13 @@ export const renderMarkdown = (content: string) => (
     {content}
   </ReactMarkdown>
 );
+const triggerConfetti = () => {
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { x: 0.5, y: 0.5 }
+  });
+};
 
 const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRegenerate, handleSignUp, currentRole, currentLevel, learningGoal }) => {
   const [time, setTime] = useState(0);
@@ -81,6 +89,7 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRe
   }, []);
 
   const handleFeedbackSubmit = async () => {
+    triggerConfetti();
     setIsSubmitting(true);
     if (!taskData) {
       setIsSubmitting(false);
@@ -120,7 +129,6 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRe
       setShowFeedback(false);
 
     }
-
 
   };
 
@@ -270,6 +278,7 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRe
               <button
                 onClick={() => {
                   if (!taskData) return;
+                  triggerConfetti();
                   setIsSubmitting(true);
                   handleSignUp({
                     name: username,
