@@ -30,6 +30,7 @@ export default function OnboardingPage() {
   const [currentLevel, setCurrentLevel] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
+  const [customGoal, setCustomGoal] = useState<string>("");
 
   // Assuming you have role and skill data coming from a previous page
   const skill = params.get("skill") || "Coding"
@@ -51,7 +52,11 @@ const router = useRouter()
         const res = await fetch(`/api/skilltrackers/${trackerId}/onboard`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ skill, learningGoal, currentLevel }),
+          body: JSON.stringify({ 
+                skill, 
+                learningGoal: learningGoal === "other" ? customGoal : learningGoal,
+                currentLevel 
+            }),
         });
   
         const data = await res.json();
@@ -68,35 +73,9 @@ const router = useRouter()
   
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-violet-600 via-indigo-600 to-blue-700">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-white/10 backdrop-blur-sm"
-            style={{
-              width: Math.random() * 100 + 50,
-              height: Math.random() * 100 + 50,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              x: [0, Math.random() * 40 - 20],
-              y: [0, Math.random() * 40 - 20],
-            }}
-            transition={{
-              duration: Math.random() * 10 + 10,
-              repeat: Number.POSITIVE_INFINITY,
-              repeatType: "reverse",
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </div>
 
-      {/* Progress indicator */}
-      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-10">
-        <div className="flex items-center space-x-2">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 py-20">
+      <div className="flex items-center space-x-2 mb-10">
           {[1, 2, 3].map((stepNumber) => (
             <motion.div
               key={stepNumber}
@@ -115,9 +94,6 @@ const router = useRouter()
             />
           ))}
         </div>
-      </div>
-
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 py-20">
         <AnimatePresence mode="wait">
           {/* Welcome step */}
           {step === 1 && (
@@ -213,10 +189,20 @@ const router = useRouter()
                     </motion.div>
                   ))}
                 </div>
+                {learningGoal === "other" && (
+                    
+                    <textarea
+                        placeholder="Hmm! Then what's the reason to learn this? You can be creative! Like 'To impress my crush lol' or 'To get a job at Google'"
+                        value={customGoal}
+                        onChange={(e) => setCustomGoal(e.target.value)}
+                        className="w-full h-[100px] p-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 mb-4 resize-none"
+                        />
+
+                    )}
 
                 <Button
                   onClick={handleNext}
-                  disabled={!learningGoal}
+                  disabled={!learningGoal || (learningGoal === "other" && customGoal.trim() === "")}
                   className={cn(
                     "w-full py-6 text-lg font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2",
                     !learningGoal
@@ -350,43 +336,6 @@ const router = useRouter()
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* Confetti effect on completion */}
-        {showConfetti && (
-          <div className="absolute inset-0 pointer-events-none">
-            {Array.from({ length: 100 }).map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-2 h-2 rounded-full"
-                style={{
-                  backgroundColor: [
-                    "#FF5733",
-                    "#33FF57",
-                    "#3357FF",
-                    "#F3FF33",
-                    "#FF33F3",
-                    "#33FFF3",
-                    "#FF3333",
-                    "#33FF33",
-                  ][Math.floor(Math.random() * 8)],
-                  top: "-5%",
-                  left: `${Math.random() * 100}%`,
-                }}
-                animate={{
-                  y: ["0vh", "100vh"],
-                  x: [0, Math.random() * 100 - 50],
-                  rotate: [0, Math.random() * 360],
-                  opacity: [1, 0],
-                }}
-                transition={{
-                  duration: Math.random() * 2 + 1,
-                  ease: "easeOut",
-                  delay: Math.random() * 0.5,
-                }}
-              />
-            ))}
-          </div>
-        )}
       </div>
     </div>
   )
