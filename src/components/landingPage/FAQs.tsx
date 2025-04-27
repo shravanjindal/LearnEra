@@ -13,15 +13,15 @@ const FAQs: NextPage =() =>{
             </details>
             <details className="mb-6 bg-white rounded-lg shadow-lg p-6 transform transition-transform duration-300 hover:scale-105">
                 <summary className="font-bold text-blue-600 cursor-pointer text-xl">How do I get started?</summary>
-                <p className="mt-4 text-gray-700">Sign up for an account and choose a plan that fits your needs. You can start exploring our courses and tools immediately after registration.</p>
+                <p className="mt-4 text-gray-700">Just click Get started!. and the tutor will take care from there.</p>
             </details>
-            <details className="mb-6 bg-white rounded-lg shadow-lg p-6 transform transition-transform duration-300 hover:scale-105">
+            {/* <details className="mb-6 bg-white rounded-lg shadow-lg p-6 transform transition-transform duration-300 hover:scale-105">
                 <summary className="font-bold text-blue-600 cursor-pointer text-xl">Can I switch plans later?</summary>
                 <p className="mt-4 text-gray-700">Yes, you can upgrade or downgrade your plan at any time through your account settings.</p>
-            </details>
+            </details> */}
             <details className="mb-6 bg-white rounded-lg shadow-lg p-6 transform transition-transform duration-300 hover:scale-105">
                 <summary className="font-bold text-blue-600 cursor-pointer text-xl">Is there a free trial available?</summary>
-                <p className="mt-4 text-gray-700">We offer a 7-day free trial for new users to explore our platform and features before committing to a plan.</p>
+                <p className="mt-4 text-gray-700">We are currently offering free services only. Learn as much as you want.</p>
             </details>
         </div>
     </div>
