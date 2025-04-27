@@ -55,7 +55,7 @@ const Dashboard = () => {
         const data = await response.json();
         setUser(data);
         localStorage.setItem("userData", data._id);
-
+        localStorage.setItem("username", data.name);
         setVerified(data.isVerified);
         // Fetch the streak data after user data
         const streakResponse = await fetch(`/api/dashboard/${userId}/getStreakData`);

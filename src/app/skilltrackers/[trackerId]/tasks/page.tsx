@@ -50,6 +50,7 @@ const TopicsAndTaskPage: React.FC = () => {
   const [welcome, setWelcome] = useState(false);
   const [input, setInput] = useState("");
   const [user, setUser] = useState<UserData >();
+  const [username, setUsername] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -57,6 +58,11 @@ const TopicsAndTaskPage: React.FC = () => {
     if (storedUserId) {
       setUserId(storedUserId);
       console.log("User ID from localStorage:", storedUserId);
+    }
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+      console.log("Username from localStorage:", storedUsername);
     }
   },[]);
   
@@ -93,7 +99,7 @@ const TopicsAndTaskPage: React.FC = () => {
       const response = await fetch(`/api/tasks/generateTask`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ skill, topic, description }),
+        body: JSON.stringify({ username, skill, topic, description }),
       });
   
       if (!response.ok) throw new Error(`Failed to generate task: ${response.statusText}`);

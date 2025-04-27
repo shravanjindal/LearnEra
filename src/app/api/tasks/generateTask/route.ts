@@ -7,6 +7,7 @@ const GROQ_INFERENCE = process.env.GROQ_INFERENCE;
 const GROQ_MODEL = process.env.GROQ_MODEL;
 
 interface TaskInput {
+  username: string;
   skill: string;
   topic: string;
   description: string;
@@ -39,11 +40,12 @@ async function callGroq(messages: any[]) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { skill, topic, description }: TaskInput = await req.json();
+    const { username, skill, topic, description }: TaskInput = await req.json();
 
     // Step 1: Generate learning plan as free text
-    const inputPrompt = `The user wants to learn a specific programming concept. Please generate a structured learning unit based on their request:
-
+    const inputPrompt = `
+    The user wants to learn a specific concept. Generate a structured learning unit based on their request:
+    - **Username**: ${username}
     - **Skill**: ${skill}
     - **Topic**: ${topic}
     - **Description**: ${description}
@@ -63,18 +65,30 @@ export async function POST(req: NextRequest) {
     
     ### Guidelines:
     1. **Content** should be written in markdown and include:
+      - Conversation-friendly language
+      - A friendly tone
+      - content should be just a piece of theory.
+      - Like you can start with "Hey ${username ? username.split(" ")[0] : "there"}! Today, we're going to learn about..."
+      - Make more questions while explain the topic. You dont just have to list the theory, but to explain it.
       - A clear explanation of the concept (theory)
       - Syntax and common patterns
       - Real-world examples
       - Best practices or common pitfalls
+      - Ask questions to engage the user
+      - Use code blocks for examples
+      - Use headings and bullet points for clarity
+      - Use emojis to make it more engaging
+      - Use markdown syntax for formatting
+      - content should be atleast 500 words long.
     
     2. **Task** should be:
       - Practical and relevant to the topic
       - Clearly explained with expected outcomes
-      - Beginner-friendly unless specified otherwise
+      - User-friendly unless specified otherwise
+      - Provide hints or tips if necessary
     
     3. **Links**:
-      - Only include links to **reputable, publicly accessible sources** such as:
+        - Only include links to **reputable, publicly accessible sources** such as:
         - Official documentation (e.g., MDN, React Docs, Python Docs, Node.js Docs)
         - Educational platforms (e.g., freeCodeCamp.org, GeeksforGeeks, W3Schools, CSS-Tricks)
         - Developer blogs (e.g., Dev.to, Medium posts by recognized authors or organizations)
