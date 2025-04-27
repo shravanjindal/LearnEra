@@ -43,12 +43,12 @@ const Navbar = ({ user, setSkillDialogBoxOpen, setGoalDialogBoxOpen, setSidebarO
             Add Skill
           </button>
           
-          <button
+          {/* <button
             onClick={() => setGoalDialogBoxOpen(true)}
             className="text-gray-300 hover:text-white transition duration-200"
           >
             Set Goals
-          </button>
+          </button> */}
           {/* <button
             onClick={() => setPriceDialogBoxOpen(true)}
             className="text-gray-300 hover:text-white transition duration-200"

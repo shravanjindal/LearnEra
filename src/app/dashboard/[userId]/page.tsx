@@ -382,7 +382,7 @@ const Dashboard = () => {
                 Add Skill
               </button>
 
-              <button
+              {/* <button
                 onClick={() => {
                   setGoalDialogBoxOpen(true);
                   setSidebarOpen(false);
@@ -390,7 +390,7 @@ const Dashboard = () => {
                 className="block text-gray-300 hover:text-white transition duration-200"
               >
                 Set Goals
-              </button>
+              </button> */}
               <button
                 onClick={handleLogout}
                 className="block text-gray-300 hover:text-white transition duration-200"
