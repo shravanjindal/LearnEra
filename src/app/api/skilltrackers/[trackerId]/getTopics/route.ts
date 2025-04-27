@@ -25,8 +25,11 @@ export async function GET(req: NextRequest,
     const inputText = `You are a personalized learning assistant helping users progress in their skill development journey.
 
     Based on the following user profile:
-    - Learning Goal: ${tracker_data.userId.purpose.join(", ")}
-    - User's Role : ${tracker_data.userId.currentRole}
+    - User's profession : ${tracker_data.userId.currentRole}
+    - Skill: ${tracker_data.skill}
+    - Learning Goal: ${tracker_data.learningGoal}
+    - User's current skill level: ${tracker_data.currentLevel}
+    
     ------------------------------------------------------------------------------------------------------------------------------------------
     - Recently Completed Tasks:
     ${tracker_data.tasksDone

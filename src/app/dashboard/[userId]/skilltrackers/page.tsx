@@ -14,6 +14,7 @@ interface TaskData1 {
 interface SkillProgress {
   idx: string;
   skill: string;
+  isOnboarded: boolean;
   data: TaskData1[];
 }
 

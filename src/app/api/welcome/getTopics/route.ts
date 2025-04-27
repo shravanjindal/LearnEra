@@ -17,14 +17,14 @@ export async function POST(req: NextRequest) {
   - Learning Goal: ${learningGoal}
   - Current Level: ${currentLevel}
   
-  Your task is to suggest 3-4 next logical sub-topics for the user to upskill in the field of "${skill}". The recommendations should:
+  Your task is to suggest 3-4 logical sub-topics for the user to upskill in the field of "${skill}". The recommendations should:
   
   1. Build directly on the user's current level
   2. Be achievable, incremental next steps
   3. Follow a natural progression toward the learning goal
   4. Be relevant to the user's role and aspirations
   5. Cover different concepts of the skill (not just specific areas)
-  6. Include one fundamental topic that hasn't been covered yet
+  6. Include one fundamental topic also.
   
   Respond with a JSON array in the following format:
   [

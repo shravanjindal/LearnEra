@@ -18,27 +18,18 @@ export async function POST(req: Request, context: { params: Promise<{ userId: st
 
     const normalizedSkill = skill.toLowerCase();
 
-    const hasSkill = user.skills.some((s : string) => s.toLowerCase() === normalizedSkill);
-    if (!hasSkill) {
-    return NextResponse.json({ error: "Skill not found" }, { status: 404 });
-    }
-
-
-    // Remove from skills array (case-insensitive)
-    user.skills = user.skills.filter((s: string) => s.toLowerCase() !== normalizedSkill);
-
     // Remove corresponding SkillTracker entry
     const trackerEntry = user.skillTracker.find(
     (entry: { skill: string }) => entry.skill.toLowerCase() === normalizedSkill
     );
 
     if (trackerEntry) {
-    await SkillTracker.findByIdAndDelete(trackerEntry._id);
+      await SkillTracker.findByIdAndDelete(trackerEntry._id);
 
-    // Remove tracker reference from user
-    user.skillTracker = user.skillTracker.filter(
-        (entry: { skill: string }) => entry.skill.toLowerCase() !== normalizedSkill
-    );
+      // Remove tracker reference from user
+      user.skillTracker = user.skillTracker.filter(
+          (entry: { skill: string }) => entry.skill.toLowerCase() !== normalizedSkill
+      );
     }
 
 

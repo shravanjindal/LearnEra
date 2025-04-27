@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 type Skill = {
   idx: string;
   skill: string;
+  isOnboarded: boolean;
   data: { day: string; tasks: number }[];
 };
 
@@ -49,7 +50,9 @@ const SkillsToLearn = ({ skills }: { skills: Skill[] }) => {
   const handleLearnMore = (trackerId: string) => {
     router.push(`/skilltrackers/${trackerId}/tasks`);
   };
-
+  const handleOnboard = (trackerId: string, skill:string) => {
+    router.push(`/skilltrackers/${trackerId}/onboard?skill=${skill}`);
+  }
   return (
     <div className="mt-8">
       <div className="flex gap-3">
@@ -81,12 +84,20 @@ const SkillsToLearn = ({ skills }: { skills: Skill[] }) => {
                 <Bar dataKey="displayTasks" fill="#3b82f6" radius={[5, 5, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
-            <Button
+              {skill.isOnboarded ? (<Button
               className="mt-3 bg-black text-white w-full rounded-lg py-2 hover:bg-gray-700 transition-colors"
               onClick={() => handleLearnMore(skill.idx)}
             >
               Learn More
-            </Button>
+            </Button>) : (
+                <Button
+                className="mt-3 bg-black text-white w-full rounded-lg py-2 hover:bg-gray-700 transition-colors"
+                onClick={() => handleOnboard(skill.idx, skill.skill)}
+              >
+                Onboard Now
+              </Button>
+            )}
+            
           </motion.div>
         ))}
       </div>

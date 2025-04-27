@@ -9,7 +9,6 @@ import TutorChatbot, { Message } from "@/components/tasks/TutorChatbot";
 import Chatbot from "@/components/tasks/SmallScreenBot";
 import { useRouter } from "next/navigation";
 import { SignupData } from "@/utils/utils";
-import { motion } from "framer-motion";
 interface SelectedTask {
   skill: string;
   topic: string;

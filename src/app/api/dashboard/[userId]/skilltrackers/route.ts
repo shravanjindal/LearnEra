@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { User } from "@/models/user";
-import { SkillTracker } from "@/models/skillTracker";
 
 export async function GET(req: NextRequest, context: { params: Promise<{ userId: string }> }) {
   await dbConnect();
@@ -24,7 +23,9 @@ export async function GET(req: NextRequest, context: { params: Promise<{ userId:
     });
 
     const skillProgress = user.skillTracker.map(({ skill, _id } : any) => {
+      let isOnboarded = false;
       let taskCounts: Record<string, number> = Object.fromEntries(last7Days.map((d) => [d, 0]));
+      if (_id?.currentLevel) {isOnboarded = true;}
       if (_id?.tasksDone) {
         _id.tasksDone
           .filter((task: any) => task.endTime >= sevenDaysAgo)
@@ -35,7 +36,7 @@ export async function GET(req: NextRequest, context: { params: Promise<{ userId:
       }
 
       const data = last7Days.map((day) => ({ day, tasks: taskCounts[day] || 0 }));
-      return { idx: _id._id, skill, data };
+      return { idx: _id._id, skill,isOnboarded, data };
     });
 
     return NextResponse.json(skillProgress);

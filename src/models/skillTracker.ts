@@ -21,7 +21,7 @@ export interface ISkillTracker extends Document {
     rating: number;
     score: number;
   }[];
-  currentLevel: string;
+  currentLevel: string | null;
   progress: number;
 }
 
@@ -94,7 +94,7 @@ const skillTrackerSchema: Schema = new mongoose.Schema({
   ],
   currentLevel : {
     type: String,
-    default: "Beginner",
+    default: null,
   },
   progress: {
     type: Number,
