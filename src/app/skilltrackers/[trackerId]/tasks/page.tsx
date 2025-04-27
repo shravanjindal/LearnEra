@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import TaskList from "@/components/tasks/taskList";
 import TutorComments from "@/components/tasks/TutorComments";
 import Task from "@/components/tasks/task";
@@ -9,6 +9,7 @@ import TutorChatbot, { Message } from "@/components/tasks/TutorChatbot";
 import Chatbot from "@/components/tasks/SmallScreenBot";
 import { useRouter } from "next/navigation";
 import { SignupData } from "@/utils/utils";
+import { motion } from "framer-motion";
 interface SelectedTask {
   skill: string;
   topic: string;
@@ -95,14 +96,15 @@ const TopicsAndTaskPage: React.FC = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ skill, topic, description }),
       });
-
-      if (!response.ok) throw new Error("Failed to generate task content");
-
+  
+      if (!response.ok) throw new Error(`Failed to generate task: ${response.statusText}`);
+  
       const data = await response.json();
-      setTaskData({...data, trackerId});
+      setTaskData({ ...data, trackerId });
       setLoading(false);
     } catch (err) {
       console.error("Error fetching task:", err);
+      setTaskData(null);
       setError("Failed to load task. Please try again later.");
       setLoading(false);
     }
@@ -164,9 +166,56 @@ const TopicsAndTaskPage: React.FC = () => {
       ]);
     }
   }, [selectedTask]);
-  
+
+  // inside component
+  const balls = useMemo(() => 
+    Array.from({ length: 100 }).map((_, i) => ({
+      id: i,
+      backgroundColor: [
+        "#FF5733",
+        "#33FF57",
+        "#3357FF",
+        "#F3FF33",
+        "#FF33F3",
+        "#33FFF3",
+        "#FF3333",
+        "#33FF33",
+      ][Math.floor(Math.random() * 8)],
+      left: `${Math.random() * 100}%`,
+      x: Math.random() * 100 - 50,
+      rotate: Math.random() * 360,
+      duration: Math.random() * 2 + 1,
+      delay: Math.random() * 0.5,
+    })), 
+  []);
+
   return (
     <div className="min-h-screen bg-[#121212] text-gray-100 overflow-x-hidden" >
+      <div className="absolute inset-0 pointer-events-none">
+        {balls.map((ball) => (
+          <motion.div
+            key={ball.id}
+            className="absolute w-2 h-2 rounded-full"
+            style={{
+              backgroundColor: ball.backgroundColor,
+              top: "-5%",
+              left: ball.left,
+            }}
+            animate={{
+              y: ["0vh", "100vh"],
+              x: [0, ball.x],
+              rotate: [0, ball.rotate],
+              opacity: [1, 0],
+            }}
+            transition={{
+              duration: ball.duration,
+              ease: "easeOut",
+              delay: ball.delay,
+            }}
+          />
+        ))}
+      </div>
+
       {!selectedTask ? (
         <div className="p-8">
           <TutorComments />
@@ -207,6 +256,7 @@ const TopicsAndTaskPage: React.FC = () => {
         </div>
       )}
     </div>
+
   );
 };
 

@@ -21,7 +21,7 @@ interface TaskData {
 }
 
 interface TaskProps {
-  currentRole : string;
+  currentRole: string;
   currentLevel: string;
   learningGoal: string;
   taskData: TaskData | null;
@@ -29,7 +29,7 @@ interface TaskProps {
   isWelcome: boolean;
   error: string | null;
   onRegenerate?: () => void;
-  handleSignUp: (data : SignupData) => void;
+  handleSignUp: (data: SignupData) => void;
 }
 
 export const renderMarkdown = (content: string) => (
@@ -70,7 +70,11 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRe
   const [password, setPassword] = useState('');
   const [showSignUp, setShowSignUp] = useState(false);
   const renderedMarkdown = useMemo(() => taskData ? renderMarkdown(taskData.content) : null, [taskData?.content]);
-
+  useEffect(()=>{
+    console.log(taskData);
+    console.log(isLoading);
+    console.log(error);
+  })
   useEffect(() => {
     const timer = setInterval(() => setTime((prev) => prev + 1), 1000);
     return () => clearInterval(timer);
@@ -117,7 +121,7 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRe
 
     }
 
-    
+
   };
 
   return (
@@ -134,13 +138,13 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRe
         </p>
       </div>
 
-      {!taskData || isLoading ? (
+      {isLoading ? (
         <div className="flex flex-col items-center justify-center text-gray-400 py-12 space-y-3">
           <RotateCcw size={28} className="animate-spin text-gray-500" />
           <div className="text-xl font-medium">Generating task...</div>
           <div className="text-sm text-gray-500">Give me a sec, cooking up something smart 🧠</div>
         </div>
-      ) : error ? (
+      ) : (!taskData || error) ? (
         <div className="flex flex-col items-center justify-center text-gray-400 py-12 space-y-3">
           <div className="text-2xl">😴 Tutor fell asleep</div>
           <div className="text-sm">Try waking them up with a refresh!</div>
@@ -213,8 +217,10 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRe
               )}
             </div>
           </div>
+          
         </div>
       )}
+      
       {/* Welcome Sign Up */}
       {showSignUp && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm p-4">
@@ -262,29 +268,31 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRe
                 Cancel
               </button>
               <button
-                onClick={ () => {
+                onClick={() => {
                   if (!taskData) return;
+                  setIsSubmitting(true);
                   handleSignUp({
-                  name: username,
-                  email,
-                  password,
-                  currentRole,
-                  skillTracker: [{
-                    skill: taskData.skill,
-                    learningGoal,
-                    tasksDone: [{
-                      topic: taskData.topic,
-                      taskId: taskData._id,
-                      startTime: taskData.createdAt,
-                      endTime: new Date(Date.now()),
-                      feedback,
-                      rating,
+                    name: username,
+                    email,
+                    password,
+                    currentRole,
+                    skillTracker: [{
+                      skill: taskData.skill,
+                      learningGoal,
+                      tasksDone: [{
+                        topic: taskData.topic,
+                        taskId: taskData._id,
+                        startTime: taskData.createdAt,
+                        endTime: new Date(Date.now()),
+                        feedback,
+                        rating,
+                      }],
+                      currentLevel,
+                      progress: 1
                     }],
-                    currentLevel,
-                    progress: 1
-                  }],    
-                  badges: ["newbie"]
-                })}}
+                    badges: ["newbie"]
+                  })
+                }}
                 disabled={isSubmitting}
                 className={`px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""
                   }`}
