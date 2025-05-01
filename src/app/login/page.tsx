@@ -18,7 +18,7 @@ const LoginPage = () => {
   const [buttonText, setButtonText] = useState<String>("Login");
   const handleSignupClick = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push('/onboarding'); // Navigate to the /onboarding page
+    router.push('/welcome'); // Navigate to the /onboarding page
   };
   const validateStep = (formData: FormData): boolean => {
     if (!formData.email.trim() || !formData.password.trim()) {
