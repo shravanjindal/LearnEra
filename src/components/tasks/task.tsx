@@ -270,13 +270,17 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRe
 
             <div className="flex justify-end space-x-3 mt-4">
               <button
-                onClick={() => setShowSignUp(false)}
+                onClick={() => {
+                  setShowFeedback(true);
+                  setShowSignUp(false)
+                  setIsSubmitting(false);
+                }}
                 className="px-5 py-2 bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white rounded-md text-sm"
               >
-                Cancel
+                Go Back
               </button>
               <button
-                onClick={() => {
+                onClick={async () => {
                   if (!taskData) return;
                   triggerConfetti();
                   setIsSubmitting(true);

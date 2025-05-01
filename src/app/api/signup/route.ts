@@ -108,9 +108,13 @@ export async function POST(request: Request) {
       process.env.JWT_SECRET as string,
       { expiresIn: '1h' }
     );
+    try {
+      await sendVerificationEmail(addedUser.email, verificationToken);
 
+    } catch(e) {
+      console.log(e);
+    }
     // Send verification email
-    await sendVerificationEmail(addedUser.email, verificationToken);
 
     // Update skillTracker with the userId
     await Promise.all(
