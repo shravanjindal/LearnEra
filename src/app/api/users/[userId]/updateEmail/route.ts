@@ -23,7 +23,9 @@ export async function POST(req: NextRequest, context: { params: Promise<{ userId
       const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL}/verify-email?token=${verificationToken}`;
   
       const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtpout.secureserver.net',
+        port: 465,
+        secure: true,
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASS,

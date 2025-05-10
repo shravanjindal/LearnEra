@@ -10,7 +10,10 @@ import { FormData } from '@/utils/utils';
 // Function to send verification email
 const sendVerificationEmail = async (userEmail: string, verificationToken: string) => {
   const transporter = nodemailer.createTransport({
-    service: 'gmail', // Example using Gmail, replace with your email service
+    host:'smtpout.secureserver.net',
+    port: 465,
+    secure: true,
+    // service: 'gmail', // Example using Gmail, replace with your email service
     auth: {
       user: process.env.EMAIL_USER, // Your email address
       pass: process.env.EMAIL_PASS, // Your email password or app-specific password

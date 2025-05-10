@@ -150,7 +150,7 @@ const EmailVerificationPopup: React.FC<EmailVerificationPopupProps> = ({
           )}
           
           <p className="mt-4 text-xs text-gray-500">
-            Having trouble? Contact <a href="#" className="text-blue-400 hover:text-blue-300">support@learneraclub.com</a>
+            Having trouble? Contact <a href="#" className="text-blue-400 hover:text-blue-300">support@zovite.co</a>
           </p>
         </div>
       </div>
