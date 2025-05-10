@@ -232,7 +232,7 @@ const HowItWorks: React.FC = () => {
               onMouseEnter={() => handleMouseEnter(stepIndex)}
               onMouseLeave={() => handleMouseLeave(stepIndex)}
             >
-              <div className="relative w-full max-w-md mx-auto">
+              <div className="relative w-full max-w mx-auto">
                 <div className="relative aspect-video w-full bg-slate-800/50 rounded-xl overflow-hidden shadow-[0_0_25px_rgba(8,145,178,0.2)] border border-slate-700/50 backdrop-blur-sm">
                   <AnimatePresence mode="wait">
                     <motion.div
@@ -377,11 +377,11 @@ const HowItWorks: React.FC = () => {
               )}
 
               {/* Image caption */}
-              <div className="absolute bottom-16 left-0 right-0 text-center">
+              {/* <div className="absolute bottom-16 left-0 right-0 text-center">
                 <div className="inline-block bg-slate-900/80 backdrop-blur-sm px-4 py-2 rounded-lg text-white/90">
                   {steps[activeImageIndex.step].title}
                 </div>
-              </div>
+              </div> */}
 
               {/* Close button */}
               <button

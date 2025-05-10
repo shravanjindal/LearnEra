@@ -213,7 +213,7 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRe
               >
                 Cancel
               </button>
-              {(!isSubmitting) && (
+              {(!isSubmitting && (rating != 0)) && (
                 <button
                   onClick={handleFeedbackSubmit}
                   disabled={isSubmitting}
@@ -233,7 +233,7 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRe
       {showSignUp && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm p-4">
           <div className="bg-[#1e1e1e] text-white w-full max-w-md p-6 rounded-lg border border-[#2c2c2c]">
-            <h2 className="text-xl font-semibold text-blue-400 mb-4">🔐 Oh shoot! I forgot to ask your name !?</h2>
+            <h2 className="text-xl font-semibold text-blue-400 mb-4">🔐 Oh shoot! I forgot to ask your name!</h2>
 
             <div className="mb-4">
               <label className="block text-gray-300 mb-2">Your Name?</label>
@@ -279,7 +279,8 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRe
               >
                 Go Back
               </button>
-              <button
+              {((username!='') && (email!='') && (password!='')) && (
+                <button
                 onClick={async () => {
                   if (!taskData) return;
                   triggerConfetti();
@@ -312,6 +313,8 @@ const Task: React.FC<TaskProps> = ({ taskData, isLoading, error, isWelcome, onRe
               >
                 Sign Up
               </button>
+              )}
+              
             </div>
           </div>
         </div>

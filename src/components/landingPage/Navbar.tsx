@@ -85,7 +85,7 @@ const Navbar: NextPage = () => {
         {isMenuOpen && (
           <div className="md:hidden absolute top-16 left-0 right-0 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 shadow-lg">
             <ul className="flex flex-col space-y-4 p-4">
-              <li>
+              {/* <li>
                 <Link 
                   href="#pricing" 
                   onClick={handleMenu} 
@@ -93,8 +93,8 @@ const Navbar: NextPage = () => {
                 >
                   Premium
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link 
                   href="/explore" 
                   onClick={handleMenu}
@@ -102,7 +102,7 @@ const Navbar: NextPage = () => {
                 >
                   Explore
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link 
                   href="/product" 

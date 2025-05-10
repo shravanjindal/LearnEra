@@ -96,102 +96,108 @@ const WhoAreYou = () => {
             <AnimatePresence>
                 {!selectedRole && (
                     <motion.div
-                        key="roles"
-                        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-w-6xl"
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -30 }}
-                        transition={{ duration: 0.4 }}
+                    key="roles"
+                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-w-6xl"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -30 }}
+                    transition={{ duration: 0.4 }}
                     >
-                        {Object.entries(roleIconMap).map(([role, icon]) => (
-                            <div
-                                key={role}
-                                className="bg-white text-blue-600 rounded-xl p-4 font-semibold text-center cursor-pointer flex flex-col items-center justify-center space-y-2 hover:scale-105 transition"
-                                onClick={() => setSelectedRole(role)}
-                            >
-                                <div className="text-3xl">{icon}</div>
-                                <div className="text-sm md:text-base">{role}</div>
-                            </div>
-                        ))}
+                    {Object.entries(roleIconMap).map(([role, icon]) => (
+                        <div
+                        key={role}
+                        className="relative bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6 text-center shadow-lg shadow-slate-900/30 hover:shadow-cyan-500/10 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center space-y-3 hover:scale-105"
+                        onClick={() => setSelectedRole(role)}
+                        >
+                        <div className="h-16 w-16 flex items-center justify-center bg-slate-700/50 text-cyan-400 rounded-full shadow-inner text-3xl">
+                            {icon}
+                        </div>
+                        <div className="text-base md:text-lg font-semibold text-white">
+                            {role}
+                        </div>
+                        </div>
+                    ))}
                     </motion.div>
                 )}
-            </AnimatePresence>
+                </AnimatePresence>
+
 
             {/* Skill Selection */}
             <AnimatePresence>
-                {selectedRole && (
-                    <motion.div
-                        key="skills"
-                        className="w-full max-w-5xl flex flex-col items-center"
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -30 }}
-                        transition={{ duration: 0.4 }}
-                    >
-                        {/* Skill Cards */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full px-2">
-                            {roleSkillsMap[selectedRole].map((skill) => (
-                                <motion.div
-                                    key={skill}
-                                    onClick={() => {
-                                        setSelectedSkill(skill);
-                                        if (skill !== "Write your own skill") setCustomSkill("");
-                                    }}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    className={`cursor-pointer flex flex-col items-center justify-center px-6 py-5 rounded-2xl shadow-md transition-all duration-200 border-2 text-center h-36 ${selectedSkill === skill
-                                        ? "bg-green-200 text-black border-green-400 shadow-lg"
-                                        : "bg-white text-blue-600 border-blue-200 hover:shadow-lg"
-                                        }`}
-                                >
-                                    <Sparkles className="w-8 h-8 mb-3" />
-                                    <span className="font-medium text-base sm:text-lg">{skill}</span>
-                                </motion.div>
-                            ))}
-                        </div>
+  {selectedRole && (
+    <motion.div
+      key="skills"
+      className="w-full max-w-5xl flex flex-col items-center"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -30 }}
+      transition={{ duration: 0.4 }}
+    >
+      {/* Skill Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full px-2">
+        {roleSkillsMap[selectedRole].map((skill) => (
+          <motion.div
+            key={skill}
+            onClick={() => {
+              setSelectedSkill(skill);
+              if (skill !== "Write your own skill") setCustomSkill("");
+            }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={`cursor-pointer flex flex-col items-center justify-center px-6 py-5 rounded-2xl transition-all duration-200 border-2 h-36 text-center shadow-lg ${
+              selectedSkill === skill
+                ? "bg-gradient-to-br from-green-400 to-emerald-500 text-black border-green-300 shadow-green-400/30"
+                : "bg-slate-800/50 text-cyan-300 border-slate-600 hover:shadow-cyan-500/10 backdrop-blur-md"
+            }`}
+          >
+            <Sparkles className="w-8 h-8 mb-3" />
+            <span className="font-medium text-base sm:text-lg">{skill}</span>
+          </motion.div>
+        ))}
+      </div>
 
-                        {/* Custom Skill Input */}
-                        {selectedSkill === "Write your own skill" && (
-                            <div className="mt-6 w-full max-w-md">
-                                <input
-                                    type="text"
-                                    placeholder="Enter your custom skill..."
-                                    className="w-full p-3 rounded-lg text-black border border-gray-300"
-                                    value={customSkill}
-                                    onChange={(e) => setCustomSkill(e.target.value)}
-                                />
-                            </div>
-                        )}
+      {/* Custom Skill Input */}
+      {selectedSkill === "Write your own skill" && (
+        <div className="mt-6 w-full max-w-md">
+          <input
+            type="text"
+            placeholder="Enter your custom skill..."
+            className="w-full p-3 rounded-lg bg-slate-800/60 text-white border border-slate-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            value={customSkill}
+            onChange={(e) => setCustomSkill(e.target.value)}
+          />
+        </div>
+      )}
 
-                        {/* Navigation Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-4 mt-10">
-                            <button
-                                type="button"
-                                className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-100 transition"
-                                onClick={() => {
-                                    setSelectedRole(null);
-                                    setSelectedSkill(null);
-                                    setCustomSkill("");
-                                }}
-                            >
-                                ← Back
-                            </button>
+      {/* Navigation Buttons */}
+      <div className="flex flex-col sm:flex-row gap-4 mt-10">
+        <button
+          type="button"
+          className="px-6 py-3 bg-slate-700/50 text-cyan-300 font-semibold rounded-lg border border-slate-600 hover:bg-slate-600/70 transition"
+          onClick={() => {
+            setSelectedRole(null);
+            setSelectedSkill(null);
+            setCustomSkill("");
+          }}
+        >
+          ← Back
+        </button>
 
-                            <button
-                                type="button"
-                                disabled={
-                                    !selectedSkill ||
-                                    (selectedSkill === "Write your own skill" && customSkill.trim() === "")
-                                }
-                                className="px-6 py-2 bg-green-400 text-black font-semibold rounded-md hover:bg-green-500 transition disabled:opacity-50"
-                                onClick={handleSubmit}
-                            >
-                                Submit
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+        <button
+          type="button"
+          disabled={
+            !selectedSkill ||
+            (selectedSkill === "Write your own skill" && customSkill.trim() === "")
+          }
+          className="px-6 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold rounded-md hover:brightness-110 transition disabled:opacity-50"
+          onClick={handleSubmit}
+        >
+          Submit
+        </button>
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
         </motion.section>
     );
 };
