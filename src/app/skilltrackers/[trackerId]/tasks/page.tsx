@@ -152,7 +152,7 @@ const TopicsAndTaskPage: React.FC = () => {
       const res_data = await res.json();
       if (res.ok) {
         localStorage.setItem("userId", res_data.user);
-        router.push('/');
+        router.push(`/dashboard/${res_data.user}`);
       } else {
         alert("Signup failed : " + res_data.message)
         console.error('Signup failed:', res_data.message);
