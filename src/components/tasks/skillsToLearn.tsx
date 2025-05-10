@@ -53,6 +53,9 @@ const SkillsToLearn = ({ skills }: { skills: Skill[] }) => {
   const handleOnboard = (trackerId: string, skill:string) => {
     router.push(`/skilltrackers/${trackerId}/onboard?skill=${skill}`);
   }
+  // const handleViewProgress = (trackerId: string) => {
+  //   router.push(`/skilltrackers/${trackerId}/progress`)
+  // }
   return (
     <div className="mt-8">
       <div className="flex gap-3">
@@ -84,12 +87,22 @@ const SkillsToLearn = ({ skills }: { skills: Skill[] }) => {
                 <Bar dataKey="displayTasks" fill="#3b82f6" radius={[5, 5, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
-              {skill.isOnboarded ? (<Button
+              {skill.isOnboarded ? (
+                <div className="flex gap-5">
+                  {/* <Button
+              className="mt-3 bg-black text-white w-full rounded-lg py-2 hover:bg-gray-700 transition-colors"
+              onClick={() => handleViewProgress(skill.idx)}
+            >
+              View Progress
+            </Button> */}
+                  <Button
               className="mt-3 bg-black text-white w-full rounded-lg py-2 hover:bg-gray-700 transition-colors"
               onClick={() => handleLearnMore(skill.idx)}
             >
               Learn More
-            </Button>) : (
+            </Button>
+                </div>
+                ) : (
                 <Button
                 className="mt-3 bg-black text-white w-full rounded-lg py-2 hover:bg-gray-700 transition-colors"
                 onClick={() => handleOnboard(skill.idx, skill.skill)}

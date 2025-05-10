@@ -20,7 +20,11 @@ const Navbar = ({ user, setSkillDialogBoxOpen, setGoalDialogBoxOpen, setSidebarO
     <nav className="bg-[#1e1e1e] p-4 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo/Title */}
-        <h1 className="hidden lg:block text-xl font-bold text-white">LearnEra</h1>
+        <div className="flex items-center gap-2 lg:flex hidden">
+        <img className="w-[30px] h-[30px]" src="/BrivonLogo.png" alt="Zovite's Logo"/>
+        <div className="flex items-center"><h1 className="text-xl font-bold text-white">Zovite</h1></div>
+        </div>
+        
         {/* Hamburger icon on small screens */}
         <button
           className="lg:hidden text-white"
@@ -61,13 +65,10 @@ const Navbar = ({ user, setSkillDialogBoxOpen, setGoalDialogBoxOpen, setSidebarO
         <button
         onClick={() => setProfileBoxOpen(true)}
         >
-        <div className="hidden lg:block flex items-center space-x-4">
+        <div className="hidden md:block lg:block flex items-center space-x-4">
           <span className="text-md text-white"><b>{user.name}</b></span>
         </div>
         </button>
-        <div className="lg:hidden flex items-center space-x-4">
-          <h1 className="text-xl font-bold text-white">LearnEra</h1>
-        </div>
       </div>
     </nav>
   );

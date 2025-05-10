@@ -11,7 +11,7 @@ const Testimonials = () => {
           name='Riya Sharma' 
           occupation='Student' 
           company='IIT Delhi' 
-          comment='Learnera helped me stay consistent with my studies. The doubt discussions with tutor are gold!' 
+          comment='Zovite helped me stay consistent with my studies. The doubt discussions with tutor are gold!' 
         />
 
         <CommentCard 
@@ -46,7 +46,7 @@ const Testimonials = () => {
           name='Vikram Deshmukh' 
           occupation='Student' 
           company='IIT Bombay' 
-          comment='Honestly, Learnera feels like a shortcut to smarter learning. Highly recommend!' 
+          comment='Honestly, Zovite feels like a shortcut to smarter learning. Highly recommend!' 
         />
 
 

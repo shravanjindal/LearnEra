@@ -45,9 +45,9 @@ export async function POST(request: Request) {
       to: email,
       subject: 'Resend Email Verification',
       html: `<div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px; background-color: #f9f9f9;">
-        <h2 style="text-align: center; color: #4a4a4a;">Welcome to <span style="color: #3f51b5;">Learnera</span>!</h2>
+        <h2 style="text-align: center; color: #4a4a4a;">Welcome to <span style="color: #3f51b5;">Zovite</span>!</h2>
         <p>Hi there,</p>
-        <p>Thanks for signing up for <strong>Learnera</strong> - your personalized AI-powered learning platform.</p>
+        <p>Thanks for signing up for <strong>Zovite</strong> - your personalized AI-powered learning platform.</p>
         <p>To complete your registration, please verify your email address by clicking the button below:</p>
         
         <div style="text-align: center; margin: 30px 0;">
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
         <p>If the button above doesn't work, copy and paste this URL into your browser:</p>
         <p style="word-break: break-all;"><a href="${verificationUrl}">${verificationUrl}</a></p>
   
-        <p style="margin-top: 40px; font-size: 0.9em; color: #666;">If you didn't sign up for Learnera, you can ignore this email.</p>
+        <p style="margin-top: 40px; font-size: 0.9em; color: #666;">If you didn't sign up for Zovite, you can ignore this email.</p>
       </div>`,
     };
 

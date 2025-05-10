@@ -13,13 +13,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LearnEra",
-  description: "A personalised learning platform",
+  title: "Zovite - Your AI Tutor",
+  description: "Personal AI - Tutor",
   openGraph: {
-    title: "LearnEra",
-    description: "A personalised learning platform",
-    url: "https://learnera-seven.vercel.app",
-    siteName: "LearnEra",
+    title: "Zovite",
+    description: "AI-powered personalised learning platform. You can learn anything as you like.",
+    url: "https://zovite.co",
+    siteName: "Zovite",
   },
 };
 

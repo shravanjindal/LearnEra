@@ -3,10 +3,11 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useSearchParams } from "next/navigation"
-import { BookOpen, Sparkles, Briefcase, MoreHorizontal, ChevronRight, CheckCircle2, ArrowRight } from "lucide-react"
+import { BookOpen, Sparkles, Briefcase, MoreHorizontal, ChevronRight, CheckCircle2, ArrowRight } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"
+
 // Define the learning goals and levels for each question
 const learningGoals = [
   { id: "academic", label: "Academic purpose", icon: BookOpen },
@@ -33,7 +34,8 @@ export default function OnboardingPage() {
   // Assuming you have role and skill data coming from a previous page
   const role = params.get("role") || "Developer"
   const skill = params.get("skill") || "Coding"
-const router = useRouter()
+  const router = useRouter()
+
   // Handle next step
   const handleNext = () => {
     if (step === 3) {
@@ -46,48 +48,57 @@ const router = useRouter()
 
   // Handle the form submission and send the data
   const handleSubmit = async () => {
-    setIsSubmitting(true);
-    const maxRetries = 3;
-    let attempts = 0;
-    let data = null;
-  
+    setIsSubmitting(true)
+    const maxRetries = 3
+    let attempts = 0
+    let data = null
+
     try {
       while (attempts < maxRetries) {
         const res = await fetch("/api/welcome/getTopics", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ role, skill, learningGoal, currentLevel }),
-        });
-  
-        data = await res.json();
+        })
+
+        data = await res.json()
         if (res.ok) {
-          localStorage.setItem("topicsData", JSON.stringify(data));
-          localStorage.setItem("welcomingData", JSON.stringify({
-            learningGoal,currentLevel,role
-          }))
-          router.push("/skilltrackers/welcome/tasks");
-          return; // Exit on success
+          localStorage.setItem("topicsData", JSON.stringify(data))
+          localStorage.setItem(
+            "welcomingData",
+            JSON.stringify({
+              learningGoal,
+              currentLevel,
+              role,
+            }),
+          )
+          router.push("/skilltrackers/welcome/tasks")
+          return // Exit on success
         }
-  
-        attempts++;
+
+        attempts++
       }
-  
-      console.error("Failed to fetch topics after retries.");
+
+      console.error("Failed to fetch topics after retries.")
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error:", error)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
-  
+  }
+
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-violet-600 via-indigo-600 to-blue-700">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
       {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {Array.from({ length: 20 }).map((_, i) => (
+      <div className="absolute inset-0 overflow-hidden opacity-20">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 -left-40 w-80 h-80 bg-cyan-500 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-20 w-60 h-60 bg-emerald-500 rounded-full blur-3xl"></div>
+
+        {Array.from({ length: 15 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute rounded-full bg-white/10 backdrop-blur-sm"
+            className="absolute rounded-full bg-white/5 backdrop-blur-sm"
             style={{
               width: Math.random() * 100 + 50,
               height: Math.random() * 100 + 50,
@@ -110,23 +121,28 @@ const router = useRouter()
 
       {/* Progress indicator */}
       <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-10">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
           {[1, 2, 3].map((stepNumber) => (
             <motion.div
               key={stepNumber}
               className={cn(
-                "w-3 h-3 rounded-full transition-colors duration-300",
-                step >= stepNumber ? "bg-white" : "bg-white/30",
+                "flex items-center justify-center transition-colors duration-300",
+                step >= stepNumber
+                  ? "w-8 h-8 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full text-white font-medium text-sm"
+                  : "w-3 h-3 bg-slate-600 rounded-full",
+                step === stepNumber && "ring-2 ring-cyan-400/30 ring-offset-2 ring-offset-slate-900",
               )}
               animate={{
-                scale: step === stepNumber ? [1, 1.2, 1] : 1,
+                scale: step === stepNumber ? [1, 1.1, 1] : 1,
               }}
               transition={{
-                duration: 0.5,
+                duration: 1.5,
                 repeat: step === stepNumber ? Number.POSITIVE_INFINITY : 0,
-                repeatDelay: 1.5,
+                repeatDelay: 1,
               }}
-            />
+            >
+              {step >= stepNumber && stepNumber}
+            </motion.div>
           ))}
         </div>
       </div>
@@ -144,12 +160,12 @@ const router = useRouter()
               transition={{ duration: 0.5 }}
             >
               <motion.div
-                className="p-8 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-xl"
-                whileHover={{ boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.3)" }}
+                className="p-8 rounded-2xl bg-slate-800/50 backdrop-blur-md border border-slate-700/50 shadow-xl"
+                whileHover={{ boxShadow: "0 25px 50px -12px rgba(8, 145, 178, 0.2)" }}
               >
                 <div className="flex justify-center mb-6">
                   <motion.div
-                    className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-orange-400 flex items-center justify-center"
+                    className="w-24 h-24 rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-cyan-500/20"
                     animate={{
                       scale: [1, 1.05, 1],
                       rotate: [0, 5, 0, -5, 0],
@@ -166,13 +182,13 @@ const router = useRouter()
 
                 <h1 className="text-3xl font-bold text-white text-center mb-4">Welcome to Your Learning Journey</h1>
 
-                <p className="text-white/90 text-center mb-8">
+                <p className="text-slate-300 text-center mb-8">
                   I'm excited to help you learn {skill}! Let's get to know your goals better.
                 </p>
 
                 <Button
                   onClick={handleNext}
-                  className="w-full py-6 text-lg bg-white hover:bg-white/90 text-indigo-700 font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group"
+                  className="w-full py-6 text-lg bg-gradient-to-r from-emerald-500 to-cyan-500 hover:shadow-lg hover:shadow-cyan-500/20 text-white font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group border-0"
                 >
                   <span>Let's Begin</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -191,7 +207,7 @@ const router = useRouter()
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="p-8 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-xl">
+              <div className="p-8 rounded-2xl bg-slate-800/50 backdrop-blur-md border border-slate-700/50 shadow-xl">
                 <h2 className="text-2xl font-bold text-white text-center mb-6">What's your learning goal?</h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
@@ -201,11 +217,11 @@ const router = useRouter()
                       className={cn(
                         "cursor-pointer rounded-xl p-4 transition-all duration-300 border",
                         learningGoal === goal.id
-                          ? "bg-white text-indigo-700 border-white"
-                          : "bg-white/5 text-white border-white/20 hover:bg-white/10",
+                          ? "bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-white border-cyan-500/50"
+                          : "bg-slate-800/50 text-white border-slate-700/50 hover:border-slate-600/80",
                       )}
                       onClick={() => setLearningGoal(goal.id)}
-                      whileHover={{ scale: 1.03 }}
+                      whileHover={{ scale: 1.03, y: -2 }}
                       whileTap={{ scale: 0.98 }}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{
@@ -216,11 +232,14 @@ const router = useRouter()
                     >
                       <div className="flex items-center gap-3">
                         <div
-                          className={cn("p-2 rounded-lg", learningGoal === goal.id ? "bg-indigo-100" : "bg-white/10")}
+                          className={cn(
+                            "p-2 rounded-lg",
+                            learningGoal === goal.id
+                              ? "bg-gradient-to-r from-emerald-500 to-cyan-500 text-white"
+                              : "bg-slate-700/70",
+                          )}
                         >
-                          <goal.icon
-                            className={cn("w-5 h-5", learningGoal === goal.id ? "text-indigo-700" : "text-white")}
-                          />
+                          <goal.icon className="w-5 h-5 text-white" />
                         </div>
                         <span className="font-medium">{goal.label}</span>
                       </div>
@@ -232,10 +251,10 @@ const router = useRouter()
                   onClick={handleNext}
                   disabled={!learningGoal}
                   className={cn(
-                    "w-full py-6 text-lg font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2",
+                    "w-full py-6 text-lg font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2 border-0",
                     !learningGoal
-                      ? "bg-white/50 text-indigo-900/50 cursor-not-allowed"
-                      : "bg-white hover:bg-white/90 text-indigo-700",
+                      ? "bg-slate-700/50 text-slate-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-emerald-500 to-cyan-500 hover:shadow-lg hover:shadow-cyan-500/20 text-white",
                   )}
                 >
                   <span>Continue</span>
@@ -255,7 +274,7 @@ const router = useRouter()
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="p-8 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-xl">
+              <div className="p-8 rounded-2xl bg-slate-800/50 backdrop-blur-md border border-slate-700/50 shadow-xl">
                 <h2 className="text-2xl font-bold text-white text-center mb-6">
                   What's your current level in {skill}?
                 </h2>
@@ -267,11 +286,11 @@ const router = useRouter()
                       className={cn(
                         "cursor-pointer rounded-xl p-4 transition-all duration-300 border",
                         currentLevel === level.id
-                          ? "bg-white text-indigo-700 border-white"
-                          : "bg-white/5 text-white border-white/20 hover:bg-white/10",
+                          ? "bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-white border-cyan-500/50"
+                          : "bg-slate-800/50 text-white border-slate-700/50 hover:border-slate-600/80",
                       )}
                       onClick={() => setCurrentLevel(level.id)}
-                      whileHover={{ scale: 1.02 }}
+                      whileHover={{ scale: 1.02, y: -2 }}
                       whileTap={{ scale: 0.98 }}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{
@@ -282,26 +301,24 @@ const router = useRouter()
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <h3
-                            className={cn(
-                              "font-semibold text-lg",
-                              currentLevel === level.id ? "text-indigo-700" : "text-white",
-                            )}
-                          >
-                            {level.label}
-                          </h3>
+                          <h3 className="font-semibold text-lg text-white">{level.label}</h3>
                           <p
                             className={cn(
                               "text-sm mt-1",
-                              currentLevel === level.id ? "text-indigo-700/70" : "text-white/70",
+                              currentLevel === level.id ? "text-cyan-300/90" : "text-slate-400",
                             )}
                           >
                             {level.description}
                           </p>
                         </div>
                         {currentLevel === level.id && (
-                          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring" }}>
-                            <CheckCircle2 className="w-6 h-6 text-indigo-700" />
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring" }}
+                            className="bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full p-1"
+                          >
+                            <CheckCircle2 className="w-5 h-5 text-white" />
                           </motion.div>
                         )}
                       </div>
@@ -311,16 +328,22 @@ const router = useRouter()
 
                 <Button
                   onClick={handleNext}
-                  disabled={!currentLevel}
+                  disabled={!currentLevel || isSubmitting}
                   className={cn(
-                    "w-full py-6 text-lg font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2",
-                    !currentLevel
-                      ? "bg-white/50 text-indigo-900/50 cursor-not-allowed"
-                      : "bg-white hover:bg-white/90 text-indigo-700",
+                    "w-full py-6 text-lg font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2 border-0",
+                    !currentLevel || isSubmitting
+                      ? "bg-slate-700/50 text-slate-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-emerald-500 to-cyan-500 hover:shadow-lg hover:shadow-cyan-500/20 text-white",
                   )}
                 >
                   <span>{isSubmitting ? "Submitting..." : "Continue"}</span>
-                  <ChevronRight className="w-5 h-5" />
+                  {!isSubmitting && <ChevronRight className="w-5 h-5" />}
+                  {isSubmitting && (
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  )}
                 </Button>
               </div>
             </motion.div>
@@ -335,10 +358,10 @@ const router = useRouter()
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="p-8 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-xl">
+              <div className="p-8 rounded-2xl bg-slate-800/50 backdrop-blur-md border border-slate-700/50 shadow-xl">
                 <div className="flex justify-center mb-6">
                   <motion.div
-                    className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center"
+                    className="w-24 h-24 rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-cyan-500/20"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{
@@ -353,11 +376,11 @@ const router = useRouter()
 
                 <h2 className="text-2xl font-bold text-white text-center mb-4">You're all set!</h2>
 
-                <p className="text-white/90 text-center mb-8">
+                <p className="text-slate-300 text-center mb-8">
                   We've customized your learning journey based on your preferences. Get ready to master {skill}!
                 </p>
 
-                <Button className="w-full py-6 text-lg bg-white hover:bg-white/90 text-indigo-700 font-medium rounded-xl transition-all duration-300">
+                <Button className="w-full py-6 text-lg bg-gradient-to-r from-emerald-500 to-cyan-500 hover:shadow-lg hover:shadow-cyan-500/20 text-white font-medium rounded-xl transition-all duration-300 border-0">
                   Start Learning
                 </Button>
               </div>
@@ -374,14 +397,14 @@ const router = useRouter()
                 className="absolute w-2 h-2 rounded-full"
                 style={{
                   backgroundColor: [
-                    "#FF5733",
-                    "#33FF57",
-                    "#3357FF",
-                    "#F3FF33",
-                    "#FF33F3",
-                    "#33FFF3",
-                    "#FF3333",
-                    "#33FF33",
+                    "#10B981", // emerald-500
+                    "#06B6D4", // cyan-500
+                    "#3B82F6", // blue-500
+                    "#8B5CF6", // violet-500
+                    "#EC4899", // pink-500
+                    "#10B981", // emerald-500
+                    "#06B6D4", // cyan-500
+                    "#3B82F6", // blue-500
                   ][Math.floor(Math.random() * 8)],
                   top: "-5%",
                   left: `${Math.random() * 100}%`,

@@ -20,7 +20,7 @@ const Chatbot = ({ userId, progressData }: ChatbotProps) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([
-    { sender: "bot", text: "Welcome back to LearnEra!" },
+    { sender: "bot", text: "Welcome back to Zovite!" },
   ]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -77,7 +77,7 @@ const Chatbot = ({ userId, progressData }: ChatbotProps) => {
       {isOpen && (
         <div className="w-[75vw] bg-[#1e1e1e] text-gray-100 m-4 p-3 rounded-lg shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col">
           <div className="flex justify-between items-center border-b pb-2 mb-2 border-[#2c2c2c]">
-            <span className="text-lg font-semibold">🎓 LearnEra Coach</span>
+            <span className="text-lg font-semibold">🎓 Zoby!</span>
             <X
               className="cursor-pointer text-gray-300 hover:text-white"
               onClick={() => setIsOpen(false)}

@@ -73,7 +73,7 @@ const LoginPage = () => {
         className="bg-white rounded-lg shadow-2xl overflow-hidden w-full max-w-4xl flex"
       >
         <div className="hidden md:flex flex-col justify-center items-center bg-gradient-to-b from-purple-600 to-indigo-700 text-white p-8 w-1/2">
-          <h2 className="text-3xl font-bold mb-4 animate-bounce">Welcome back to LearnEra</h2>
+          <h2 className="text-3xl font-bold mb-4 animate-bounce">Welcome back to Zovite</h2>
           <p className="text-lg text-center mb-6">Do you think AGI is here?</p>
         </div>
         <div className="p-8 w-full md:w-1/2">

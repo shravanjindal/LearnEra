@@ -56,36 +56,14 @@ const roleSkillsMap: Record<string, string[]> = {
     "High Secondary School Student": ["Physics", "Coding Basics", "Communication Skills"],
     "College Student (Tech)": ["DSA", "Machine Learning", "Web Dev", "GitHub"],
     "College Student (Non-Tech)": ["Anatomy", "Clinical Skills", "Bioinformatics"],
-    // "Postgraduate Student": ["Thesis Writing", "Advanced Research", "Presentation Skills"],
-    // "PhD Scholar": ["Paper Writing", "Deep Learning", "Research Methodologies"],
-    // "Researcher": ["Data Analysis", "Publishing", "Statistical Tools"],
     "Working Professional (Tech)": ["System Design", "Cloud", "DevOps"],
     "Working Professional (Non-Tech)": ["Leadership", "Excel", "Public Speaking"],
     "Entrepreneur": ["Startup Pitching", "Fundraising", "Marketing"],
     "Freelancer": ["Client Handling", "Portfolio Building", "Online Platforms"],
-    // "Educator": ["Curriculum Design", "Assessment Tools", "EdTech"],
     "School Teacher": ["Child Psychology", "Digital Classrooms", "Creative Teaching"],
-    // "College Professor": ["Research Supervision", "Academic Writing", "Grant Proposals"],
     "Mentor": ["Coaching", "Listening Skills", "Feedback Giving"],
     "Job Seeker": ["Resume Building", "Interview Prep", "LinkedIn Optimization"],
-    // "Startup Founder": ["Fundraising", "Pitch Deck", "Team Building"],
     "Product Manager": ["Product Lifecycle", "Jira", "Agile Methods"],
-    // "UI/UX Designer": ["Figma", "User Research", "Design Thinking"],
-    // "Data Analyst": ["Excel", "Power BI", "SQL", "Python"],
-    // "Machine Learning Engineer": ["TensorFlow", "Pytorch", "MLOps"],
-    // "Doctor": ["Clinical Practice", "Ethics", "Medical Software"],
-    // "Nurse": ["First Aid", "Patient Care", "Communication"],
-    // "Pharmacist": ["Drug Database", "Inventory", "Dosage Calculation"],
-    // "Law Student": ["Legal Writing", "Court Proceedings", "Case Studies"],
-    // "Civil Services Aspirant": ["Current Affairs", "Ethics", "Essay Writing"],
-    // "CA/CS Student": ["Taxation", "Audit", "Company Law"],
-    // "Finance Professional": ["Financial Modelling", "Valuation", "Excel"],
-    // "Investor": ["Portfolio Strategy", "Risk Analysis", "Stock Market"],
-    // "Artist": ["Digital Art", "Storyboarding", "Art Selling"],
-    // "Content Creator": ["Video Editing", "SEO", "Social Media"],
-    // "Journalist": ["Investigative Writing", "Interviewing", "News Ethics"],
-    // "NGO Volunteer": ["Fundraising", "Event Planning", "Impact Measurement"],
-    // "Community Manager": ["Discord Management", "Community Engagement", "Analytics"],
     "Other": []
 };
 
@@ -109,7 +87,7 @@ const WhoAreYou = () => {
     };
 
     return (
-        <motion.section className="bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white py-20 px-6 min-h-screen flex flex-col items-center">
+        <motion.section className="bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white py-20 px-6 min-h-screen flex flex-col items-center">
             <h2 className="text-4xl font-bold mb-6 text-center">
                 {selectedRole ? "What do you want to learn?" : "Who Are You?"}
             </h2>

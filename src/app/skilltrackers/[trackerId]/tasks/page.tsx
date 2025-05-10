@@ -154,12 +154,13 @@ const TopicsAndTaskPage: React.FC = () => {
         localStorage.setItem("userId", res_data.user);
         router.push('/');
       } else {
+        alert("Signup failed : " + res_data.message)
         console.error('Signup failed:', res_data.message);
       }
-    } catch(err) {
+    } catch(err : any) {
+      alert("Signup failed : " + err.message);
       console.error(err);
     }
-    
   }
   useEffect(() => {
     if (selectedTask) {

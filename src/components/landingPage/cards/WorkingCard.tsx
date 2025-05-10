@@ -1,42 +1,44 @@
 "use client"
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from 'react'
+import { motion } from 'framer-motion'
 
 interface WorkingCardProps {
-  stepNumber: number;
-  title: string;
-  description: string;
-  icon: React.ReactNode; // Add an icon prop
+  stepNumber: number
+  title: string
+  description: string
+  icon: React.ReactNode
 }
 
-const WorkingCard: React.FC<WorkingCardProps> = ({ title, description, icon }) => {
+const WorkingCard: React.FC<WorkingCardProps> = ({ stepNumber, title, description, icon }) => {
   return (
-    <div className='hover:scale-105  transform  transition duration-300'>
-        <motion.div
-      className="h-60 max-w-sm bg-white shadow-lg rounded-lg"
-      initial={{ opacity: 0, y: 50 }} // Start 50px below
-      whileInView={{ opacity: 1, y: 0 }} // Slide up to original position
-      viewport={{ once: true, amount: 0.2 }} // Trigger animation when 20% of the element is in view
-      transition={{ duration: 0.8 }} // Smooth transition
+    <motion.div
+      className="h-64 w-full max-w-sm transform transition duration-300 hover:-translate-y-2"
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.8 }}
     >
-      <div className="p-6 text-center ">
+      <div className="h-full bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6 text-center shadow-lg shadow-slate-900/30 hover:shadow-cyan-500/10 transition-all duration-300">
+        {/* Step Number */}
+        <div className="absolute -top-3 -right-3 w-10 h-10 flex items-center justify-center bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full text-white font-bold shadow-lg shadow-cyan-500/20">
+          {stepNumber}
+        </div>
+        
         {/* Icon */}
-        <div className="flex items-center justify-center mb-4">
-          <div className="h-16 w-16 flex items-center justify-center bg-purple-200 text-purple-700 rounded-full shadow-md">
-            {icon} {/* Render the icon */}
+        <div className="flex items-center justify-center mb-5">
+          <div className="h-16 w-16 flex items-center justify-center bg-slate-700/50 text-cyan-400 rounded-full shadow-inner">
+            {icon}
           </div>
         </div>
 
         {/* Title */}
-        <h4 className="text-2xl font-bold text-indigo-600 mb-2">{title}</h4>
+        <h4 className="text-2xl font-bold text-white mb-3">{title}</h4>
 
         {/* Description */}
-        <p className="text-gray-700">{description}</p>
+        <p className="text-slate-300">{description}</p>
       </div>
     </motion.div>
-    </div>
-    
-  );
-};
+  )
+}
 
-export default WorkingCard;
+export default WorkingCard
